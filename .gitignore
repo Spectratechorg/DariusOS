@@ -20,6 +20,8 @@ storage/processed/*
 !storage/raw/.gitkeep
 !storage/processed/.gitkeep
 data/
+!frontend/src/data/
+!frontend/src/data/mockData.ts
 *.las
 *.laz
 *.xyz
