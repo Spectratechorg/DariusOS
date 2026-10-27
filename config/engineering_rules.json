@@ -1,0 +1,90 @@
+{
+  "ENGINEERING_STATUS": "PRELIMINARY / DEMO PLACEHOLDER ONLY - TO BE CONFIRMED BY A REGISTERED ENGINEER",
+  "disclaimer": "This system provides automated computational decision support. All road geometry standards, soil compaction factors, and bill rates must be reviewed, confirmed, and stamped by a registered professional civil engineer prior to construction.",
+  "project_metadata": {
+    "default_crs_epsg": 32632,
+    "unit_of_measurement": "meters"
+  },
+  "horizontal_alignment": {
+    "notice": "TO BE CONFIRMED BY A REGISTERED ENGINEER",
+    "design_speed_kph": 60.0,
+    "min_curve_radius_m": 150.0,
+    "max_ground_grade_percent": 12.0,
+    "station_interval_m": 20.0
+  },
+  "vertical_alignment": {
+    "notice": "TO BE CONFIRMED BY A REGISTERED ENGINEER",
+    "max_grade_percent": 8.0,
+    "min_grade_percent": 0.5,
+    "min_crest_vertical_curve_k": 15.0,
+    "min_sag_vertical_curve_k": 10.0,
+    "default_roadbed_target_offset_m": 0.0
+  },
+  "cross_section": {
+    "notice": "TO BE CONFIRMED BY A REGISTERED ENGINEER",
+    "carriageway_width_m": 7.0,
+    "shoulder_width_m": 1.5,
+    "camber_cross_slope_percent": -2.5,
+    "shoulder_cross_slope_percent": -4.0,
+    "cut_slope_v_to_h": 0.6667,
+    "fill_slope_v_to_h": 0.5000,
+    "ditch_bottom_width_m": 0.6,
+    "ditch_depth_m": 0.5,
+    "ditch_side_slope_v_to_h": 1.0,
+    "corridor_sampling_half_width_m": 25.0
+  },
+  "earthwork_factors": {
+    "notice": "TO BE CONFIRMED BY A REGISTERED ENGINEER",
+    "topsoil_strip_depth_m": 0.15,
+    "soil_bulking_factor": 1.15,
+    "compaction_shrinkage_factor": 0.90
+  },
+  "beme_rates_placeholder": {
+    "notice": "TO BE CONFIRMED BY A REGISTERED ENGINEER - PLACEHOLDER UNIT RATES",
+    "currency": "USD",
+    "items": [
+      {
+        "code": "1.01",
+        "description": "Site clearance and bush clearing along road corridor",
+        "unit": "m2",
+        "unit_rate": 1.50
+      },
+      {
+        "code": "1.02",
+        "description": "Topsoil stripping and stockpiling (depth ~ 150mm)",
+        "unit": "m3",
+        "unit_rate": 3.20
+      },
+      {
+        "code": "2.01",
+        "description": "Roadbed roadway excavation in common material (Cut)",
+        "unit": "m3",
+        "unit_rate": 6.50
+      },
+      {
+        "code": "2.02",
+        "description": "Embankment compaction from approved borrow or cut (Fill)",
+        "unit": "m3",
+        "unit_rate": 8.00
+      },
+      {
+        "code": "3.01",
+        "description": "Crushed stone granular subbase course (150mm compacted thickness)",
+        "unit": "m3",
+        "unit_rate": 24.00
+      },
+      {
+        "code": "3.02",
+        "description": "Dense bituminous macadam wearing course (50mm compacted)",
+        "unit": "m2",
+        "unit_rate": 18.50
+      },
+      {
+        "code": "4.01",
+        "description": "Trapezoidal unlined side drainage ditch excavation",
+        "unit": "m",
+        "unit_rate": 15.00
+      }
+    ]
+  }
+}

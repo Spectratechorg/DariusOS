@@ -1,0 +1,52 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Data and Storage (NEVER commit client or survey data)
+storage/
+storage/raw/*
+storage/processed/*
+!storage/raw/.gitkeep
+!storage/processed/.gitkeep
+data/
+*.las
+*.laz
+*.xyz
+*.csv
+*.dxf
+*.xlsx
+*.pdf
+*.npy
+
+# Testing & Coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Node / Frontend
+node_modules/
+dist/
+dist-ssr/
+*.local
+*.tsbuildinfo
+
+# Database
+*.sqlite
+*.sqlite3
+*.db
+pgdata/
+
+# OS artifacts
+.DS_Store
+Thumbs.db
