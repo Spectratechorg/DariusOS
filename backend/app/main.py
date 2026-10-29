@@ -40,7 +40,7 @@ app = FastAPI(
 # CORS Middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.BACKEND_CORS_ORIGINS,
+    allow_origins=settings.ALLOWED_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -50,6 +50,7 @@ app.add_middleware(
 app.include_router(api_router)
 
 
+@app.get("/health", response_model=HealthCheck, tags=["System"])
 @app.get("/api/v1/health", response_model=HealthCheck, tags=["System"])
 def health_check():
     rules_hash = EngineeringRulesLoader.get_sha256()

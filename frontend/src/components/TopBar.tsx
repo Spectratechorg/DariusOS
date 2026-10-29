@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Typography, Button, InputBase } from '@mui/material';
+import { Box, Typography, Button, InputBase, Chip } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import { useProject } from '../context/ProjectContext';
 import { StageId } from '../types';
@@ -10,7 +10,10 @@ export const TopBar: React.FC = () => {
     setActiveStage, 
     isSampleData, 
     setIsSampleData, 
-    setSnackbarMessage 
+    setSnackbarMessage,
+    backendHealth,
+    backendHealthError,
+    isBackendChecking,
   } = useProject();
 
   const getBreadcrumbs = () => {
@@ -127,6 +130,18 @@ export const TopBar: React.FC = () => {
 
       {/* Right Controls */}
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+        <Chip
+          size="small"
+          label={isBackendChecking ? 'Connecting API' : backendHealthError ? 'API offline' : `API ${backendHealth?.status ?? 'ready'}`}
+          sx={{
+            color: backendHealthError ? '#FBBF24' : '#34D399',
+            backgroundColor: backendHealthError ? 'rgba(245, 158, 11, 0.12)' : 'rgba(16, 185, 129, 0.12)',
+            border: `1px solid ${backendHealthError ? '#92400E' : '#065F46'}`,
+            fontSize: '0.7rem',
+            fontWeight: 600,
+          }}
+        />
+
         {/* Search */}
         <Box
           sx={{
