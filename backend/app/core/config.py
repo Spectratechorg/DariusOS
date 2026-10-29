@@ -31,7 +31,8 @@ class Settings(BaseSettings):
     # Engineering Rules
     ENGINEERING_RULES_PATH: str = str(BASE_DIR / "config" / "engineering_rules.json")
 
-    # CORS
+    # CORS. ALLOWED_ORIGINS is the deployment-facing name; the legacy setting remains supported.
+    ALLOWED_ORIGINS: List[str] = ["http://localhost:3000", "http://localhost:5173"]
     BACKEND_CORS_ORIGINS: List[str] = ["http://localhost:3000", "http://localhost:5173"]
 
     model_config = SettingsConfigDict(

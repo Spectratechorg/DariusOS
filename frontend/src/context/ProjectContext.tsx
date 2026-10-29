@@ -1,4 +1,6 @@
 import React, { createContext, useContext, useState, useMemo, ReactNode } from 'react';
+import useSWR from 'swr';
+import { fetchHealth, HealthResponse } from '../api';
 import { 
   StageId, 
   ProjectData, 
@@ -75,6 +77,11 @@ interface ProjectContextType {
   setActiveTolerance: (tol: '0.5 m' | '1 m' | '2 m') => void;
   asBuiltRows: AsBuiltComparisonRow[];
   
+  // Backend connection
+  backendHealth?: HealthResponse;
+  backendHealthError?: Error;
+  isBackendChecking: boolean;
+
   // Notifications
   snackbarMessage: string | null;
   setSnackbarMessage: (msg: string | null) => void;
@@ -83,6 +90,10 @@ interface ProjectContextType {
 const ProjectContext = createContext<ProjectContextType | undefined>(undefined);
 
 export const ProjectProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const { data: backendHealth, error: backendHealthError, isLoading: isBackendChecking } = useSWR<HealthResponse>('backend-health', fetchHealth, {
+    shouldRetryOnError: true,
+    errorRetryCount: 3,
+  });
   const [activeStage, setActiveStage] = useState<StageId>('overview');
   const [isSampleData, setIsSampleData] = useState<boolean>(true);
   
@@ -197,6 +208,9 @@ export const ProjectProvider: React.FC<{ children: ReactNode }> = ({ children })
       activeTolerance,
       setActiveTolerance,
       asBuiltRows,
+      backendHealth,
+      backendHealthError,
+      isBackendChecking,
       snackbarMessage,
       setSnackbarMessage,
     }}>
