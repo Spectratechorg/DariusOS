@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useMemo, ReactNode } from 'react';
 import useSWR from 'swr';
-import { fetchHealth, HealthResponse } from '../api';
+import { createProject, fetchHealth, HealthResponse, ProjectResponse } from '../api';
 import { 
   StageId, 
   ProjectData, 
@@ -36,6 +36,8 @@ interface ProjectContextType {
   // Project Setup
   projectData: ProjectData;
   updateProjectData: (data: Partial<ProjectData>) => void;
+  backendProject?: ProjectResponse;
+  saveProject: () => Promise<void>;
   
   // Survey
   surveyPoints: SurveyPointRow[];
@@ -98,6 +100,7 @@ export const ProjectProvider: React.FC<{ children: ReactNode }> = ({ children })
   const [isSampleData, setIsSampleData] = useState<boolean>(true);
   
   const [projectData, setProjectData] = useState<ProjectData>(INITIAL_PROJECT_DATA);
+  const [backendProject, setBackendProject] = useState<ProjectResponse>();
   const [surveyPoints] = useState<SurveyPointRow[]>(MOCK_SURVEY_POINTS);
   const [surveyWarnings, setSurveyWarnings] = useState<EngineerWarning[]>(MOCK_SURVEY_WARNINGS);
   const [validationChecks] = useState<ValidationCheckItem[]>(MOCK_VALIDATION_CHECKS);
@@ -129,6 +132,12 @@ export const ProjectProvider: React.FC<{ children: ReactNode }> = ({ children })
 
   const updateProjectData = (data: Partial<ProjectData>) => {
     setProjectData(prev => ({ ...prev, ...data }));
+  };
+
+  const saveProject = async () => {
+    const project = await createProject(projectData.projectName, `${projectData.client} · ${projectData.projectLocation}`);
+    setBackendProject(project);
+    setSnackbarMessage(`Project ${project.name} saved to the backend.`);
   };
 
   const toggleWarningAcknowledged = (id: string) => {
@@ -182,6 +191,8 @@ export const ProjectProvider: React.FC<{ children: ReactNode }> = ({ children })
       setIsSampleData,
       projectData,
       updateProjectData,
+      backendProject,
+      saveProject,
       surveyPoints,
       surveyWarnings,
       toggleWarningAcknowledged,

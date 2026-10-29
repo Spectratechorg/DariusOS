@@ -14,6 +14,7 @@ export const TopBar: React.FC = () => {
     backendHealth,
     backendHealthError,
     isBackendChecking,
+    saveProject,
   } = useProject();
 
   const getBreadcrumbs = () => {
@@ -83,7 +84,7 @@ export const TopBar: React.FC = () => {
       case 'overview':
         return { label: 'Export report', onClick: () => setActiveStage('beme') };
       case 'setup':
-        return { label: 'Save draft', onClick: () => setSnackbarMessage('Project setup draft saved successfully.') };
+        return { label: 'Save to backend', onClick: () => void saveProject() };
       case 'survey':
         return { label: 'Upload another file', onClick: () => setSnackbarMessage('Survey intake modal open: drop CSV, XYZ, LAS files.') };
       case 'terrain':
