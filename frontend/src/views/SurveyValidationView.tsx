@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useState } from 'react';
 import { Box, Card, Typography, Grid, Chip, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 import UploadFileOutlinedIcon from '@mui/icons-material/UploadFileOutlined';
 import { useProject } from '../context/ProjectContext';
@@ -8,8 +8,13 @@ export const SurveyValidationView: React.FC = () => {
     surveyPoints, 
     surveyWarnings, 
     toggleWarningAcknowledged, 
-    validationChecks 
+    validationChecks,
+    backendProject,
+    uploadSurveyFile,
+    setSnackbarMessage,
   } = useProject();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isUploading, setIsUploading] = useState(false);
 
   const acknowledgedCount = surveyWarnings.filter(w => w.isAcknowledged).length;
 
@@ -51,6 +56,34 @@ export const SurveyValidationView: React.FC = () => {
                   />
                 ))}
               </Box>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept=".csv,.xlsx,.xls,.txt"
+                hidden
+                onChange={async (event) => {
+                  const file = event.target.files?.[0];
+                  if (!file) return;
+                  setIsUploading(true);
+                  try {
+                    await uploadSurveyFile(file);
+                  } catch (error) {
+                    setSnackbarMessage(error instanceof Error ? error.message : 'Survey upload failed.');
+                  } finally {
+                    setIsUploading(false);
+                    event.target.value = '';
+                  }
+                }}
+              />
+              <Button
+                variant="outlined"
+                size="small"
+                disabled={!backendProject || isUploading}
+                onClick={() => fileInputRef.current?.click()}
+                sx={{ whiteSpace: 'nowrap', textTransform: 'none', borderColor: '#334155', color: '#CBD5E1' }}
+              >
+                {isUploading ? 'Uploading…' : backendProject ? 'Replace survey' : 'Save project first'}
+              </Button>
             </Box>
           </Card>
 

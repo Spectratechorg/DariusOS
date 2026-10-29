@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useMemo, ReactNode } from 'react';
 import useSWR from 'swr';
-import { createProject, fetchHealth, HealthResponse, ProjectResponse } from '../api';
+import { createProject, fetchHealth, HealthResponse, ProjectResponse, uploadSurvey, SurveyUploadResponse, triggerPipeline, PipelineRunResponse } from '../api';
 import { 
   StageId, 
   ProjectData, 
@@ -38,6 +38,8 @@ interface ProjectContextType {
   updateProjectData: (data: Partial<ProjectData>) => void;
   backendProject?: ProjectResponse;
   saveProject: () => Promise<void>;
+  uploadSurveyFile: (file: File) => Promise<SurveyUploadResponse>;
+  runPipeline: () => Promise<PipelineRunResponse>;
   
   // Survey
   surveyPoints: SurveyPointRow[];
@@ -137,7 +139,23 @@ export const ProjectProvider: React.FC<{ children: ReactNode }> = ({ children })
   const saveProject = async () => {
     const project = await createProject(projectData.projectName, `${projectData.client} · ${projectData.projectLocation}`);
     setBackendProject(project);
+    setIsSampleData(false);
     setSnackbarMessage(`Project ${project.name} saved to the backend.`);
+  };
+
+  const uploadSurveyFile = async (file: File) => {
+    if (!backendProject) throw new Error('Save the project before uploading a survey file.');
+    const result = await uploadSurvey(backendProject.id, file);
+    setIsSampleData(false);
+    setSnackbarMessage(`${result.original_filename} uploaded and validated by the backend.`);
+    return result;
+  };
+
+  const runPipeline = async () => {
+    if (!backendProject) throw new Error('Save the project before running the pipeline.');
+    const run = await triggerPipeline(backendProject.id);
+    setSnackbarMessage(`Pipeline run ${run.id.slice(0, 8)} started.`);
+    return run;
   };
 
   const toggleWarningAcknowledged = (id: string) => {
@@ -193,6 +211,8 @@ export const ProjectProvider: React.FC<{ children: ReactNode }> = ({ children })
       updateProjectData,
       backendProject,
       saveProject,
+      uploadSurveyFile,
+      runPipeline,
       surveyPoints,
       surveyWarnings,
       toggleWarningAcknowledged,

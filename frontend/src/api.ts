@@ -65,4 +65,22 @@ export function uploadSurvey(projectId: string, file: File, crsEpsg = 32632): Pr
   return request<SurveyUploadResponse>(`/projects/${projectId}/surveys`, { method: 'POST', body })
 }
 
+export type PipelineRunResponse = {
+  id: string
+  project_id: string
+  status: string
+  created_at: string
+  started_at?: string | null
+  completed_at?: string | null
+  error_message?: string | null
+}
+
+export function triggerPipeline(projectId: string): Promise<PipelineRunResponse> {
+  return request<PipelineRunResponse>(`/projects/${projectId}/runs`, { method: 'POST' })
+}
+
+export function listProjects(): Promise<ProjectResponse[]> {
+  return request<ProjectResponse[]>('/projects')
+}
+
 export { API_BASE_URL }
