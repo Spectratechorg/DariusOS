@@ -70,6 +70,7 @@ pytest tests/test_quantities.py -k "golden"
 ---
 
 ## Documentation
+- [Frontend: run steps, routes and how to add a screen](frontend/README.md)
 - [Architecture & Guide for Junior Engineers](docs/architecture.md)
 - [Data Contracts Between Stages](docs/contracts/)
 - [Architecture Decision Log](docs/decisions.md)
