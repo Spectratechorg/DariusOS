@@ -1,0 +1,53 @@
+# ==============================================================================
+# STRIDER DESIGN RULES & GEOMETRIC PARAMETERS
+# Status: DRAFT / PROVISIONAL PLACEHOLDERS
+# ==============================================================================
+# IMPORTANT NOTICE:
+# ALL VALUES IN THIS FILE ARE PROVISIONAL PLACEHOLDERS.
+# THEY ARE TO BE CONFIRMED AND SIGNED OFF BY A REGISTERED CIVIL ENGINEER (TASK K5)
+# BEFORE PRODUCTION USE. NO VALUE IN THIS FILE MAY BE HARDCODED IN SOURCE CODE.
+# ==============================================================================
+
+metadata:
+  version: "0.1.0-draft"
+  status: "TO BE CONFIRMED BY REGISTERED CIVIL ENGINEER"
+  last_updated: "2026-11-03"
+  disclaimer: "ALL VALUES MUST BE CONFIRMED AND STAMPED BY A REGISTERED ENGINEER"
+
+# Geometric Design Parameters
+geometry:
+  # Carriageway total width (metres)
+  carriageway_width_m: 7.0        # TO BE CONFIRMED BY REGISTERED ENGINEER
+  # Shoulder width per side (metres)
+  shoulder_width_m: 1.5           # TO BE CONFIRMED BY REGISTERED ENGINEER
+  # Normal pavement camber / cross-slope (percent)
+  camber_slope_percent: -2.5      # TO BE CONFIRMED BY REGISTERED ENGINEER
+  # Design speed (km/h)
+  design_speed_kph: 60.0          # TO BE CONFIRMED BY REGISTERED ENGINEER
+  # Minimum horizontal curve radius (metres)
+  min_curve_radius_m: 150.0       # TO BE CONFIRMED BY REGISTERED ENGINEER
+  # Maximum allowable longitudinal gradient (percent)
+  max_grade_percent: 8.0          # TO BE CONFIRMED BY REGISTERED ENGINEER
+  # Minimum allowable longitudinal gradient for drainage (percent)
+  min_grade_percent: 0.5          # TO BE CONFIRMED BY REGISTERED ENGINEER
+
+# Earthworks & Cross-Section Slopes
+# Conventions: 1:s represents 1 Vertical to 's' Horizontal (V:H).
+# Each 1m vertical drop/rise requires 's' metres horizontal daylight offset.
+earthworks:
+  # Cross-section sampling interval along centreline (metres)
+  station_interval_m: 25.0        # TO BE CONFIRMED BY REGISTERED ENGINEER
+  # Side slope in embankment (fill) - 1:s (V:H)
+  fill_slope_v_to_h: "1:1.5"      # TO BE CONFIRMED BY REGISTERED ENGINEER
+  fill_slope_horizontal_run: 1.5  # TO BE CONFIRMED BY REGISTERED ENGINEER (1.5m run per 1m height)
+  # Side slope in cutting (cut) - 1:s (V:H)
+  cut_slope_v_to_h: "1:1.5"       # TO BE CONFIRMED BY REGISTERED ENGINEER
+  cut_slope_horizontal_run: 1.5   # TO BE CONFIRMED BY REGISTERED ENGINEER (1.5m run per 1m depth)
+  # Earthwork volume integration method
+  volume_method: "AVERAGE_END_AREA" # TO BE CONFIRMED BY REGISTERED ENGINEER
+  # Soil expansion / bulking factor (uncompacted cut to haul)
+  soil_bulking_factor: 1.0        # TO BE CONFIRMED BY REGISTERED ENGINEER (1.0 for analytical golden cases)
+  # Soil compaction shrinkage factor (fill compaction)
+  compaction_shrinkage_factor: 1.0 # TO BE CONFIRMED BY REGISTERED ENGINEER (1.0 for analytical golden cases)
+  # Stripping depth for topsoil / unsuitable material (metres)
+  topsoil_strip_depth_m: 0.0      # TO BE CONFIRMED BY REGISTERED ENGINEER (0.0 for analytical golden cases)

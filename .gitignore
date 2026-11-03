@@ -26,6 +26,9 @@ data/
 *.laz
 *.xyz
 *.csv
+!fake_data/*.csv
+*LDF*
+*LIFIDI*
 *.dxf
 *.xlsx
 *.pdf
