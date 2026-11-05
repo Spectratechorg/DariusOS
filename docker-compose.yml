@@ -45,7 +45,6 @@ services:
     env_file:
       - .env
     environment:
-      - DATABASE_URL=postgresql+psycopg2://${POSTGRES_USER:-darius}:${POSTGRES_PASSWORD:-darius_secret}@db:5432/${POSTGRES_DB:-dariusos_db}
       - REDIS_URL=redis://redis:6379/0
     ports:
       - "8000:8000"
@@ -68,7 +67,6 @@ services:
     env_file:
       - .env
     environment:
-      - DATABASE_URL=postgresql+psycopg2://${POSTGRES_USER:-darius}:${POSTGRES_PASSWORD:-darius_secret}@db:5432/${POSTGRES_DB:-dariusos_db}
       - REDIS_URL=redis://redis:6379/0
     volumes:
       - ./storage:/app/storage
