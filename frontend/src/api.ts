@@ -1,3 +1,5 @@
+import type { BemeCategory, TerrainSummary } from './types'
+
 const API_BASE_URL = (import.meta.env.VITE_API_URL || '/api/v1').replace(/\/$/, '')
 
 export type HealthResponse = {
@@ -9,7 +11,10 @@ export type HealthResponse = {
 }
 
 export async function fetchHealth(): Promise<HealthResponse> {
-  const response = await fetch(`${API_BASE_URL}/health`)
+  const token = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null
+  const response = await fetch(`${API_BASE_URL}/health`, {
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
+  })
   if (!response.ok) {
     throw new Error(`Backend health check failed with status ${response.status}`)
   }
@@ -51,10 +56,24 @@ export type ProjectDetail = ProjectSummary & {
   }>
 }
 
+export interface BemeResponse {
+  project_title: string
+  currency: string
+  engineer_disclaimer: string
+  grand_total: number
+  categories: BemeCategory[]
+}
+
 async function fetchJson<T>(path: string, init?: RequestInit): Promise<T> {
+  const token = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    ...((init?.headers as Record<string, string>) || {}),
+  }
   const response = await fetch(`${API_BASE_URL}${path}`, {
     ...init,
-    headers: { 'Content-Type': 'application/json', ...init?.headers },
+    headers,
   })
   if (!response.ok) {
     throw new Error(`Backend request failed with status ${response.status}`)
@@ -74,6 +93,14 @@ export type EngineeringResult = Record<string, unknown>
 
 export function fetchRunResult(runId: string, result: 'alignment' | 'profile' | 'sections' | 'quantities'): Promise<EngineeringResult> {
   return fetchJson<EngineeringResult>(`/runs/${encodeURIComponent(runId)}/${result}`)
+}
+
+export function fetchRunBeme(runId: string): Promise<BemeResponse> {
+  return fetchJson<BemeResponse>(`/runs/${encodeURIComponent(runId)}/beme`)
+}
+
+export function fetchRunTerrain(runId: string): Promise<TerrainSummary> {
+  return fetchJson<TerrainSummary>(`/runs/${encodeURIComponent(runId)}/terrain`)
 }
 
 export { API_BASE_URL }

@@ -32,6 +32,8 @@ data/
 *.dxf
 *.xlsx
 *.pdf
+*.docx
+*.doc
 *.npy
 
 # Testing & Coverage

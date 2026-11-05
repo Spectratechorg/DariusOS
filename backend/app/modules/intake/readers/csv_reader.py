@@ -87,7 +87,10 @@ class CsvReader(BaseReader):
                 x_val = float(parts[x_col])
                 y_val = float(parts[y_col])
                 z_val = float(parts[z_col])
-                c_val = int(float(parts[class_col])) if class_col != -1 and len(parts) > class_col else 0
+                try:
+                    c_val = int(float(parts[class_col])) if class_col != -1 and len(parts) > class_col else 0
+                except (ValueError, TypeError):
+                    c_val = 0
 
                 if np.isnan(x_val) or np.isnan(y_val) or np.isnan(z_val):
                     invalid_rows_count += 1

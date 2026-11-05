@@ -6,7 +6,10 @@ export const BemeReportView: React.FC = () => {
   const { 
     bemeCategories, 
     updateBemeRate, 
-    grandTotalBeme 
+    grandTotalBeme,
+    activeBackendProject,
+    activeRun,
+    isLiveLoaded 
   } = useProject();
 
   const reportReadiness = [
@@ -26,10 +29,10 @@ export const BemeReportView: React.FC = () => {
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
           <Chip label="Traceable" size="small" sx={{ backgroundColor: 'rgba(56, 189, 248, 0.15)', color: '#38BDF8', fontWeight: 600, fontSize: '0.7rem' }} />
           <Typography variant="body2" sx={{ color: '#CBD5E1', fontSize: '0.8rem' }}>
-            Every quantity comes from design Rev C, parameter set v2 and pilot_survey.csv.
+            {isLiveLoaded ? `Every quantity computed by Python DAG run ${activeRun?.id.slice(0, 8)} from survey ${activeBackendProject?.surveys[0]?.original_filename || 'survey.csv'}.` : 'Every quantity comes from design Rev C, parameter set v2 and pilot_survey.csv.'}
           </Typography>
         </Box>
-        <Chip label="Draft awaiting engineer approval" size="small" sx={{ backgroundColor: 'rgba(245, 158, 11, 0.15)', color: '#FBBF24', fontWeight: 600, fontSize: '0.7rem' }} />
+        <Chip label={isLiveLoaded ? "Live Pipeline Quantities" : "Draft awaiting engineer approval"} size="small" sx={{ backgroundColor: isLiveLoaded ? 'rgba(16, 185, 129, 0.15)' : 'rgba(245, 158, 11, 0.15)', color: isLiveLoaded ? '#34D399' : '#FBBF24', fontWeight: 600, fontSize: '0.7rem' }} />
       </Card>
 
       <Grid container spacing={3}>

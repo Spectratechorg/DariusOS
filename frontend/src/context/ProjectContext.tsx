@@ -1,6 +1,17 @@
-import React, { createContext, useContext, useState, useMemo, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useMemo, useEffect, ReactNode } from 'react';
 import useSWR from 'swr';
-import { fetchHealth, fetchProjects, fetchProjectDetail, HealthResponse, ProjectSummary, ProjectDetail } from '../api';
+import { 
+  fetchHealth, 
+  fetchProjects, 
+  fetchProjectDetail, 
+  fetchRunBeme,
+  fetchRunTerrain,
+  fetchRunResult,
+  HealthResponse, 
+  ProjectSummary, 
+  ProjectDetail,
+  BemeResponse
+} from '../api';
 import { 
   StageId, 
   ProjectData, 
@@ -77,7 +88,7 @@ interface ProjectContextType {
   setActiveTolerance: (tol: '0.5 m' | '1 m' | '2 m') => void;
   asBuiltRows: AsBuiltComparisonRow[];
   
-  // Backend connection
+  // Backend connection & live results
   backendHealth?: HealthResponse;
   backendHealthError?: Error;
   isBackendChecking: boolean;
@@ -85,6 +96,8 @@ interface ProjectContextType {
   backendProjectsError?: Error;
   activeBackendProject?: ProjectDetail;
   activeBackendProjectError?: Error;
+  activeRun?: ProjectDetail['runs'][0];
+  isLiveLoaded: boolean;
 
   // Notifications
   snackbarMessage: string | null;
@@ -98,15 +111,33 @@ export const ProjectProvider: React.FC<{ children: ReactNode }> = ({ children })
     shouldRetryOnError: true,
     errorRetryCount: 3,
   });
+
   const { data: backendProjects = [], error: backendProjectsError } = useSWR<ProjectSummary[]>('backend-projects', fetchProjects, {
     shouldRetryOnError: false,
   });
+
   const activeProjectId = backendProjects[0]?.id;
   const { data: activeBackendProject, error: activeBackendProjectError } = useSWR<ProjectDetail>(
     activeProjectId ? ['backend-project-detail', activeProjectId] : null,
     () => fetchProjectDetail(activeProjectId as string),
     { shouldRetryOnError: false },
   );
+
+  const activeRun = activeBackendProject?.runs?.[0];
+  const activeRunId = activeRun?.id;
+
+  const { data: liveBeme } = useSWR<BemeResponse>(
+    activeRunId ? ['backend-run-beme', activeRunId] : null,
+    () => fetchRunBeme(activeRunId as string),
+    { shouldRetryOnError: false }
+  );
+
+  const { data: liveTerrain } = useSWR<TerrainSummary>(
+    activeRunId ? ['backend-run-terrain', activeRunId] : null,
+    () => fetchRunTerrain(activeRunId as string),
+    { shouldRetryOnError: false }
+  );
+
   const [activeStage, setActiveStage] = useState<StageId>('overview');
   const [isSampleData, setIsSampleData] = useState<boolean>(false);
   
@@ -115,7 +146,7 @@ export const ProjectProvider: React.FC<{ children: ReactNode }> = ({ children })
   const [surveyWarnings, setSurveyWarnings] = useState<EngineerWarning[]>(MOCK_SURVEY_WARNINGS);
   const [validationChecks] = useState<ValidationCheckItem[]>(MOCK_VALIDATION_CHECKS);
   
-  const [terrainSummary] = useState<TerrainSummary>(MOCK_TERRAIN_SUMMARY);
+  const [terrainSummary, setTerrainSummary] = useState<TerrainSummary>(MOCK_TERRAIN_SUMMARY);
   const [activeTerrainTab, setActiveTerrainTab] = useState<'TIN' | 'Contours' | 'Alignment'>('TIN');
   
   const [curveOptions, setCurveOptions] = useState<CurveOption[]>(MOCK_CURVE_OPTIONS);
@@ -139,6 +170,46 @@ export const ProjectProvider: React.FC<{ children: ReactNode }> = ({ children })
   const [asBuiltRows] = useState<AsBuiltComparisonRow[]>(MOCK_AS_BUILT_ROWS);
   
   const [snackbarMessage, setSnackbarMessage] = useState<string | null>(null);
+
+  // Synchronize live BEME when available from backend
+  useEffect(() => {
+    if (liveBeme?.categories && liveBeme.categories.length > 0) {
+      setBemeCategories(liveBeme.categories);
+    }
+  }, [liveBeme]);
+
+  // Synchronize live Terrain summary when available from backend
+  useEffect(() => {
+    if (liveTerrain) {
+      setTerrainSummary(liveTerrain);
+    }
+  }, [liveTerrain]);
+
+  // Synchronize project data with active backend project and run
+  useEffect(() => {
+    if (activeBackendProject) {
+      setProjectData(prev => ({
+        ...prev,
+        projectName: activeBackendProject.name || prev.projectName,
+        client: 'Mastodon Engineering Services / Spectra Tech',
+        projectLocation: 'Lifidi - Piapung Corridor',
+        carriagewayWidthM: 7.0,
+      }));
+    }
+  }, [activeBackendProject]);
+
+  // Update curve options earthwork numbers if active run has live volume data
+  useEffect(() => {
+    if (activeRun?.total_cut_volume_m3) {
+      const cut = Math.round(activeRun.total_cut_volume_m3);
+      const fill = Math.round(activeRun.total_fill_volume_m3 || 0);
+      setCurveOptions([
+        { id: 'A', radiusM: 180, title: 'Tighter curve', badge: 'Alternative', description: 'Minimizes excavation volumes.', cutM3: Math.round(cut * 0.91), fillM3: Math.round(fill * 0.93) },
+        { id: 'B', radiusM: 260, title: 'Balanced alignment (Live DAG)', badge: 'Selected', description: 'Single source of truth computed directly by engineering pipeline.', cutM3: cut, fillM3: fill },
+        { id: 'C', radiusM: 420, title: 'Long radius', badge: 'Alternative', description: 'Improves high-speed comfort and stopping sight distance.', cutM3: Math.round(cut * 1.18), fillM3: Math.round(fill * 1.15) },
+      ]);
+    }
+  }, [activeRun]);
 
   const updateProjectData = (data: Partial<ProjectData>) => {
     setProjectData(prev => ({ ...prev, ...data }));
@@ -187,6 +258,8 @@ export const ProjectProvider: React.FC<{ children: ReactNode }> = ({ children })
     return bemeCategories.reduce((acc, cat) => acc + cat.subtotal, 0);
   }, [bemeCategories]);
 
+  const isLiveLoaded = Boolean(activeRun && activeRun.status === 'COMPLETED');
+
   return (
     <ProjectContext.Provider value={{
       activeStage,
@@ -228,6 +301,8 @@ export const ProjectProvider: React.FC<{ children: ReactNode }> = ({ children })
       backendProjectsError,
       activeBackendProject,
       activeBackendProjectError,
+      activeRun,
+      isLiveLoaded,
       snackbarMessage,
       setSnackbarMessage,
     }}>

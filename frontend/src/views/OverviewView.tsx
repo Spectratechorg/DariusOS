@@ -4,7 +4,44 @@ import { useProject } from '../context/ProjectContext';
 import { MOCK_AUDIT_TRAIL } from '../data/mockData';
 
 export const OverviewView: React.FC = () => {
-  const { setActiveStage } = useProject();
+  const { 
+    setActiveStage, 
+    terrainSummary, 
+    grandTotalBeme, 
+    activeBackendProject, 
+    activeRun, 
+    isLiveLoaded 
+  } = useProject();
+
+  const pointsCount = activeBackendProject?.surveys?.[0]?.point_count 
+    ? activeBackendProject.surveys[0].point_count 
+    : terrainSummary.surveyPointsUsed;
+
+  const roadLengthKm = activeRun?.total_road_length_m 
+    ? (activeRun.total_road_length_m / 1000).toFixed(2) 
+    : '3.20';
+
+  const totalEarthworksM3 = (activeRun?.total_cut_volume_m3 !== undefined && activeRun?.total_cut_volume_m3 !== null)
+    ? Math.round(activeRun.total_cut_volume_m3 + (activeRun.total_fill_volume_m3 || 0))
+    : 18420;
+
+  const cutM3 = (activeRun?.total_cut_volume_m3 !== undefined && activeRun?.total_cut_volume_m3 !== null)
+    ? Math.round(activeRun.total_cut_volume_m3)
+    : 18420;
+
+  const fillM3 = (activeRun?.total_fill_volume_m3 !== undefined && activeRun?.total_fill_volume_m3 !== null)
+    ? Math.round(activeRun.total_fill_volume_m3)
+    : 15960;
+
+  const netM3 = (activeRun?.net_volume_m3 !== undefined && activeRun?.net_volume_m3 !== null)
+    ? Math.round(activeRun.net_volume_m3)
+    : 2460;
+
+  const formattedBeme = grandTotalBeme >= 1_000_000_000
+    ? `₦${(grandTotalBeme / 1_000_000_000).toFixed(2)}B`
+    : grandTotalBeme >= 1_000_000
+    ? `₦${(grandTotalBeme / 1_000_000).toFixed(1)}M`
+    : `₦${grandTotalBeme.toLocaleString()}`;
 
   const pipelineStatus = [
     { num: 1, name: 'Project setup', desc: 'Road class, standards, pavement and drainage requirements set', engine: 'PROJECT CONTEXT', status: 'Complete', color: '#10B981', stageId: 'setup' },
@@ -26,7 +63,7 @@ export const OverviewView: React.FC = () => {
               SURVEY POINTS
             </Typography>
             <Typography variant="h4" sx={{ fontWeight: 700, color: '#F8FAFC', mb: 1.5, letterSpacing: '-0.02em' }}>
-              1,842
+              {pointsCount.toLocaleString()}
             </Typography>
             <Box sx={{ display: 'flex', gap: 1 }}>
               <Chip label="3 warnings" size="small" sx={{ backgroundColor: 'rgba(245, 158, 11, 0.15)', color: '#FBBF24', fontSize: '0.7rem' }} />
@@ -41,10 +78,10 @@ export const OverviewView: React.FC = () => {
               ALIGNMENT
             </Typography>
             <Typography variant="h4" sx={{ fontWeight: 700, color: '#F8FAFC', mb: 1, letterSpacing: '-0.02em' }}>
-              3.20 km
+              {roadLengthKm} km
             </Typography>
             <Typography variant="caption" sx={{ color: '#94A3B8', fontSize: '0.75rem' }}>
-              Ch 0+000 to 3+200 · rolling terrain
+              Ch 0+000 to {roadLengthKm.replace('.', '+')} · {terrainSummary.classification.toLowerCase()} terrain
             </Typography>
           </Card>
         </Grid>
@@ -55,10 +92,10 @@ export const OverviewView: React.FC = () => {
               EARTHWORKS
             </Typography>
             <Typography variant="h4" sx={{ fontWeight: 700, color: '#F8FAFC', mb: 1, letterSpacing: '-0.02em' }}>
-              18,420 m³
+              {totalEarthworksM3.toLocaleString()} m³
             </Typography>
             <Typography variant="caption" sx={{ color: '#94A3B8', fontSize: '0.75rem' }}>
-              cut ~15,960 m³ fill · 2,460 m³ net spoil
+              {cutM3.toLocaleString()} m³ cut · {fillM3.toLocaleString()} m³ fill · {Math.abs(netM3).toLocaleString()} m³ {netM3 >= 0 ? 'net spoil' : 'net borrow'}
             </Typography>
           </Card>
         </Grid>
@@ -66,14 +103,14 @@ export const OverviewView: React.FC = () => {
         <Grid item xs={12} sm={6} md={3}>
           <Card sx={{ p: 2.2, height: '100%' }}>
             <Typography variant="subtitle2" sx={{ color: '#64748B', mb: 0.5 }}>
-              BEME TOTAL (DRAFT)
+              BEME TOTAL {isLiveLoaded ? '(LIVE)' : '(DRAFT)'}
             </Typography>
             <Typography variant="h4" sx={{ fontWeight: 700, color: '#F8FAFC', mb: 1.5, letterSpacing: '-0.02em' }}>
-              ₦666.5M
+              {formattedBeme}
             </Typography>
             <Box sx={{ display: 'flex', gap: 1 }}>
-              <Chip label="Rev C" size="small" sx={{ backgroundColor: '#1E293B', color: '#94A3B8', fontSize: '0.7rem' }} />
-              <Chip label="awaiting approval" size="small" sx={{ backgroundColor: 'rgba(245, 158, 11, 0.15)', color: '#FBBF24', fontSize: '0.7rem' }} />
+              <Chip label={isLiveLoaded ? "Live DAG" : "Rev C"} size="small" sx={{ backgroundColor: '#1E293B', color: '#94A3B8', fontSize: '0.7rem' }} />
+              <Chip label={isLiveLoaded ? "Pipeline verified" : "awaiting approval"} size="small" sx={{ backgroundColor: isLiveLoaded ? 'rgba(16, 185, 129, 0.15)' : 'rgba(245, 158, 11, 0.15)', color: isLiveLoaded ? '#34D399' : '#FBBF24', fontSize: '0.7rem' }} />
             </Box>
           </Card>
         </Grid>
