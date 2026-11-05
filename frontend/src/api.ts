@@ -70,4 +70,10 @@ export function fetchProjectDetail(projectId: string): Promise<ProjectDetail> {
   return fetchJson<ProjectDetail>(`/projects/${encodeURIComponent(projectId)}`)
 }
 
+export type EngineeringResult = Record<string, unknown>
+
+export function fetchRunResult(runId: string, result: 'alignment' | 'profile' | 'sections' | 'quantities'): Promise<EngineeringResult> {
+  return fetchJson<EngineeringResult>(`/runs/${encodeURIComponent(runId)}/${result}`)
+}
+
 export { API_BASE_URL }
