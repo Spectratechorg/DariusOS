@@ -1,322 +1,412 @@
 import React from 'react';
-import { Box, Card, Typography, Grid, Chip, Button } from '@mui/material';
+import { Box, Paper, Typography, Grid, Button, Divider } from '@mui/material';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { useProject } from '../context/ProjectContext';
 import { MOCK_AUDIT_TRAIL } from '../data/mockData';
+import { tokens } from '../theme';
+
+type Status = { label: string; color: string };
+
+const pipelineStatus: {
+  num: number;
+  name: string;
+  desc: string;
+  engine: string;
+  status: Status;
+  stageId: string;
+}[] = [
+  {
+    num: 1,
+    name: 'Project setup',
+    desc: 'Road class, standards, pavement and drainage requirements set',
+    engine: 'Project context',
+    status: { label: 'Complete', color: tokens.success },
+    stageId: 'setup',
+  },
+  {
+    num: 2,
+    name: 'Survey and validation',
+    desc: '1,842 points checked, 3 warnings acknowledged',
+    engine: 'Validation',
+    status: { label: 'Complete', color: tokens.success },
+    stageId: 'survey',
+  },
+  {
+    num: 3,
+    name: 'Terrain',
+    desc: 'TIN, contours, existing-ground profile and slope analysis',
+    engine: 'Terrain engine',
+    status: { label: 'Complete', color: tokens.success },
+    stageId: 'terrain',
+  },
+  {
+    num: 4,
+    name: 'AI reasoning',
+    desc: 'Parameter set approved by the engineering lead',
+    engine: 'Intelligence engine',
+    status: { label: 'Approved', color: tokens.success },
+    stageId: 'reasoning',
+  },
+  {
+    num: 5,
+    name: 'Design engine',
+    desc: '22 of 27 checks pass, 1 needs review',
+    engine: 'Engineering engine',
+    status: { label: 'In progress', color: tokens.accent },
+    stageId: 'design',
+  },
+  {
+    num: 6,
+    name: 'Drawings',
+    desc: 'Plan, profile and cross-sections as DXF and PDF',
+    engine: 'CAD engine',
+    status: { label: 'Waiting', color: tokens.faint },
+    stageId: 'drawings',
+  },
+  {
+    num: 7,
+    name: 'BEME and report',
+    desc: 'Quantity times rate, traced to one design revision',
+    engine: 'Quantity and BEME',
+    status: { label: 'Draft', color: tokens.warning },
+    stageId: 'beme',
+  },
+];
+
+const reviewItems = [
+  {
+    title: 'Gradient exceeds limit at Ch 1+840',
+    meta: 'Design engine · Rev C · vertical alignment',
+    badge: 'Review required',
+    color: tokens.danger,
+    stage: 'design',
+  },
+  {
+    title: 'Steep side slope in cut, Ch 2+100 to 2+260',
+    meta: 'Design engine · Rev C · cross-sections',
+    badge: 'Warning',
+    color: tokens.warning,
+    stage: 'design',
+  },
+  {
+    title: 'Curve radius options for the bend at Ch 0+950',
+    meta: 'AI reasoning · three alternatives compared',
+    badge: 'Awaiting approval',
+    color: tokens.accent,
+    stage: 'reasoning',
+  },
+] as const;
+
+const Stat: React.FC<{ label: string; value: string; meta: React.ReactNode }> = ({ label, value, meta }) => (
+  <Box sx={{ flex: 1, minWidth: 0, px: 2.5, py: 2 }}>
+    <Typography variant="subtitle2" sx={{ color: tokens.faint, mb: 1 }}>
+      {label}
+    </Typography>
+    <Typography
+      sx={{
+        fontSize: '1.625rem',
+        fontWeight: 650,
+        letterSpacing: '-0.03em',
+        lineHeight: 1.1,
+        color: tokens.text,
+        fontVariantNumeric: 'tabular-nums',
+        mb: 1,
+        whiteSpace: 'nowrap',
+      }}
+    >
+      {value}
+    </Typography>
+    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>{meta}</Box>
+  </Box>
+);
+
+const Meta: React.FC<{ children: React.ReactNode; color?: string }> = ({ children, color }) => (
+  <Typography sx={{ fontSize: '0.71875rem', color: color ?? tokens.muted, lineHeight: 1.4 }}>
+    {children}
+  </Typography>
+);
+
+const StatusPill: React.FC<{ label: string; color: string }> = ({ label, color }) => (
+  <Box
+    sx={{
+      display: 'inline-flex',
+      alignItems: 'center',
+      gap: 0.75,
+      flexShrink: 0,
+      fontSize: '0.71875rem',
+      fontWeight: 500,
+      color,
+    }}
+  >
+    <Box sx={{ width: 5, height: 5, borderRadius: '50%', backgroundColor: color }} />
+    {label}
+  </Box>
+);
 
 export const OverviewView: React.FC = () => {
   const { setActiveStage } = useProject();
 
-  const pipelineStatus = [
-    { num: 1, name: 'Project setup', desc: 'Road class, standards, pavement and drainage requirements set', engine: 'PROJECT CONTEXT', status: 'Complete', color: '#10B981', stageId: 'setup' },
-    { num: 2, name: 'Survey and validation', desc: '1,842 points checked, 3 warnings acknowledged', engine: 'VALIDATION', status: 'Complete', color: '#10B981', stageId: 'survey' },
-    { num: 3, name: 'Terrain', desc: 'TIN, contours, existing-ground profile and slope analysis', engine: 'TERRAIN ENGINE', status: 'Complete', color: '#10B981', stageId: 'terrain' },
-    { num: 4, name: 'AI reasoning', desc: 'Parameter set approved by the engineering lead', engine: 'INTELLIGENCE ENGINE', status: 'Approved', color: '#10B981', stageId: 'reasoning' },
-    { num: 5, name: 'Design engine', desc: '22 of 27 checks pass, 1 needs review', engine: 'ENGINEERING ENGINE', status: 'In progress', color: '#38BDF8', stageId: 'design' },
-    { num: 6, name: 'Drawings', desc: 'Plan, profile and cross-sections as DXF and PDF', engine: 'CAD ENGINE', status: 'Waiting', color: '#64748B', stageId: 'drawings' },
-    { num: 7, name: 'BEME and report', desc: 'Quantity times rate, traced to one design revision', engine: 'QUANTITY AND BEME', status: 'Draft', color: '#F59E0B', stageId: 'beme' },
-  ];
-
   return (
     <Box sx={{ p: 3 }}>
-      {/* 4 Summary Stat Cards */}
-      <Grid container spacing={2} sx={{ mb: 3 }}>
-        <Grid item xs={12} sm={6} md={3}>
-          <Card sx={{ p: 2.2, height: '100%' }}>
-            <Typography variant="subtitle2" sx={{ color: '#64748B', mb: 0.5 }}>
-              SURVEY POINTS
-            </Typography>
-            <Typography variant="h4" sx={{ fontWeight: 700, color: '#F8FAFC', mb: 1.5, letterSpacing: '-0.02em' }}>
-              1,842
-            </Typography>
-            <Box sx={{ display: 'flex', gap: 1 }}>
-              <Chip label="3 warnings" size="small" sx={{ backgroundColor: 'rgba(245, 158, 11, 0.15)', color: '#FBBF24', fontSize: '0.7rem' }} />
-              <Chip label="0 errors" size="small" sx={{ backgroundColor: 'rgba(16, 185, 129, 0.15)', color: '#34D399', fontSize: '0.7rem' }} />
-            </Box>
-          </Card>
-        </Grid>
+      {/* Summary strip */}
+      <Paper
+        sx={{
+          display: 'flex',
+          alignItems: 'stretch',
+          mb: 2.5,
+          overflow: 'hidden',
+          '& > *:not(:last-of-type)': { borderRight: `1px solid ${tokens.line}` },
+          '@media (max-width: 900px)': {
+            flexWrap: 'wrap',
+            '& > *': { flex: '1 1 50%' },
+          },
+        }}
+      >
+        <Stat
+          label="Survey points"
+          value="1,842"
+          meta={
+            <>
+              <Meta color={tokens.warning}>3 warnings</Meta>
+              <Box sx={{ width: 3, height: 3, borderRadius: '50%', backgroundColor: '#39414E' }} />
+              <Meta color={tokens.success}>0 errors</Meta>
+            </>
+          }
+        />
+        <Stat label="Alignment" value="3.20 km" meta={<Meta>Ch 0+000 to 3+200 · rolling terrain</Meta>} />
+        <Stat
+          label="Earthworks"
+          value="18,420 m³"
+          meta={<Meta>Cut ~15,960 m³ · fill 2,460 m³ net spoil</Meta>}
+        />
+        <Stat
+          label="BEME total (draft)"
+          value="₦666.5M"
+          meta={
+            <>
+              <Meta>Rev C</Meta>
+              <Box sx={{ width: 3, height: 3, borderRadius: '50%', backgroundColor: '#39414E' }} />
+              <Meta color={tokens.warning}>Awaiting approval</Meta>
+            </>
+          }
+        />
+      </Paper>
 
-        <Grid item xs={12} sm={6} md={3}>
-          <Card sx={{ p: 2.2, height: '100%' }}>
-            <Typography variant="subtitle2" sx={{ color: '#64748B', mb: 0.5 }}>
-              ALIGNMENT
-            </Typography>
-            <Typography variant="h4" sx={{ fontWeight: 700, color: '#F8FAFC', mb: 1, letterSpacing: '-0.02em' }}>
-              3.20 km
-            </Typography>
-            <Typography variant="caption" sx={{ color: '#94A3B8', fontSize: '0.75rem' }}>
-              Ch 0+000 to 3+200 · rolling terrain
-            </Typography>
-          </Card>
-        </Grid>
-
-        <Grid item xs={12} sm={6} md={3}>
-          <Card sx={{ p: 2.2, height: '100%' }}>
-            <Typography variant="subtitle2" sx={{ color: '#64748B', mb: 0.5 }}>
-              EARTHWORKS
-            </Typography>
-            <Typography variant="h4" sx={{ fontWeight: 700, color: '#F8FAFC', mb: 1, letterSpacing: '-0.02em' }}>
-              18,420 m³
-            </Typography>
-            <Typography variant="caption" sx={{ color: '#94A3B8', fontSize: '0.75rem' }}>
-              cut ~15,960 m³ fill · 2,460 m³ net spoil
-            </Typography>
-          </Card>
-        </Grid>
-
-        <Grid item xs={12} sm={6} md={3}>
-          <Card sx={{ p: 2.2, height: '100%' }}>
-            <Typography variant="subtitle2" sx={{ color: '#64748B', mb: 0.5 }}>
-              BEME TOTAL (DRAFT)
-            </Typography>
-            <Typography variant="h4" sx={{ fontWeight: 700, color: '#F8FAFC', mb: 1.5, letterSpacing: '-0.02em' }}>
-              ₦666.5M
-            </Typography>
-            <Box sx={{ display: 'flex', gap: 1 }}>
-              <Chip label="Rev C" size="small" sx={{ backgroundColor: '#1E293B', color: '#94A3B8', fontSize: '0.7rem' }} />
-              <Chip label="awaiting approval" size="small" sx={{ backgroundColor: 'rgba(245, 158, 11, 0.15)', color: '#FBBF24', fontSize: '0.7rem' }} />
-            </Box>
-          </Card>
-        </Grid>
-      </Grid>
-
-      {/* Main Content Grid */}
-      <Grid container spacing={3}>
-        {/* Left Column (2/3) */}
+      <Grid container spacing={2.5}>
+        {/* Left column */}
         <Grid item xs={12} lg={8}>
-          {/* Workflow Pipeline */}
-          <Card sx={{ p: 3, mb: 3 }}>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-              <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                Workflow pipeline
-              </Typography>
-              <Chip label="DESIGN REVISION C" size="small" sx={{ backgroundColor: '#1E293B', color: '#94A3B8', fontWeight: 600, fontSize: '0.7rem' }} />
+          <Paper sx={{ mb: 2.5 }}>
+            <Box
+              sx={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                px: 2.5,
+                pt: 2.25,
+                pb: 1.5,
+              }}
+            >
+              <Box>
+                <Typography variant="h6">Workflow pipeline</Typography>
+                <Typography variant="caption" sx={{ color: tokens.faint }}>
+                  Seven stages from survey to signed report
+                </Typography>
+              </Box>
+              <Typography sx={{ fontSize: '0.71875rem', color: tokens.faint }}>Design revision C</Typography>
             </Box>
-
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-              {pipelineStatus.map(stage => (
+            <Divider />
+            <Box sx={{ px: 1 }}>
+              {pipelineStatus.map((stage, index) => (
                 <Box
                   key={stage.num}
-                  onClick={() => setActiveStage(stage.stageId as any)}
+                  onClick={() => setActiveStage(stage.stageId as never)}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={e => {
+                    if (e.key === 'Enter' || e.key === ' ') setActiveStage(stage.stageId as never);
+                  }}
                   sx={{
                     display: 'flex',
                     alignItems: 'center',
-                    justifyContent: 'space-between',
-                    p: 1.5,
-                    borderRadius: 1.5,
-                    border: '1px solid #1E293B',
-                    backgroundColor: '#0F1626',
+                    gap: 2,
+                    px: 1.5,
+                    py: 1.25,
+                    borderRadius: '8px',
                     cursor: 'pointer',
-                    '&:hover': { borderColor: '#334155', backgroundColor: '#141E33' },
+                    borderBottom: index === pipelineStatus.length - 1 ? 'none' : `1px solid ${tokens.line}`,
+                    transition: 'background-color 140ms ease',
+                    '&:hover': { backgroundColor: 'rgba(255,255,255,0.03)' },
                   }}
                 >
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                    <Box
+                  <Typography
+                    sx={{
+                      width: 22,
+                      flexShrink: 0,
+                      fontSize: '0.71875rem',
+                      fontWeight: 600,
+                      color: tokens.faint,
+                      fontVariantNumeric: 'tabular-nums',
+                    }}
+                  >
+                    {String(stage.num).padStart(2, '0')}
+                  </Typography>
+
+                  <Box sx={{ minWidth: 0, flex: 1 }}>
+                    <Typography sx={{ fontSize: '0.84375rem', fontWeight: 600, color: tokens.text, lineHeight: 1.45 }}>
+                      {stage.name}
+                    </Typography>
+                    <Typography
                       sx={{
-                        width: 24,
-                        height: 24,
-                        borderRadius: '50%',
-                        backgroundColor: '#1E293B',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        color: stage.color,
-                        fontWeight: 700,
                         fontSize: '0.75rem',
+                        color: tokens.muted,
+                        lineHeight: 1.45,
+                        display: '-webkit-box',
+                        WebkitLineClamp: 2,
+                        WebkitBoxOrient: 'vertical',
+                        overflow: 'hidden',
                       }}
                     >
-                      {stage.num}
-                    </Box>
-                    <Box>
-                      <Typography variant="body2" sx={{ fontWeight: 600, color: '#F8FAFC' }}>
-                        {stage.name}
-                      </Typography>
-                      <Typography variant="caption" sx={{ color: '#94A3B8' }}>
-                        {stage.desc}
-                      </Typography>
-                    </Box>
+                      {stage.desc}
+                    </Typography>
                   </Box>
 
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                    <Typography variant="caption" sx={{ color: '#64748B', fontWeight: 600, fontSize: '0.7rem' }}>
-                      {stage.engine}
-                    </Typography>
-                    <Chip
-                      label={stage.status}
-                      size="small"
-                      sx={{
-                        backgroundColor: `${stage.color}18`,
-                        color: stage.color,
-                        fontWeight: 600,
-                        fontSize: '0.7rem',
-                        border: `1px solid ${stage.color}40`,
-                      }}
-                    />
+                  <Typography
+                    noWrap
+                    sx={{
+                      fontSize: '0.71875rem',
+                      color: tokens.faint,
+                      display: { xs: 'none', md: 'block' },
+                      width: 120,
+                      textAlign: 'right',
+                      flexShrink: 0,
+                    }}
+                  >
+                    {stage.engine}
+                  </Typography>
+
+                  <Box sx={{ width: 96, flexShrink: 0, display: 'flex', justifyContent: 'flex-end' }}>
+                    <StatusPill label={stage.status.label} color={stage.status.color} />
                   </Box>
                 </Box>
               ))}
             </Box>
-          </Card>
+          </Paper>
 
-          {/* How Every Output is Produced Card */}
-          <Card sx={{ p: 3 }}>
-            <Typography variant="h6" sx={{ fontWeight: 600, mb: 0.5 }}>
+          <Paper sx={{ px: 2.5, py: 2.25 }}>
+            <Typography variant="h6" sx={{ mb: 0.25 }}>
               How every output is produced
             </Typography>
-            <Typography variant="caption" sx={{ color: '#94A3B8', display: 'block', mb: 2.5 }}>
-              The AI never issues the final answer. It proposes, the engineering engine calculates, the validation engine checks, and an engineer approves.
+            <Typography variant="caption" sx={{ color: tokens.muted, display: 'block', mb: 2.5 }}>
+              The AI never issues the final answer. It proposes, the engine calculates, validation checks, and an
+              engineer approves.
             </Typography>
 
-            <Grid container spacing={2}>
-              <Grid item xs={12} sm={6} md={3}>
-                <Box sx={{ p: 2, borderRadius: 1.5, backgroundColor: '#0F1626', border: '1px solid #1E293B', height: '100%' }}>
-                  <Typography variant="caption" sx={{ color: '#38BDF8', fontWeight: 700, display: 'block', mb: 0.5 }}>
-                    01
+            <Box sx={{ display: 'flex', gap: 2.5, flexWrap: 'wrap' }}>
+              {[
+                ['AI proposes', 'Suggests parameters and alternatives, with reasons.'],
+                ['Engine calculates', 'Deterministic maths produces alignment, profile and volumes.'],
+                ['Validation checks', 'Every result is marked pass, warning or review.'],
+                ['Engineer approves', 'Nothing is released without a qualified sign-off.'],
+              ].map(([title, body], i) => (
+                <Box key={title} sx={{ flex: '1 1 170px', minWidth: 0, position: 'relative', pl: 0 }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.75 }}>
+                    <Typography
+                      sx={{
+                        fontSize: '0.6875rem',
+                        fontWeight: 600,
+                        color: tokens.accent,
+                        fontVariantNumeric: 'tabular-nums',
+                      }}
+                    >
+                      {String(i + 1).padStart(2, '0')}
+                    </Typography>
+                    <Box sx={{ flex: 1, height: 1, backgroundColor: tokens.line }} />
+                  </Box>
+                  <Typography sx={{ fontSize: '0.8125rem', fontWeight: 600, color: tokens.text, mb: 0.4 }}>
+                    {title}
                   </Typography>
-                  <Typography variant="body2" sx={{ fontWeight: 600, color: '#F8FAFC', mb: 0.5 }}>
-                    AI proposes
-                  </Typography>
-                  <Typography variant="caption" sx={{ color: '#94A3B8', fontSize: '0.75rem', display: 'block' }}>
-                    Intelligence engine suggests parameters and alternatives, with reasons.
-                  </Typography>
-                </Box>
-              </Grid>
-
-              <Grid item xs={12} sm={6} md={3}>
-                <Box sx={{ p: 2, borderRadius: 1.5, backgroundColor: '#0F1626', border: '1px solid #1E293B', height: '100%' }}>
-                  <Typography variant="caption" sx={{ color: '#38BDF8', fontWeight: 700, display: 'block', mb: 0.5 }}>
-                    02
-                  </Typography>
-                  <Typography variant="body2" sx={{ fontWeight: 600, color: '#F8FAFC', mb: 0.5 }}>
-                    Engine calculates
-                  </Typography>
-                  <Typography variant="caption" sx={{ color: '#94A3B8', fontSize: '0.75rem', display: 'block' }}>
-                    Deterministic maths produces alignment, profile, sections and earthworks.
-                  </Typography>
-                </Box>
-              </Grid>
-
-              <Grid item xs={12} sm={6} md={3}>
-                <Box sx={{ p: 2, borderRadius: 1.5, backgroundColor: '#0F1626', border: '1px solid #1E293B', height: '100%' }}>
-                  <Typography variant="caption" sx={{ color: '#38BDF8', fontWeight: 700, display: 'block', mb: 0.5 }}>
-                    03
-                  </Typography>
-                  <Typography variant="body2" sx={{ fontWeight: 600, color: '#F8FAFC', mb: 0.5 }}>
-                    Validation checks
-                  </Typography>
-                  <Typography variant="caption" sx={{ color: '#94A3B8', fontSize: '0.75rem', display: 'block' }}>
-                    Every result is marked PASS, WARNING or REVIEW REQUIRED.
-                  </Typography>
-                </Box>
-              </Grid>
-
-              <Grid item xs={12} sm={6} md={3}>
-                <Box sx={{ p: 2, borderRadius: 1.5, backgroundColor: '#0F1626', border: '1px solid #1E293B', height: '100%' }}>
-                  <Typography variant="caption" sx={{ color: '#38BDF8', fontWeight: 700, display: 'block', mb: 0.5 }}>
-                    04
-                  </Typography>
-                  <Typography variant="body2" sx={{ fontWeight: 600, color: '#F8FAFC', mb: 0.5 }}>
-                    Engineer approves
-                  </Typography>
-                  <Typography variant="caption" sx={{ color: '#94A3B8', fontSize: '0.75rem', display: 'block' }}>
-                    Nothing is released until a qualified engineer signs it off.
-                  </Typography>
-                </Box>
-              </Grid>
-            </Grid>
-          </Card>
-        </Grid>
-
-        {/* Right Column (1/3) */}
-        <Grid item xs={12} lg={4}>
-          {/* Needs Engineer Review */}
-          <Card sx={{ p: 3, mb: 3 }}>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-              <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                Needs engineer review
-              </Typography>
-              <Chip label="3 open" size="small" sx={{ backgroundColor: 'rgba(239, 68, 68, 0.15)', color: '#EF4444', fontWeight: 700, fontSize: '0.7rem' }} />
-            </Box>
-
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-              {/* Review Item 1 */}
-              <Box sx={{ p: 1.8, borderRadius: 1.5, border: '1px solid #1E293B', backgroundColor: '#0F1626' }}>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
-                  <Typography variant="body2" sx={{ fontWeight: 600, color: '#F8FAFC' }}>
-                    Gradient exceeds limit at Ch 1+840
-                  </Typography>
-                  <Chip label="Review required" size="small" sx={{ backgroundColor: 'rgba(239, 68, 68, 0.15)', color: '#EF4444', fontSize: '0.65rem' }} />
-                </Box>
-                <Typography variant="caption" sx={{ color: '#94A3B8', display: 'block', mb: 1 }}>
-                  Design engine · Rev C · vertical alignment
-                </Typography>
-                <Button size="small" onClick={() => setActiveStage('design')} sx={{ color: '#38BDF8', p: 0, fontSize: '0.75rem', textTransform: 'none' }}>
-                  Open item →
-                </Button>
-              </Box>
-
-              {/* Review Item 2 */}
-              <Box sx={{ p: 1.8, borderRadius: 1.5, border: '1px solid #1E293B', backgroundColor: '#0F1626' }}>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
-                  <Typography variant="body2" sx={{ fontWeight: 600, color: '#F8FAFC' }}>
-                    Steep side slope in cut, Ch 2+100 to 2+260
-                  </Typography>
-                  <Chip label="Warning" size="small" sx={{ backgroundColor: 'rgba(245, 158, 11, 0.15)', color: '#FBBF24', fontSize: '0.65rem' }} />
-                </Box>
-                <Typography variant="caption" sx={{ color: '#94A3B8', display: 'block', mb: 1 }}>
-                  Design engine · Rev C · cross-sections
-                </Typography>
-                <Button size="small" onClick={() => setActiveStage('design')} sx={{ color: '#38BDF8', p: 0, fontSize: '0.75rem', textTransform: 'none' }}>
-                  Open item →
-                </Button>
-              </Box>
-
-              {/* Review Item 3 */}
-              <Box sx={{ p: 1.8, borderRadius: 1.5, border: '1px solid #1E293B', backgroundColor: '#0F1626' }}>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
-                  <Typography variant="body2" sx={{ fontWeight: 600, color: '#F8FAFC' }}>
-                    Curve radius options for the bend at Ch 0+950
-                  </Typography>
-                  <Chip label="Awaiting approval" size="small" sx={{ backgroundColor: 'rgba(56, 189, 248, 0.15)', color: '#38BDF8', fontSize: '0.65rem' }} />
-                </Box>
-                <Typography variant="caption" sx={{ color: '#94A3B8', display: 'block', mb: 1 }}>
-                  AI reasoning · three alternatives compared
-                </Typography>
-                <Button size="small" onClick={() => setActiveStage('reasoning')} sx={{ color: '#38BDF8', p: 0, fontSize: '0.75rem', textTransform: 'none' }}>
-                  Open item →
-                </Button>
-              </Box>
-            </Box>
-          </Card>
-
-          {/* Audit Trail */}
-          <Card sx={{ p: 3 }}>
-            <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
-              Audit trail
-            </Typography>
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-              {MOCK_AUDIT_TRAIL.map((evt, idx) => (
-                <Box key={idx} sx={{ borderLeft: '2px solid #1E293B', pl: 1.8, position: 'relative' }}>
-                  <Box
-                    sx={{
-                      position: 'absolute',
-                      left: -5,
-                      top: 4,
-                      width: 8,
-                      height: 8,
-                      borderRadius: '50%',
-                      backgroundColor: evt.type === 'approval' ? '#10B981' : evt.type === 'warning' ? '#F59E0B' : '#38BDF8',
-                    }}
-                  />
-                  <Typography variant="body2" sx={{ fontWeight: 500, color: '#F8FAFC', fontSize: '0.8125rem' }}>
-                    {evt.title}
-                  </Typography>
-                  <Typography variant="caption" sx={{ color: '#64748B', fontSize: '0.72rem' }}>
-                    {evt.time}
-                  </Typography>
+                  <Typography sx={{ fontSize: '0.75rem', color: tokens.muted, lineHeight: 1.5 }}>{body}</Typography>
                 </Box>
               ))}
             </Box>
-          </Card>
+          </Paper>
+        </Grid>
+
+        {/* Right column */}
+        <Grid item xs={12} lg={4}>
+          <Paper sx={{ mb: 2.5 }}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', px: 2.25, pt: 2, pb: 1.5 }}>
+              <Typography variant="h6">Needs engineer review</Typography>
+              <Typography sx={{ fontSize: '0.71875rem', color: tokens.danger, fontWeight: 500 }}>3 open</Typography>
+            </Box>
+            <Divider />
+            <Box sx={{ px: 1, py: 0.5 }}>
+              {reviewItems.map(item => (
+                <Box
+                  key={item.title}
+                  sx={{
+                    px: 1.25,
+                    py: 1.25,
+                    borderRadius: '8px',
+                    borderLeft: `2px solid ${item.color}`,
+                    mb: 0.25,
+                    '&:hover': { backgroundColor: 'rgba(255,255,255,0.03)' },
+                  }}
+                >
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 1.5, mb: 0.4 }}>
+                    <Typography sx={{ fontSize: '0.8125rem', fontWeight: 600, color: tokens.text, lineHeight: 1.45 }}>
+                      {item.title}
+                    </Typography>
+                    <Typography sx={{ fontSize: '0.6875rem', color: item.color, fontWeight: 500, whiteSpace: 'nowrap' }}>
+                      {item.badge}
+                    </Typography>
+                  </Box>
+                  <Typography sx={{ fontSize: '0.71875rem', color: tokens.faint, mb: 0.75 }}>{item.meta}</Typography>
+                  <Button
+                    size="small"
+                    onClick={() => setActiveStage(item.stage as never)}
+                    endIcon={<ArrowForwardIcon sx={{ fontSize: 13 }} />}
+                    sx={{ p: 0, minHeight: 0, fontSize: '0.75rem', color: tokens.muted, '&:hover': { color: tokens.text, backgroundColor: 'transparent' } }}
+                  >
+                    Open item
+                  </Button>
+                </Box>
+              ))}
+            </Box>
+          </Paper>
+
+          <Paper sx={{ px: 2.25, py: 2.25 }}>
+            <Typography variant="h6" sx={{ mb: 2 }}>
+              Audit trail
+            </Typography>
+            <Box sx={{ position: 'relative', pl: 2 }}>
+              <Box sx={{ position: 'absolute', left: 3, top: 4, bottom: 4, width: 1, backgroundColor: tokens.line }} />
+              {MOCK_AUDIT_TRAIL.map((evt, idx) => {
+                const color =
+                  evt.type === 'approval' ? tokens.success : evt.type === 'warning' ? tokens.warning : tokens.accent;
+                return (
+                  <Box key={idx} sx={{ position: 'relative', mb: idx === MOCK_AUDIT_TRAIL.length - 1 ? 0 : 2 }}>
+                    <Box
+                      sx={{
+                        position: 'absolute',
+                        left: -14.5,
+                        top: 4,
+                        width: 7,
+                        height: 7,
+                        borderRadius: '50%',
+                        backgroundColor: color,
+                        boxShadow: `0 0 0 3px ${tokens.surface}`,
+                      }}
+                    />
+                    <Typography sx={{ fontSize: '0.8125rem', color: tokens.text, lineHeight: 1.45 }}>
+                      {evt.title}
+                    </Typography>
+                    <Typography sx={{ fontSize: '0.71875rem', color: tokens.faint }}>{evt.time}</Typography>
+                  </Box>
+                );
+              })}
+            </Box>
+          </Paper>
         </Grid>
       </Grid>
     </Box>

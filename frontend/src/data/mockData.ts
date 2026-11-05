@@ -12,7 +12,7 @@ import type {
 } from '../types';
 
 export const INITIAL_PROJECT_DATA: ProjectData = {
-  projectName: 'North Ridge Access Road', client: 'Spectra Infrastructure', projectLocation: 'North Ridge, Sector 4', projectType: 'Rural access road', roadClassification: 'Class III', applicableStandard: 'AASHTO 2018', carriagewayWidthM: 7.0, shoulderWidthM: 1.5, subBaseThicknessMm: 200, baseCourseThicknessMm: 150, asphaltWearingCourseMm: 50, drainageRequirement: 'Cross-drainage at low points', constraints: 'Steep terrain and protected wetland boundary',
+  projectName: 'North Ridge Access Road', client: 'Spectra Infrastructure', projectLocation: 'North Ridge, Sector 4', projectType: 'New road, survey to design', roadClassification: 'Secondary road', applicableStandard: 'AASHTO Green Book 2018', carriagewayWidthM: 7.0, shoulderWidthM: 1.5, subBaseThicknessMm: 200, baseCourseThicknessMm: 150, asphaltWearingCourseMm: 50, drainageRequirement: 'Lined side drains, both sides', constraints: 'Steep terrain and protected wetland boundary',
 };
 
 export const MOCK_SURVEY_POINTS: SurveyPointRow[] = [

@@ -1,203 +1,199 @@
 import React from 'react';
-import { Box, Typography, List, ListItemButton, ListItemText, ListItemIcon } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import DashboardOutlinedIcon from '@mui/icons-material/DashboardOutlined';
 import LayersOutlinedIcon from '@mui/icons-material/LayersOutlined';
 import { useProject } from '../context/ProjectContext';
 import { StageId } from '../types';
+import { tokens } from '../theme';
+
+const pipelineStages: { id: StageId; label: string }[] = [
+  { id: 'setup', label: 'Project setup' },
+  { id: 'survey', label: 'Survey and validation' },
+  { id: 'terrain', label: 'Terrain' },
+  { id: 'reasoning', label: 'AI reasoning' },
+  { id: 'design', label: 'Design engine' },
+  { id: 'drawings', label: 'Drawings' },
+  { id: 'beme', label: 'BEME and report' },
+];
+
+const NavRow: React.FC<{
+  active: boolean;
+  label: string;
+  onClick: () => void;
+  icon?: React.ReactNode;
+  dot?: boolean;
+}> = ({ active, label, onClick, icon, dot }) => (
+  <Box
+    onClick={onClick}
+    role="button"
+    tabIndex={0}
+    aria-current={active ? 'page' : undefined}
+    onKeyDown={e => {
+      if (e.key === 'Enter' || e.key === ' ') onClick();
+    }}
+    sx={{
+      display: 'flex',
+      alignItems: 'center',
+      gap: 1.25,
+      height: 34,
+      px: 1.25,
+      mb: 0.25,
+      borderRadius: '8px',
+      cursor: 'pointer',
+      color: active ? tokens.text : tokens.muted,
+      backgroundColor: active ? '#151A22' : 'transparent',
+      boxShadow: active ? `inset 2px 0 0 ${tokens.accent}` : 'none',
+      transition: 'background-color 140ms ease, color 140ms ease',
+      '&:hover': { backgroundColor: active ? '#171D26' : 'rgba(255,255,255,0.035)', color: tokens.text },
+      '&:focus-visible': { outline: `2px solid rgba(91,141,239,0.7)`, outlineOffset: 1 },
+    }}
+  >
+    {icon ? (
+      <Box sx={{ display: 'flex', color: active ? tokens.accent : tokens.faint }}>{icon}</Box>
+    ) : (
+      <Box
+        sx={{
+          width: 6,
+          height: 6,
+          borderRadius: '50%',
+          ml: 0.9,
+          mr: 0.6,
+          backgroundColor: active ? tokens.accent : '#39414E',
+          boxShadow: active ? `0 0 0 3px rgba(91,141,239,0.18)` : 'none',
+          flexShrink: 0,
+        }}
+      />
+    )}
+    <Typography
+      noWrap
+      sx={{
+        fontSize: '0.8125rem',
+        fontWeight: active ? 600 : 400,
+        color: 'inherit',
+        letterSpacing: '-0.005em',
+      }}
+    >
+      {label}
+    </Typography>
+    {dot && <Box sx={{ width: 4, height: 4, borderRadius: '50%', backgroundColor: tokens.warning, ml: 'auto' }} />}
+  </Box>
+);
 
 export const Sidebar: React.FC = () => {
   const { activeStage, setActiveStage } = useProject();
 
-  const pipelineStages: { id: StageId; number: number; label: string }[] = [
-    { id: 'setup', number: 1, label: 'Project setup' },
-    { id: 'survey', number: 2, label: 'Survey and validation' },
-    { id: 'terrain', number: 3, label: 'Terrain' },
-    { id: 'reasoning', number: 4, label: 'AI reasoning' },
-    { id: 'design', number: 5, label: 'Design engine' },
-    { id: 'drawings', number: 6, label: 'Drawings' },
-    { id: 'beme', number: 7, label: 'BEME and report' },
-  ];
-
   return (
     <Box
+      component="nav"
       sx={{
-        width: 240,
-        minWidth: 240,
-        height: '100vh',
-        backgroundColor: '#0A0E17',
-        borderRight: '1px solid #1E293B',
+        width: 224,
+        minWidth: 224,
+        height: '100%',
+        backgroundColor: '#0B0E14',
+        borderRight: `1px solid ${tokens.line}`,
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-between',
         userSelect: 'none',
       }}
     >
-      <Box>
-        {/* Brand Header */}
-        <Box sx={{ p: 2.5, display: 'flex', alignItems: 'center', gap: 1.5 }}>
+      <Box sx={{ px: 1.5, pt: 2, overflowY: 'auto' }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.25, px: 1, pb: 2 }}>
           <Box
             sx={{
               width: 28,
               height: 28,
-              backgroundColor: '#2563EB',
-              borderRadius: 1,
+              background: `linear-gradient(140deg, ${tokens.accent}, #3F6FD0)`,
+              borderRadius: 1.25,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               color: '#FFFFFF',
               fontWeight: 700,
-              fontSize: '1rem',
+              fontSize: '0.875rem',
+              letterSpacing: '-0.02em',
             }}
           >
             D
           </Box>
-          <Typography variant="h6" sx={{ fontWeight: 700, letterSpacing: '-0.02em', fontSize: '1.05rem' }}>
-            DariusOS
-          </Typography>
+          <Box sx={{ minWidth: 0 }}>
+            <Typography sx={{ fontSize: '0.875rem', fontWeight: 600, lineHeight: 1.2, color: tokens.text }}>
+              DariusOS
+            </Typography>
+            <Typography sx={{ fontSize: '0.6875rem', color: tokens.faint, lineHeight: 1.3 }}>
+              Road design platform
+            </Typography>
+          </Box>
         </Box>
 
-        {/* WORKSPACE */}
-        <Box sx={{ px: 2, mt: 1 }}>
-          <Typography variant="subtitle2" sx={{ px: 1, mb: 0.5, color: '#64748B', fontSize: '0.7rem' }}>
-            WORKSPACE
-          </Typography>
-          <List disablePadding>
-            <ListItemButton
-              selected={activeStage === 'overview'}
-              onClick={() => setActiveStage('overview')}
-              sx={{
-                borderRadius: 1.5,
-                py: 0.7,
-                px: 1.5,
-                mb: 0.5,
-                backgroundColor: activeStage === 'overview' ? '#1E293B' : 'transparent',
-                '&.Mui-selected': {
-                  backgroundColor: '#1E293B',
-                  '&:hover': { backgroundColor: '#1E293B' },
-                },
-                '&:hover': { backgroundColor: '#131D2E' },
-              }}
-            >
-              <ListItemIcon sx={{ minWidth: 28, color: activeStage === 'overview' ? '#38BDF8' : '#64748B' }}>
-                <DashboardOutlinedIcon fontSize="small" />
-              </ListItemIcon>
-              <ListItemText
-                primary="Overview"
-                primaryTypographyProps={{
-                  fontSize: '0.825rem',
-                  fontWeight: activeStage === 'overview' ? 600 : 400,
-                  color: activeStage === 'overview' ? '#F8FAFC' : '#94A3B8',
-                }}
-              />
-            </ListItemButton>
-          </List>
-        </Box>
+        <Typography variant="subtitle2" sx={{ px: 1.25, mb: 0.5, color: tokens.faint }}>
+          Workspace
+        </Typography>
+        <NavRow
+          active={activeStage === 'overview'}
+          label="Overview"
+          onClick={() => setActiveStage('overview')}
+          icon={<DashboardOutlinedIcon sx={{ fontSize: 16 }} />}
+        />
 
-        {/* PIPELINE */}
-        <Box sx={{ px: 2, mt: 2 }}>
-          <Typography variant="subtitle2" sx={{ px: 1, mb: 0.5, color: '#64748B', fontSize: '0.7rem' }}>
-            PIPELINE
-          </Typography>
-          <List disablePadding>
-            {pipelineStages.map(stage => {
-              const isSelected = activeStage === stage.id;
-              return (
-                <ListItemButton
-                  key={stage.id}
-                  selected={isSelected}
-                  onClick={() => setActiveStage(stage.id)}
-                  sx={{
-                    borderRadius: 1.5,
-                    py: 0.6,
-                    px: 1.5,
-                    mb: 0.4,
-                    backgroundColor: isSelected ? '#1E293B' : 'transparent',
-                    '&.Mui-selected': {
-                      backgroundColor: '#1E293B',
-                      '&:hover': { backgroundColor: '#1E293B' },
-                    },
-                    '&:hover': { backgroundColor: '#131D2E' },
-                  }}
-                >
-                  <Box
-                    sx={{
-                      width: 18,
-                      height: 18,
-                      borderRadius: '50%',
-                      backgroundColor: isSelected ? '#10B981' : '#1E293B',
-                      color: isSelected ? '#0B0F19' : '#94A3B8',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontSize: '0.65rem',
-                      fontWeight: 700,
-                      mr: 1.5,
-                    }}
-                  >
-                    {stage.number}
-                  </Box>
-                  <ListItemText
-                    primary={stage.label}
-                    primaryTypographyProps={{
-                      fontSize: '0.825rem',
-                      fontWeight: isSelected ? 600 : 400,
-                      color: isSelected ? '#F8FAFC' : '#94A3B8',
-                    }}
-                  />
-                </ListItemButton>
-              );
-            })}
-          </List>
-        </Box>
+        <Typography variant="subtitle2" sx={{ px: 1.25, mt: 2.5, mb: 0.5, color: tokens.faint }}>
+          Pipeline
+        </Typography>
+        {pipelineStages.map(stage => (
+          <NavRow
+            key={stage.id}
+            active={activeStage === stage.id}
+            label={stage.label}
+            onClick={() => setActiveStage(stage.id)}
+          />
+        ))}
 
-        {/* FULL SYSTEM */}
-        <Box sx={{ px: 2, mt: 2 }}>
-          <Typography variant="subtitle2" sx={{ px: 1, mb: 0.5, color: '#64748B', fontSize: '0.7rem' }}>
-            FULL SYSTEM
-          </Typography>
-          <List disablePadding>
-            <ListItemButton
-              selected={activeStage === 'monitoring'}
-              onClick={() => setActiveStage('monitoring')}
-              sx={{
-                borderRadius: 1.5,
-                py: 0.6,
-                px: 1.5,
-                backgroundColor: activeStage === 'monitoring' ? '#1E293B' : 'transparent',
-                '&.Mui-selected': {
-                  backgroundColor: '#1E293B',
-                  '&:hover': { backgroundColor: '#1E293B' },
-                },
-                '&:hover': { backgroundColor: '#131D2E' },
-              }}
-            >
-              <ListItemIcon sx={{ minWidth: 28, color: activeStage === 'monitoring' ? '#38BDF8' : '#64748B' }}>
-                <LayersOutlinedIcon fontSize="small" />
-              </ListItemIcon>
-              <ListItemText
-                primary="Routes and monitoring"
-                primaryTypographyProps={{
-                  fontSize: '0.825rem',
-                  fontWeight: activeStage === 'monitoring' ? 600 : 400,
-                  color: activeStage === 'monitoring' ? '#F8FAFC' : '#94A3B8',
-                }}
-              />
-            </ListItemButton>
-          </List>
-        </Box>
+        <Typography variant="subtitle2" sx={{ px: 1.25, mt: 2.5, mb: 0.5, color: tokens.faint }}>
+          System
+        </Typography>
+        <NavRow
+          active={activeStage === 'monitoring'}
+          label="Routes and monitoring"
+          onClick={() => setActiveStage('monitoring')}
+          icon={<LayersOutlinedIcon sx={{ fontSize: 16 }} />}
+        />
       </Box>
 
-      {/* User Footer */}
-      <Box sx={{ p: 2, borderTop: '1px solid #1E293B', backgroundColor: '#090D15' }}>
-        <Typography variant="caption" sx={{ color: '#64748B', display: 'block', textTransform: 'uppercase', fontSize: '0.65rem', fontWeight: 600 }}>
-          SIGNED IN
-        </Typography>
-        <Typography variant="body2" sx={{ fontWeight: 600, color: '#F8FAFC', fontSize: '0.825rem', mt: 0.2 }}>
-          Engineering lead
-        </Typography>
-        <Typography variant="caption" sx={{ color: '#94A3B8', fontSize: '0.72rem' }}>
-          Reviewer and approver
-        </Typography>
+      <Box
+        sx={{
+          p: 1.75,
+          borderTop: `1px solid ${tokens.line}`,
+          display: 'flex',
+          alignItems: 'center',
+          gap: 1.25,
+        }}
+      >
+        <Box
+          sx={{
+            width: 28,
+            height: 28,
+            borderRadius: '50%',
+            backgroundColor: '#1B212B',
+            border: `1px solid ${tokens.lineStrong}`,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '0.6875rem',
+            fontWeight: 600,
+            color: tokens.muted,
+            flexShrink: 0,
+          }}
+        >
+          EL
+        </Box>
+        <Box sx={{ minWidth: 0 }}>
+          <Typography noWrap sx={{ fontSize: '0.8125rem', fontWeight: 600, color: tokens.text, lineHeight: 1.3 }}>
+            Engineering lead
+          </Typography>
+          <Typography noWrap sx={{ fontSize: '0.6875rem', color: tokens.faint, lineHeight: 1.3 }}>
+            Reviewer and approver
+          </Typography>
+        </Box>
       </Box>
     </Box>
   );

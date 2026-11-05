@@ -121,7 +121,7 @@ export const ProjectProvider: React.FC<{ children: ReactNode }> = ({ children })
   
   const [bemeCategories, setBemeCategories] = useState<BemeCategory[]>(MOCK_BEME_CATEGORIES);
   
-  const [selectedRouteId, setSelectedRouteId] = useState<string>('balanced');
+  const [selectedRouteId, setSelectedRouteId] = useState<string>('route-b');
   const [activeTolerance, setActiveTolerance] = useState<'0.5 m' | '1 m' | '2 m'>('1 m');
   const [asBuiltRows] = useState<AsBuiltComparisonRow[]>(MOCK_AS_BUILT_ROWS);
   

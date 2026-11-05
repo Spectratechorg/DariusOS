@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, ThemeProvider, CssBaseline, Snackbar, Alert } from '@mui/material';
-import { theme } from './theme';
+import { theme, tokens } from './theme';
 import { ProjectProvider, useProject } from './context/ProjectContext';
 import { Sidebar } from './components/Sidebar';
 import { TopBar } from './components/TopBar';
@@ -47,26 +47,30 @@ const MainLayout: React.FC = () => {
   };
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh', width: '100vw', overflow: 'hidden', backgroundColor: '#0B0F19' }}>
-      {/* Top Persistent Mandatory Registered Engineer Banner */}
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        height: '100dvh',
+        width: '100vw',
+        overflow: 'hidden',
+        backgroundColor: tokens.base,
+      }}
+    >
       <EngineerBanner />
 
-      {/* Main Workspace Frame */}
-      <Box sx={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
-        {/* Left Navigation Sidebar */}
+      <Box sx={{ display: 'flex', flex: 1, minHeight: 0, overflow: 'hidden' }}>
         <Sidebar />
 
-        {/* Center Main Stage Content */}
-        <Box sx={{ display: 'flex', flexDirection: 'column', flex: 1, height: '100%', overflow: 'hidden' }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', flex: 1, minWidth: 0, height: '100%', overflow: 'hidden' }}>
           <TopBar />
           <StepperBar />
-          <Box sx={{ flex: 1, overflowY: 'auto', backgroundColor: '#0B0F19' }}>
+          <Box component="main" sx={{ flex: 1, overflowY: 'auto', backgroundColor: tokens.base }}>
             {renderActiveView()}
           </Box>
         </Box>
       </Box>
 
-      {/* Interactive Action Toast Notification */}
       <Snackbar
         open={Boolean(snackbarMessage)}
         autoHideDuration={4000}
@@ -75,12 +79,14 @@ const MainLayout: React.FC = () => {
       >
         <Alert
           onClose={() => setSnackbarMessage(null)}
-          severity="success"
+          severity="info"
+          variant="outlined"
           sx={{
-            backgroundColor: '#0F1E38',
-            color: '#38BDF8',
-            border: '1px solid #1E3A8A',
-            '& .MuiAlert-icon': { color: '#38BDF8' },
+            backgroundColor: '#141922',
+            color: tokens.text,
+            border: `1px solid ${tokens.lineStrong}`,
+            boxShadow: '0 12px 32px rgba(0,0,0,0.45)',
+            '& .MuiAlert-icon': { color: tokens.accent },
           }}
         >
           {snackbarMessage}

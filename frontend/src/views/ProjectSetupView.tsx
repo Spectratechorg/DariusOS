@@ -15,13 +15,13 @@ export const ProjectSetupView: React.FC = () => {
             <Typography variant="h6" sx={{ fontWeight: 600, mb: 0.5 }}>
               Project details
             </Typography>
-            <Typography variant="caption" sx={{ color: '#94A3B8', display: 'block', mb: 2.5 }}>
+            <Typography variant="caption" sx={{ color: '#9AA3B2', display: 'block', mb: 2.5 }}>
               This context is carried through every later stage.
             </Typography>
 
             <Grid container spacing={2}>
               <Grid item xs={12} sm={6}>
-                <Typography variant="caption" sx={{ color: '#94A3B8', display: 'block', mb: 0.5, fontWeight: 500 }}>
+                <Typography variant="caption" sx={{ color: '#9AA3B2', display: 'block', mb: 0.5, fontWeight: 500 }}>
                   Project name
                 </Typography>
                 <TextField
@@ -29,12 +29,12 @@ export const ProjectSetupView: React.FC = () => {
                   size="small"
                   value={projectData.projectName}
                   onChange={e => updateProjectData({ projectName: e.target.value })}
-                  sx={{ backgroundColor: '#0B0F19', borderRadius: 1 }}
+                  sx={{ backgroundColor: '#0A0C11', borderRadius: 1 }}
                 />
               </Grid>
 
               <Grid item xs={12} sm={6}>
-                <Typography variant="caption" sx={{ color: '#94A3B8', display: 'block', mb: 0.5, fontWeight: 500 }}>
+                <Typography variant="caption" sx={{ color: '#9AA3B2', display: 'block', mb: 0.5, fontWeight: 500 }}>
                   Client
                 </Typography>
                 <TextField
@@ -42,12 +42,12 @@ export const ProjectSetupView: React.FC = () => {
                   size="small"
                   value={projectData.client}
                   onChange={e => updateProjectData({ client: e.target.value })}
-                  sx={{ backgroundColor: '#0B0F19', borderRadius: 1 }}
+                  sx={{ backgroundColor: '#0A0C11', borderRadius: 1 }}
                 />
               </Grid>
 
               <Grid item xs={12} sm={6}>
-                <Typography variant="caption" sx={{ color: '#94A3B8', display: 'block', mb: 0.5, fontWeight: 500 }}>
+                <Typography variant="caption" sx={{ color: '#9AA3B2', display: 'block', mb: 0.5, fontWeight: 500 }}>
                   Project location
                 </Typography>
                 <TextField
@@ -56,12 +56,12 @@ export const ProjectSetupView: React.FC = () => {
                   placeholder="[Location of the road]"
                   value={projectData.projectLocation}
                   onChange={e => updateProjectData({ projectLocation: e.target.value })}
-                  sx={{ backgroundColor: '#0B0F19', borderRadius: 1 }}
+                  sx={{ backgroundColor: '#0A0C11', borderRadius: 1 }}
                 />
               </Grid>
 
               <Grid item xs={12} sm={6}>
-                <Typography variant="caption" sx={{ color: '#94A3B8', display: 'block', mb: 0.5, fontWeight: 500 }}>
+                <Typography variant="caption" sx={{ color: '#9AA3B2', display: 'block', mb: 0.5, fontWeight: 500 }}>
                   Project type
                 </Typography>
                 <TextField
@@ -70,7 +70,7 @@ export const ProjectSetupView: React.FC = () => {
                   size="small"
                   value={projectData.projectType}
                   onChange={e => updateProjectData({ projectType: e.target.value })}
-                  sx={{ backgroundColor: '#0B0F19', borderRadius: 1 }}
+                  sx={{ backgroundColor: '#0A0C11', borderRadius: 1 }}
                 >
                   <MenuItem value="New road, survey to design">New road, survey to design</MenuItem>
                   <MenuItem value="Rehabilitation / As-built widening">Rehabilitation / As-built widening</MenuItem>
@@ -85,13 +85,13 @@ export const ProjectSetupView: React.FC = () => {
             <Typography variant="h6" sx={{ fontWeight: 600, mb: 0.5 }}>
               Road and design requirements
             </Typography>
-            <Typography variant="caption" sx={{ color: '#94A3B8', display: 'block', mb: 2.5 }}>
+            <Typography variant="caption" sx={{ color: '#9AA3B2', display: 'block', mb: 2.5 }}>
               The engineer sets these. The AI may suggest values later but never overwrites them.
             </Typography>
 
             <Grid container spacing={2}>
               <Grid item xs={12} sm={6}>
-                <Typography variant="caption" sx={{ color: '#94A3B8', display: 'block', mb: 0.5, fontWeight: 500 }}>
+                <Typography variant="caption" sx={{ color: '#9AA3B2', display: 'block', mb: 0.5, fontWeight: 500 }}>
                   Road classification
                 </Typography>
                 <TextField
@@ -100,7 +100,7 @@ export const ProjectSetupView: React.FC = () => {
                   size="small"
                   value={projectData.roadClassification}
                   onChange={e => updateProjectData({ roadClassification: e.target.value })}
-                  sx={{ backgroundColor: '#0B0F19', borderRadius: 1 }}
+                  sx={{ backgroundColor: '#0A0C11', borderRadius: 1 }}
                 >
                   <MenuItem value="Secondary road">Secondary road</MenuItem>
                   <MenuItem value="Primary arterial">Primary arterial</MenuItem>
@@ -109,7 +109,7 @@ export const ProjectSetupView: React.FC = () => {
               </Grid>
 
               <Grid item xs={12} sm={6}>
-                <Typography variant="caption" sx={{ color: '#94A3B8', display: 'block', mb: 0.5, fontWeight: 500 }}>
+                <Typography variant="caption" sx={{ color: '#9AA3B2', display: 'block', mb: 0.5, fontWeight: 500 }}>
                   Applicable engineering standard
                 </Typography>
                 <TextField
@@ -118,7 +118,7 @@ export const ProjectSetupView: React.FC = () => {
                   size="small"
                   value={projectData.applicableStandard}
                   onChange={e => updateProjectData({ applicableStandard: e.target.value })}
-                  sx={{ backgroundColor: '#0B0F19', borderRadius: 1 }}
+                  sx={{ backgroundColor: '#0A0C11', borderRadius: 1 }}
                 >
                   <MenuItem value="Highway Manual Part 1 (Geometric Design)">Highway Manual Part 1 (Geometric Design)</MenuItem>
                   <MenuItem value="AASHTO Green Book 2018">AASHTO Green Book 2018</MenuItem>
@@ -127,7 +127,7 @@ export const ProjectSetupView: React.FC = () => {
               </Grid>
 
               <Grid item xs={12} sm={6}>
-                <Typography variant="caption" sx={{ color: '#94A3B8', display: 'block', mb: 0.5, fontWeight: 500 }}>
+                <Typography variant="caption" sx={{ color: '#9AA3B2', display: 'block', mb: 0.5, fontWeight: 500 }}>
                   Carriageway width (m)
                 </Typography>
                 <TextField
@@ -136,12 +136,12 @@ export const ProjectSetupView: React.FC = () => {
                   size="small"
                   value={projectData.carriagewayWidthM}
                   onChange={e => updateProjectData({ carriagewayWidthM: parseFloat(e.target.value) || 7.0 })}
-                  sx={{ backgroundColor: '#0B0F19', borderRadius: 1 }}
+                  sx={{ backgroundColor: '#0A0C11', borderRadius: 1 }}
                 />
               </Grid>
 
               <Grid item xs={12} sm={6}>
-                <Typography variant="caption" sx={{ color: '#94A3B8', display: 'block', mb: 0.5, fontWeight: 500 }}>
+                <Typography variant="caption" sx={{ color: '#9AA3B2', display: 'block', mb: 0.5, fontWeight: 500 }}>
                   Shoulder width, each side (m)
                 </Typography>
                 <TextField
@@ -150,7 +150,7 @@ export const ProjectSetupView: React.FC = () => {
                   size="small"
                   value={projectData.shoulderWidthM}
                   onChange={e => updateProjectData({ shoulderWidthM: parseFloat(e.target.value) || 1.5 })}
-                  sx={{ backgroundColor: '#0B0F19', borderRadius: 1 }}
+                  sx={{ backgroundColor: '#0A0C11', borderRadius: 1 }}
                 />
               </Grid>
             </Grid>
@@ -161,13 +161,13 @@ export const ProjectSetupView: React.FC = () => {
             <Typography variant="h6" sx={{ fontWeight: 600, mb: 0.5 }}>
               Pavement and drainage
             </Typography>
-            <Typography variant="caption" sx={{ color: '#94A3B8', display: 'block', mb: 2.5 }}>
+            <Typography variant="caption" sx={{ color: '#9AA3B2', display: 'block', mb: 2.5 }}>
               These feed the quantity engine and the BEME.
             </Typography>
 
             <Grid container spacing={2}>
               <Grid item xs={12} sm={6}>
-                <Typography variant="caption" sx={{ color: '#94A3B8', display: 'block', mb: 0.5, fontWeight: 500 }}>
+                <Typography variant="caption" sx={{ color: '#9AA3B2', display: 'block', mb: 0.5, fontWeight: 500 }}>
                   Sub-base thickness (mm)
                 </Typography>
                 <TextField
@@ -176,12 +176,12 @@ export const ProjectSetupView: React.FC = () => {
                   size="small"
                   value={projectData.subBaseThicknessMm}
                   onChange={e => updateProjectData({ subBaseThicknessMm: parseInt(e.target.value) || 200 })}
-                  sx={{ backgroundColor: '#0B0F19', borderRadius: 1 }}
+                  sx={{ backgroundColor: '#0A0C11', borderRadius: 1 }}
                 />
               </Grid>
 
               <Grid item xs={12} sm={6}>
-                <Typography variant="caption" sx={{ color: '#94A3B8', display: 'block', mb: 0.5, fontWeight: 500 }}>
+                <Typography variant="caption" sx={{ color: '#9AA3B2', display: 'block', mb: 0.5, fontWeight: 500 }}>
                   Base course thickness (mm)
                 </Typography>
                 <TextField
@@ -190,12 +190,12 @@ export const ProjectSetupView: React.FC = () => {
                   size="small"
                   value={projectData.baseCourseThicknessMm}
                   onChange={e => updateProjectData({ baseCourseThicknessMm: parseInt(e.target.value) || 150 })}
-                  sx={{ backgroundColor: '#0B0F19', borderRadius: 1 }}
+                  sx={{ backgroundColor: '#0A0C11', borderRadius: 1 }}
                 />
               </Grid>
 
               <Grid item xs={12} sm={6}>
-                <Typography variant="caption" sx={{ color: '#94A3B8', display: 'block', mb: 0.5, fontWeight: 500 }}>
+                <Typography variant="caption" sx={{ color: '#9AA3B2', display: 'block', mb: 0.5, fontWeight: 500 }}>
                   Asphalt wearing course (mm)
                 </Typography>
                 <TextField
@@ -204,12 +204,12 @@ export const ProjectSetupView: React.FC = () => {
                   size="small"
                   value={projectData.asphaltWearingCourseMm}
                   onChange={e => updateProjectData({ asphaltWearingCourseMm: parseInt(e.target.value) || 50 })}
-                  sx={{ backgroundColor: '#0B0F19', borderRadius: 1 }}
+                  sx={{ backgroundColor: '#0A0C11', borderRadius: 1 }}
                 />
               </Grid>
 
               <Grid item xs={12} sm={6}>
-                <Typography variant="caption" sx={{ color: '#94A3B8', display: 'block', mb: 0.5, fontWeight: 500 }}>
+                <Typography variant="caption" sx={{ color: '#9AA3B2', display: 'block', mb: 0.5, fontWeight: 500 }}>
                   Drainage requirement
                 </Typography>
                 <TextField
@@ -218,7 +218,7 @@ export const ProjectSetupView: React.FC = () => {
                   size="small"
                   value={projectData.drainageRequirement}
                   onChange={e => updateProjectData({ drainageRequirement: e.target.value })}
-                  sx={{ backgroundColor: '#0B0F19', borderRadius: 1 }}
+                  sx={{ backgroundColor: '#0A0C11', borderRadius: 1 }}
                 >
                   <MenuItem value="Lined side drains, both sides">Lined side drains, both sides</MenuItem>
                   <MenuItem value="Unlined earth trapezoidal ditches">Unlined earth trapezoidal ditches</MenuItem>
@@ -233,7 +233,7 @@ export const ProjectSetupView: React.FC = () => {
             <Typography variant="h6" sx={{ fontWeight: 600, mb: 0.5 }}>
               Site constraints and notes
             </Typography>
-            <Typography variant="caption" sx={{ color: '#94A3B8', display: 'block', mb: 2 }}>
+            <Typography variant="caption" sx={{ color: '#9AA3B2', display: 'block', mb: 2 }}>
               Known constraints the reasoning layer must respect.
             </Typography>
             <TextField
@@ -243,7 +243,7 @@ export const ProjectSetupView: React.FC = () => {
               value={projectData.constraints}
               onChange={e => updateProjectData({ constraints: e.target.value })}
               placeholder="Existing structures, water conditions, soil information, landowner limits"
-              sx={{ backgroundColor: '#0B0F19', borderRadius: 1 }}
+              sx={{ backgroundColor: '#0A0C11', borderRadius: 1 }}
             />
           </Card>
         </Grid>
@@ -258,48 +258,48 @@ export const ProjectSetupView: React.FC = () => {
 
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
               <Box sx={{ display: 'flex', gap: 1.5 }}>
-                <Typography variant="caption" sx={{ color: '#10B981', fontWeight: 700 }}>1</Typography>
+                <Typography variant="caption" sx={{ color: '#46B98A', fontWeight: 700 }}>1</Typography>
                 <Box>
-                  <Typography variant="body2" sx={{ fontWeight: 600, color: '#F8FAFC' }}>
+                  <Typography variant="body2" sx={{ fontWeight: 600, color: '#E7EAF0' }}>
                     Validation rules
                   </Typography>
-                  <Typography variant="caption" sx={{ color: '#94A3B8' }}>
+                  <Typography variant="caption" sx={{ color: '#9AA3B2' }}>
                     Survey checks use the units and coordinate system chosen here.
                   </Typography>
                 </Box>
               </Box>
 
               <Box sx={{ display: 'flex', gap: 1.5 }}>
-                <Typography variant="caption" sx={{ color: '#10B981', fontWeight: 700 }}>2</Typography>
+                <Typography variant="caption" sx={{ color: '#46B98A', fontWeight: 700 }}>2</Typography>
                 <Box>
-                  <Typography variant="body2" sx={{ fontWeight: 600, color: '#F8FAFC' }}>
+                  <Typography variant="body2" sx={{ fontWeight: 600, color: '#E7EAF0' }}>
                     Design constraints
                   </Typography>
-                  <Typography variant="caption" sx={{ color: '#94A3B8' }}>
+                  <Typography variant="caption" sx={{ color: '#9AA3B2' }}>
                     Standards and classification decide which rules flag a review.
                   </Typography>
                 </Box>
               </Box>
 
               <Box sx={{ display: 'flex', gap: 1.5 }}>
-                <Typography variant="caption" sx={{ color: '#10B981', fontWeight: 700 }}>3</Typography>
+                <Typography variant="caption" sx={{ color: '#46B98A', fontWeight: 700 }}>3</Typography>
                 <Box>
-                  <Typography variant="body2" sx={{ fontWeight: 600, color: '#F8FAFC' }}>
+                  <Typography variant="body2" sx={{ fontWeight: 600, color: '#E7EAF0' }}>
                     Pavement quantities
                   </Typography>
-                  <Typography variant="caption" sx={{ color: '#94A3B8' }}>
+                  <Typography variant="caption" sx={{ color: '#9AA3B2' }}>
                     Layer thicknesses drive the material lines in the BEME.
                   </Typography>
                 </Box>
               </Box>
 
               <Box sx={{ display: 'flex', gap: 1.5 }}>
-                <Typography variant="caption" sx={{ color: '#10B981', fontWeight: 700 }}>4</Typography>
+                <Typography variant="caption" sx={{ color: '#46B98A', fontWeight: 700 }}>4</Typography>
                 <Box>
-                  <Typography variant="body2" sx={{ fontWeight: 600, color: '#F8FAFC' }}>
+                  <Typography variant="body2" sx={{ fontWeight: 600, color: '#E7EAF0' }}>
                     AI context
                   </Typography>
-                  <Typography variant="caption" sx={{ color: '#94A3B8' }}>
+                  <Typography variant="caption" sx={{ color: '#9AA3B2' }}>
                     Constraints become part of what the reasoning layer reads.
                   </Typography>
                 </Box>
@@ -316,38 +316,38 @@ export const ProjectSetupView: React.FC = () => {
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <Box>
-                  <Typography variant="body2" sx={{ fontWeight: 600, color: '#F8FAFC' }}>
+                  <Typography variant="body2" sx={{ fontWeight: 600, color: '#E7EAF0' }}>
                     Engineering lead
                   </Typography>
-                  <Typography variant="caption" sx={{ color: '#94A3B8' }}>
+                  <Typography variant="caption" sx={{ color: '#9AA3B2' }}>
                     Approves designs and outputs
                   </Typography>
                 </Box>
-                <Chip label="Approver" size="small" sx={{ backgroundColor: 'rgba(16, 185, 129, 0.15)', color: '#34D399', fontWeight: 600, fontSize: '0.7rem' }} />
+                <Chip label="Approver" size="small" sx={{ backgroundColor: 'rgba(16, 185, 129, 0.15)', color: '#64C9A1', fontWeight: 600, fontSize: '0.75rem' }} />
               </Box>
 
               <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <Box>
-                  <Typography variant="body2" sx={{ fontWeight: 600, color: '#F8FAFC' }}>
+                  <Typography variant="body2" sx={{ fontWeight: 600, color: '#E7EAF0' }}>
                     Business owner
                   </Typography>
-                  <Typography variant="caption" sx={{ color: '#94A3B8' }}>
+                  <Typography variant="caption" sx={{ color: '#9AA3B2' }}>
                     Approves requirements and scope
                   </Typography>
                 </Box>
-                <Chip label="Approver" size="small" sx={{ backgroundColor: 'rgba(16, 185, 129, 0.15)', color: '#34D399', fontWeight: 600, fontSize: '0.7rem' }} />
+                <Chip label="Approver" size="small" sx={{ backgroundColor: 'rgba(16, 185, 129, 0.15)', color: '#64C9A1', fontWeight: 600, fontSize: '0.75rem' }} />
               </Box>
 
               <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <Box>
-                  <Typography variant="body2" sx={{ fontWeight: 600, color: '#F8FAFC' }}>
+                  <Typography variant="body2" sx={{ fontWeight: 600, color: '#E7EAF0' }}>
                     Engineer
                   </Typography>
-                  <Typography variant="caption" sx={{ color: '#94A3B8' }}>
+                  <Typography variant="caption" sx={{ color: '#9AA3B2' }}>
                     Reviews calculations and quantities
                   </Typography>
                 </Box>
-                <Chip label="Reviewer" size="small" sx={{ backgroundColor: 'rgba(56, 189, 248, 0.15)', color: '#38BDF8', fontWeight: 600, fontSize: '0.7rem' }} />
+                <Chip label="Reviewer" size="small" sx={{ backgroundColor: 'rgba(56, 189, 248, 0.15)', color: '#5B8DEF', fontWeight: 600, fontSize: '0.75rem' }} />
               </Box>
             </Box>
           </Card>

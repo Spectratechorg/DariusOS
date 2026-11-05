@@ -19,26 +19,26 @@ export const SurveyValidationView: React.FC = () => {
         {/* Left Column (2/3) */}
         <Grid item xs={12} lg={8}>
           {/* Uploaded File Banner */}
-          <Card sx={{ p: 2.5, mb: 3, display: 'flex', alignItems: 'center', gap: 2.5, backgroundColor: '#0F1626' }}>
+          <Card sx={{ p: 2.5, mb: 3, display: 'flex', alignItems: 'center', gap: 2.5, backgroundColor: '#0C1017' }}>
             <Box
               sx={{
                 width: 44,
                 height: 44,
-                borderRadius: 1.5,
+                borderRadius: '8px',
                 backgroundColor: 'rgba(56, 189, 248, 0.1)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                color: '#38BDF8',
+                color: '#5B8DEF',
               }}
             >
               <UploadFileOutlinedIcon fontSize="medium" />
             </Box>
             <Box sx={{ flex: 1 }}>
-              <Typography variant="body1" sx={{ fontWeight: 600, color: '#F8FAFC' }}>
+              <Typography variant="body1" sx={{ fontWeight: 600, color: '#E7EAF0' }}>
                 pilot_survey.csv
               </Typography>
-              <Typography variant="caption" sx={{ color: '#94A3B8', display: 'block', mb: 1 }}>
+              <Typography variant="caption" sx={{ color: '#9AA3B2', display: 'block', mb: 1 }}>
                 1,842 rows · 5 columns mapped · units in metres · CSV, Excel and TXT accepted
               </Typography>
               <Box sx={{ display: 'flex', gap: 1 }}>
@@ -47,7 +47,7 @@ export const SurveyValidationView: React.FC = () => {
                     key={col}
                     label={col}
                     size="small"
-                    sx={{ backgroundColor: '#1E293B', color: '#94A3B8', fontSize: '0.7rem' }}
+                    sx={{ backgroundColor: '#1B2029', color: '#9AA3B2', fontSize: '0.75rem' }}
                   />
                 ))}
               </Box>
@@ -60,39 +60,39 @@ export const SurveyValidationView: React.FC = () => {
               <Typography variant="h6" sx={{ fontWeight: 600 }}>
                 Structured project dataset
               </Typography>
-              <Typography variant="caption" sx={{ color: '#64748B', fontWeight: 600, letterSpacing: '0.04em' }}>
+              <Typography variant="caption" sx={{ color: '#6C7686', fontWeight: 600, letterSpacing: '0.04em' }}>
                 SHOWING 6 OF 1,842
               </Typography>
             </Box>
 
-            <TableContainer sx={{ borderRadius: 1, border: '1px solid #1E293B' }}>
+            <TableContainer sx={{ border: 'none' }}>
               <Table size="small">
-                <TableHead sx={{ backgroundColor: '#0A0E17' }}>
+                <TableHead sx={{ backgroundColor: '#080A0E' }}>
                   <TableRow>
-                    <TableCell sx={{ color: '#64748B', fontWeight: 600, fontSize: '0.72rem', py: 1 }}>POINT ID</TableCell>
-                    <TableCell sx={{ color: '#64748B', fontWeight: 600, fontSize: '0.72rem', py: 1 }}>EASTING</TableCell>
-                    <TableCell sx={{ color: '#64748B', fontWeight: 600, fontSize: '0.72rem', py: 1 }}>NORTHING</TableCell>
-                    <TableCell sx={{ color: '#64748B', fontWeight: 600, fontSize: '0.72rem', py: 1 }}>ELEVATION (M)</TableCell>
-                    <TableCell sx={{ color: '#64748B', fontWeight: 600, fontSize: '0.72rem', py: 1 }}>DESCRIPTION</TableCell>
-                    <TableCell sx={{ color: '#64748B', fontWeight: 600, fontSize: '0.72rem', py: 1 }}>CHECK</TableCell>
+                    <TableCell sx={{ color: '#6C7686', fontWeight: 600, fontSize: '0.75rem', py: 1 }}>POINT ID</TableCell>
+                    <TableCell sx={{ color: '#6C7686', fontWeight: 600, fontSize: '0.75rem', py: 1 }}>EASTING</TableCell>
+                    <TableCell sx={{ color: '#6C7686', fontWeight: 600, fontSize: '0.75rem', py: 1 }}>NORTHING</TableCell>
+                    <TableCell sx={{ color: '#6C7686', fontWeight: 600, fontSize: '0.75rem', py: 1 }}>ELEVATION</TableCell>
+                    <TableCell sx={{ color: '#6C7686', fontWeight: 600, fontSize: '0.75rem', py: 1 }}>DESCRIPTION</TableCell>
+                    <TableCell sx={{ color: '#6C7686', fontWeight: 600, fontSize: '0.75rem', py: 1 }}>CHECK</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {surveyPoints.map(row => (
-                    <TableRow key={row.pointId} sx={{ '&:hover': { backgroundColor: '#131D2E' } }}>
-                      <TableCell sx={{ color: '#F8FAFC', fontWeight: 500, fontSize: '0.8rem', fontFamily: 'monospace' }}>
+                    <TableRow key={row.pointId} sx={{ '&:hover': { backgroundColor: 'rgba(255,255,255,0.03)' } }}>
+                      <TableCell sx={{ color: '#E7EAF0', fontWeight: 500, fontSize: '0.75rem', fontFamily: "'JetBrains Mono', ui-monospace, monospace" }}>
                         {row.pointId}
                       </TableCell>
-                      <TableCell sx={{ color: '#CBD5E1', fontSize: '0.8rem', fontFamily: 'monospace' }}>
+                      <TableCell sx={{ color: '#C3C9D4', fontSize: '0.75rem', fontFamily: "'JetBrains Mono', ui-monospace, monospace" }}>
                         {row.easting.toLocaleString()}
                       </TableCell>
-                      <TableCell sx={{ color: '#CBD5E1', fontSize: '0.8rem', fontFamily: 'monospace' }}>
+                      <TableCell sx={{ color: '#C3C9D4', fontSize: '0.75rem', fontFamily: "'JetBrains Mono', ui-monospace, monospace" }}>
                         {row.northing.toLocaleString()}
                       </TableCell>
-                      <TableCell sx={{ color: '#CBD5E1', fontSize: '0.8rem', fontFamily: 'monospace' }}>
+                      <TableCell sx={{ color: '#C3C9D4', fontSize: '0.75rem', fontFamily: "'JetBrains Mono', ui-monospace, monospace" }}>
                         {row.elevation.toFixed(1)}
                       </TableCell>
-                      <TableCell sx={{ color: '#CBD5E1', fontSize: '0.8rem' }}>
+                      <TableCell sx={{ color: '#C3C9D4', fontSize: '0.8125rem' }}>
                         {row.description}
                       </TableCell>
                       <TableCell>
@@ -100,10 +100,11 @@ export const SurveyValidationView: React.FC = () => {
                           label={row.checkStatus}
                           size="small"
                           sx={{
-                            backgroundColor: row.checkStatus === 'OK' ? 'rgba(16, 185, 129, 0.15)' : 'rgba(245, 158, 11, 0.15)',
-                            color: row.checkStatus === 'OK' ? '#34D399' : '#FBBF24',
-                            fontWeight: 600,
-                            fontSize: '0.68rem',
+                            backgroundColor:
+                              row.checkStatus === 'OK' ? 'rgba(70,185,138,0.12)' : 'rgba(227,169,72,0.12)',
+                            color: row.checkStatus === 'OK' ? '#64C9A1' : '#EFC06A',
+                            border: 'none',
+                            whiteSpace: 'nowrap',
                           }}
                         />
                       </TableCell>
@@ -119,7 +120,7 @@ export const SurveyValidationView: React.FC = () => {
             <Typography variant="h6" sx={{ fontWeight: 600, mb: 0.5 }}>
               Warnings for the engineer
             </Typography>
-            <Typography variant="caption" sx={{ color: '#94A3B8', display: 'block', mb: 2 }}>
+            <Typography variant="caption" sx={{ color: '#9AA3B2', display: 'block', mb: 2 }}>
               Errors and warnings are shown before design starts. {acknowledgedCount} of {surveyWarnings.length} acknowledged.
             </Typography>
 
@@ -129,30 +130,30 @@ export const SurveyValidationView: React.FC = () => {
                   key={w.id}
                   sx={{
                     p: 1.8,
-                    borderRadius: 1.5,
-                    border: '1px solid #1E293B',
-                    backgroundColor: '#0F1626',
+                    borderRadius: '8px',
+                    border: '1px solid #1B2029',
+                    backgroundColor: '#0C1017',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
                   }}
                 >
                   <Box sx={{ pr: 2 }}>
-                    <Typography variant="body2" sx={{ fontWeight: 600, color: '#F8FAFC' }}>
+                    <Typography variant="body2" sx={{ fontWeight: 600, color: '#E7EAF0' }}>
                       {w.title}
                     </Typography>
-                    <Typography variant="caption" sx={{ color: '#94A3B8' }}>
+                    <Typography variant="caption" sx={{ color: '#9AA3B2' }}>
                       {w.detail}
                     </Typography>
                   </Box>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                     {w.isAcknowledged && (
-                      <Chip label="Acknowledged" size="small" sx={{ backgroundColor: 'rgba(16, 185, 129, 0.15)', color: '#34D399', fontWeight: 600, fontSize: '0.7rem' }} />
+                      <Chip label="Acknowledged" size="small" sx={{ backgroundColor: 'rgba(16, 185, 129, 0.15)', color: '#64C9A1', fontWeight: 600, fontSize: '0.75rem' }} />
                     )}
                     <Button
                       size="small"
                       onClick={() => toggleWarningAcknowledged(w.id)}
-                      sx={{ color: '#64748B', fontSize: '0.75rem', textTransform: 'none', '&:hover': { color: '#F8FAFC' } }}
+                      sx={{ color: '#6C7686', fontSize: '0.75rem', textTransform: 'none', '&:hover': { color: '#E7EAF0' } }}
                     >
                       {w.isAcknowledged ? 'Reopen' : 'Acknowledge'}
                     </Button>
@@ -171,7 +172,7 @@ export const SurveyValidationView: React.FC = () => {
               <Typography variant="h6" sx={{ fontWeight: 600 }}>
                 Validation checks
               </Typography>
-              <Chip label="3 warnings" size="small" sx={{ backgroundColor: 'rgba(245, 158, 11, 0.15)', color: '#FBBF24', fontWeight: 600, fontSize: '0.7rem' }} />
+              <Chip label="3 warnings" size="small" sx={{ backgroundColor: 'rgba(245, 158, 11, 0.15)', color: '#EFC06A', fontWeight: 600, fontSize: '0.75rem' }} />
             </Box>
 
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.2 }}>
@@ -185,10 +186,10 @@ export const SurveyValidationView: React.FC = () => {
                       justifyContent: 'space-between',
                       alignItems: 'center',
                       py: 0.8,
-                      borderBottom: '1px solid #1A2436',
+                      borderBottom: '1px solid #1B2029',
                     }}
                   >
-                    <Typography variant="body2" sx={{ color: '#CBD5E1', fontSize: '0.825rem' }}>
+                    <Typography variant="body2" sx={{ color: '#C3C9D4', fontSize: '0.8125rem' }}>
                       {check.name}
                     </Typography>
                     <Chip
@@ -196,9 +197,9 @@ export const SurveyValidationView: React.FC = () => {
                       size="small"
                       sx={{
                         backgroundColor: isWarning ? 'rgba(245, 158, 11, 0.15)' : 'rgba(16, 185, 129, 0.15)',
-                        color: isWarning ? '#FBBF24' : '#34D399',
+                        color: isWarning ? '#EFC06A' : '#64C9A1',
                         fontWeight: 600,
-                        fontSize: '0.7rem',
+                        fontSize: '0.75rem',
                       }}
                     />
                   </Box>

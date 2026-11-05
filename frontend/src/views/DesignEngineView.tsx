@@ -30,16 +30,16 @@ export const DesignEngineView: React.FC = () => {
   return (
     <Box sx={{ p: 3 }}>
       {/* Top Engine Progress Bar */}
-      <Card sx={{ p: 2, mb: 3, backgroundColor: '#0A0E17', border: '1px solid #1E293B' }}>
+      <Card sx={{ p: 2, mb: 3, backgroundColor: '#080A0E', border: '1px solid #1B2029' }}>
         <Grid container spacing={2} alignItems="center">
           <Grid item xs={12} sm={6} md={3}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              <CheckCircleOutlinedIcon sx={{ color: '#10B981', fontSize: '1.1rem' }} />
+              <CheckCircleOutlinedIcon sx={{ color: '#46B98A', fontSize: '1.1rem' }} />
               <Box>
-                <Typography variant="body2" sx={{ fontWeight: 600, color: '#F8FAFC', fontSize: '0.8rem' }}>
+                <Typography variant="body2" sx={{ fontWeight: 600, color: '#E7EAF0', fontSize: '0.8125rem' }}>
                   AI proposes
                 </Typography>
-                <Typography variant="caption" sx={{ color: '#64748B', fontSize: '0.7rem' }}>
+                <Typography variant="caption" sx={{ color: '#6C7686', fontSize: '0.75rem' }}>
                   Parameter set v2 approved
                 </Typography>
               </Box>
@@ -48,12 +48,12 @@ export const DesignEngineView: React.FC = () => {
 
           <Grid item xs={12} sm={6} md={3}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              <CheckCircleOutlinedIcon sx={{ color: '#10B981', fontSize: '1.1rem' }} />
+              <CheckCircleOutlinedIcon sx={{ color: '#46B98A', fontSize: '1.1rem' }} />
               <Box>
-                <Typography variant="body2" sx={{ fontWeight: 600, color: '#F8FAFC', fontSize: '0.8rem' }}>
+                <Typography variant="body2" sx={{ fontWeight: 600, color: '#E7EAF0', fontSize: '0.8125rem' }}>
                   Engine calculates
                 </Typography>
-                <Typography variant="caption" sx={{ color: '#64748B', fontSize: '0.7rem' }}>
+                <Typography variant="caption" sx={{ color: '#6C7686', fontSize: '0.75rem' }}>
                   Revision C generated
                 </Typography>
               </Box>
@@ -63,15 +63,15 @@ export const DesignEngineView: React.FC = () => {
           <Grid item xs={12} sm={6} md={3}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               {isAccepted1840 ? (
-                <CheckCircleOutlinedIcon sx={{ color: '#10B981', fontSize: '1.1rem' }} />
+                <CheckCircleOutlinedIcon sx={{ color: '#46B98A', fontSize: '1.1rem' }} />
               ) : (
-                <ErrorOutlineOutlinedIcon sx={{ color: '#EF4444', fontSize: '1.1rem' }} />
+                <ErrorOutlineOutlinedIcon sx={{ color: '#E4695E', fontSize: '1.1rem' }} />
               )}
               <Box>
-                <Typography variant="body2" sx={{ fontWeight: 600, color: isAccepted1840 ? '#10B981' : '#EF4444', fontSize: '0.8rem' }}>
+                <Typography variant="body2" sx={{ fontWeight: 600, color: isAccepted1840 ? '#46B98A' : '#E4695E', fontSize: '0.8125rem' }}>
                   Validation checks
                 </Typography>
-                <Typography variant="caption" sx={{ color: '#64748B', fontSize: '0.7rem' }}>
+                <Typography variant="caption" sx={{ color: '#6C7686', fontSize: '0.75rem' }}>
                   {isAccepted1840 ? 'All items accepted with notes' : '22 pass · 4 warnings · 1 review'}
                 </Typography>
               </Box>
@@ -80,12 +80,12 @@ export const DesignEngineView: React.FC = () => {
 
           <Grid item xs={12} sm={6} md={3}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              <WarningAmberOutlinedIcon sx={{ color: isAccepted1840 ? '#10B981' : '#64748B', fontSize: '1.1rem' }} />
+              <WarningAmberOutlinedIcon sx={{ color: isAccepted1840 ? '#46B98A' : '#6C7686', fontSize: '1.1rem' }} />
               <Box>
-                <Typography variant="body2" sx={{ fontWeight: 600, color: isAccepted1840 ? '#F8FAFC' : '#94A3B8', fontSize: '0.8rem' }}>
+                <Typography variant="body2" sx={{ fontWeight: 600, color: isAccepted1840 ? '#E7EAF0' : '#9AA3B2', fontSize: '0.8125rem' }}>
                   Engineer approves
                 </Typography>
-                <Typography variant="caption" sx={{ color: '#64748B', fontSize: '0.7rem' }}>
+                <Typography variant="caption" sx={{ color: '#6C7686', fontSize: '0.75rem' }}>
                   {isAccepted1840 ? 'Ready for CAD sheet issuance' : 'Blocked until review is cleared'}
                 </Typography>
               </Box>
@@ -100,7 +100,7 @@ export const DesignEngineView: React.FC = () => {
           {/* Main Visual Profile / Alignment / Cross-section Card */}
           <Card sx={{ p: 3, mb: 3 }}>
             {/* View Switcher Tabs */}
-            <Box sx={{ display: 'flex', gap: 1, mb: 2.5, borderBottom: '1px solid #1E293B', pb: 1.5 }}>
+            <Box sx={{ display: 'flex', gap: 1, mb: 2.5, borderBottom: '1px solid #1B2029', pb: 1.5 }}>
               {(['Longitudinal profile', 'Horizontal alignment', 'Cross-section'] as const).map(tab => (
                 <Button
                   key={tab}
@@ -109,12 +109,12 @@ export const DesignEngineView: React.FC = () => {
                   sx={{
                     px: 1.8,
                     py: 0.5,
-                    fontSize: '0.8rem',
+                    fontSize: '0.8125rem',
                     fontWeight: 600,
-                    borderRadius: 1.5,
-                    color: activeDesignTab === tab ? '#F8FAFC' : '#64748B',
-                    backgroundColor: activeDesignTab === tab ? '#1E293B' : 'transparent',
-                    '&:hover': { backgroundColor: activeDesignTab === tab ? '#1E293B' : 'rgba(255,255,255,0.02)' },
+                    borderRadius: '8px',
+                    color: activeDesignTab === tab ? '#E7EAF0' : '#6C7686',
+                    backgroundColor: activeDesignTab === tab ? '#1B2029' : 'transparent',
+                    '&:hover': { backgroundColor: activeDesignTab === tab ? '#1B2029' : 'rgba(255,255,255,0.02)' },
                   }}
                 >
                   {tab}
@@ -122,14 +122,30 @@ export const DesignEngineView: React.FC = () => {
               ))}
             </Box>
 
+            {/* Legend */}
+            <Box sx={{ display: 'flex', gap: 2.5, alignItems: 'center', mb: 1.5, flexWrap: 'wrap' }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
+                <Box sx={{ width: 14, height: 2, backgroundColor: '#5B8DEF' }} />
+                <Typography sx={{ fontSize: '0.71875rem', color: '#9AA3B2' }}>Existing ground</Typography>
+              </Box>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
+                <Box sx={{ width: 14, height: 2, backgroundColor: '#E3A948' }} />
+                <Typography sx={{ fontSize: '0.71875rem', color: '#9AA3B2' }}>Proposed profile</Typography>
+              </Box>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
+                <Box sx={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: '#E4695E' }} />
+                <Typography sx={{ fontSize: '0.71875rem', color: '#E4695E' }}>Flagged for review</Typography>
+              </Box>
+            </Box>
+
             {/* Profile Chart Canvas */}
             <Box
               sx={{
                 width: '100%',
                 height: 250,
-                backgroundColor: '#090D16',
-                borderRadius: 1.5,
-                border: '1px solid #1E293B',
+                backgroundColor: '#080A0E',
+                borderRadius: '8px',
+                border: '1px solid #1B2029',
                 position: 'relative',
                 overflow: 'hidden',
                 mb: 2.5,
@@ -137,22 +153,22 @@ export const DesignEngineView: React.FC = () => {
             >
               <svg width="100%" height="100%" viewBox="0 0 700 250" preserveAspectRatio="none">
                 {/* Horizontal Grid */}
-                <line x1="40" y1="30" x2="680" y2="30" stroke="#162238" strokeDasharray="3,3" />
-                <line x1="40" y1="80" x2="680" y2="80" stroke="#162238" strokeDasharray="3,3" />
-                <line x1="40" y1="130" x2="680" y2="130" stroke="#162238" strokeDasharray="3,3" />
-                <line x1="40" y1="180" x2="680" y2="180" stroke="#162238" strokeDasharray="3,3" />
-                <line x1="40" y1="220" x2="680" y2="220" stroke="#162238" />
+                <line x1="40" y1="30" x2="680" y2="30" stroke="#1B2029" strokeDasharray="3,3" />
+                <line x1="40" y1="80" x2="680" y2="80" stroke="#1B2029" strokeDasharray="3,3" />
+                <line x1="40" y1="130" x2="680" y2="130" stroke="#1B2029" strokeDasharray="3,3" />
+                <line x1="40" y1="180" x2="680" y2="180" stroke="#1B2029" strokeDasharray="3,3" />
+                <line x1="40" y1="220" x2="680" y2="220" stroke="#1B2029" />
 
-                <text x="15" y="34" fill="#64748B" fontSize="9" fontFamily="monospace">275</text>
-                <text x="15" y="84" fill="#64748B" fontSize="9" fontFamily="monospace">266</text>
-                <text x="15" y="134" fill="#64748B" fontSize="9" fontFamily="monospace">257</text>
-                <text x="15" y="184" fill="#64748B" fontSize="9" fontFamily="monospace">248</text>
+                <text x="15" y="34" fill="#6C7686" fontSize="9" fontFamily="monospace">275</text>
+                <text x="15" y="84" fill="#6C7686" fontSize="9" fontFamily="monospace">266</text>
+                <text x="15" y="134" fill="#6C7686" fontSize="9" fontFamily="monospace">257</text>
+                <text x="15" y="184" fill="#6C7686" fontSize="9" fontFamily="monospace">248</text>
 
                 {/* Existing Ground (Blue line) */}
                 <polyline
                   points="40,190 120,165 200,140 280,110 360,75 420,130 500,170 580,145 680,120"
                   fill="none"
-                  stroke="#38BDF8"
+                  stroke="#5B8DEF"
                   strokeWidth="2.2"
                 />
 
@@ -160,64 +176,50 @@ export const DesignEngineView: React.FC = () => {
                 <polyline
                   points="40,185 120,160 220,135 320,110 380,68 440,145 520,155 600,138 680,118"
                   fill="none"
-                  stroke="#F59E0B"
+                  stroke="#E3A948"
                   strokeWidth="2.2"
                 />
 
                 {/* Annotations */}
-                <text x="310" y="150" fill="#64748B" fontSize="9" fontFamily="sans-serif">CUT through the ridge</text>
-                <text x="470" y="195" fill="#64748B" fontSize="9" fontFamily="sans-serif">FILL across the valley</text>
+                <text x="310" y="150" fill="#6C7686" fontSize="9" fontFamily="sans-serif">CUT through the ridge</text>
+                <text x="470" y="195" fill="#6C7686" fontSize="9" fontFamily="sans-serif">FILL across the valley</text>
 
                 {/* Flagged Review Point at Ch 1+840 */}
-                <circle cx="380" cy="68" r="5" fill="#EF4444" stroke="#FFFFFF" strokeWidth="1.5" />
-                <line x1="380" y1="68" x2="415" y2="40" stroke="#EF4444" strokeWidth="1.2" />
-                <rect x="420" y="30" width="95" height="18" rx="3" fill="#1E1515" stroke="#EF4444" strokeWidth="1" />
-                <text x="426" y="42" fill="#F87171" fontSize="9" fontWeight="700" fontFamily="sans-serif">Ch 1+840 · 9.2 %</text>
+                <circle cx="380" cy="68" r="5" fill="#E4695E" stroke="#FFFFFF" strokeWidth="1.5" />
+                <line x1="380" y1="68" x2="415" y2="40" stroke="#E4695E" strokeWidth="1.2" />
+                <rect x="420" y="30" width="95" height="18" rx="3" fill="#2A1B18" stroke="#E4695E" strokeWidth="1" />
+                <text x="426" y="42" fill="#EE8B82" fontSize="9" fontWeight="700" fontFamily="sans-serif">Ch 1+840 · 9.2 %</text>
 
                 {/* X Axis Chainage */}
-                <text x="40" y="238" fill="#64748B" fontSize="9" fontFamily="sans-serif">0+000</text>
-                <text x="180" y="238" fill="#64748B" fontSize="9" fontFamily="sans-serif">0+800</text>
-                <text x="320" y="238" fill="#64748B" fontSize="9" fontFamily="sans-serif">1+650</text>
-                <text x="480" y="238" fill="#64748B" fontSize="9" fontFamily="sans-serif">2+400</text>
-                <text x="640" y="238" fill="#64748B" fontSize="9" fontFamily="sans-serif">3+200</text>
+                <text x="40" y="238" fill="#6C7686" fontSize="9" fontFamily="sans-serif">0+000</text>
+                <text x="180" y="238" fill="#6C7686" fontSize="9" fontFamily="sans-serif">0+800</text>
+                <text x="320" y="238" fill="#6C7686" fontSize="9" fontFamily="sans-serif">1+650</text>
+                <text x="480" y="238" fill="#6C7686" fontSize="9" fontFamily="sans-serif">2+400</text>
+                <text x="640" y="238" fill="#6C7686" fontSize="9" fontFamily="sans-serif">3+200</text>
               </svg>
 
-              {/* Legend Bottom */}
-              <Box sx={{ position: 'absolute', bottom: 8, left: 16, display: 'flex', gap: 2.5, alignItems: 'center' }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8 }}>
-                  <Box sx={{ width: 14, height: 2, backgroundColor: '#38BDF8' }} />
-                  <Typography variant="caption" sx={{ color: '#94A3B8', fontSize: '0.7rem' }}>Existing ground</Typography>
-                </Box>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8 }}>
-                  <Box sx={{ width: 14, height: 2, backgroundColor: '#F59E0B' }} />
-                  <Typography variant="caption" sx={{ color: '#94A3B8', fontSize: '0.7rem' }}>Proposed profile</Typography>
-                </Box>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8 }}>
-                  <Box sx={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: '#EF4444' }} />
-                  <Typography variant="caption" sx={{ color: '#EF4444', fontSize: '0.7rem' }}>Flagged for review</Typography>
-                </Box>
-              </Box>
+
             </Box>
 
             {/* Gradient Segments Table */}
-            <TableContainer sx={{ borderRadius: 1, border: '1px solid #1E293B' }}>
+            <TableContainer sx={{ border: 'none' }}>
               <Table size="small">
-                <TableHead sx={{ backgroundColor: '#0A0E17' }}>
+                <TableHead sx={{ backgroundColor: '#080A0E' }}>
                   <TableRow>
-                    <TableCell sx={{ color: '#64748B', fontWeight: 600, fontSize: '0.72rem', py: 1 }}>CHAINAGE</TableCell>
-                    <TableCell sx={{ color: '#64748B', fontWeight: 600, fontSize: '0.72rem', py: 1 }}>GRADIENT</TableCell>
-                    <TableCell sx={{ color: '#64748B', fontWeight: 600, fontSize: '0.72rem', py: 1 }}>RESULT</TableCell>
+                    <TableCell sx={{ color: '#6C7686', fontWeight: 600, fontSize: '0.75rem', py: 1 }}>CHAINAGE</TableCell>
+                    <TableCell sx={{ color: '#6C7686', fontWeight: 600, fontSize: '0.75rem', py: 1 }}>GRADIENT</TableCell>
+                    <TableCell sx={{ color: '#6C7686', fontWeight: 600, fontSize: '0.75rem', py: 1 }}>RESULT</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {MOCK_GRADIENT_SEGMENTS.map((seg, idx) => {
                     const isReview = seg.result === 'Review required';
                     return (
-                      <TableRow key={idx} sx={{ backgroundColor: isReview ? 'rgba(239, 68, 68, 0.05)' : 'transparent', '&:hover': { backgroundColor: '#131D2E' } }}>
-                        <TableCell sx={{ color: '#F8FAFC', fontWeight: 500, fontSize: '0.8rem', fontFamily: 'monospace' }}>
+                      <TableRow key={idx} sx={{ backgroundColor: isReview ? 'rgba(239, 68, 68, 0.05)' : 'transparent', '&:hover': { backgroundColor: 'rgba(255,255,255,0.03)' } }}>
+                        <TableCell sx={{ color: '#E7EAF0', fontWeight: 500, fontSize: '0.8125rem', fontFamily: "'JetBrains Mono', ui-monospace, monospace" }}>
                           {seg.chainage}
                         </TableCell>
-                        <TableCell sx={{ color: isReview ? '#EF4444' : '#CBD5E1', fontWeight: isReview ? 700 : 500, fontSize: '0.8rem', fontFamily: 'monospace' }}>
+                        <TableCell sx={{ color: isReview ? '#E4695E' : '#C3C9D4', fontWeight: isReview ? 700 : 500, fontSize: '0.8125rem', fontFamily: "'JetBrains Mono', ui-monospace, monospace" }}>
                           {seg.gradient}
                         </TableCell>
                         <TableCell>
@@ -226,9 +228,9 @@ export const DesignEngineView: React.FC = () => {
                             size="small"
                             sx={{
                               backgroundColor: (isReview && !isAccepted1840) ? 'rgba(239, 68, 68, 0.15)' : 'rgba(16, 185, 129, 0.15)',
-                              color: (isReview && !isAccepted1840) ? '#EF4444' : '#34D399',
+                              color: (isReview && !isAccepted1840) ? '#E4695E' : '#64C9A1',
                               fontWeight: 600,
-                              fontSize: '0.68rem',
+                              fontSize: '0.75rem',
                             }}
                           />
                         </TableCell>
@@ -248,7 +250,7 @@ export const DesignEngineView: React.FC = () => {
               <Typography variant="h6" sx={{ fontWeight: 600 }}>
                 Validation
               </Typography>
-              <Typography variant="caption" sx={{ color: '#64748B', fontWeight: 600, letterSpacing: '0.04em' }}>
+              <Typography variant="caption" sx={{ color: '#6C7686', fontWeight: 600, letterSpacing: '0.04em' }}>
                 27 CHECKS
               </Typography>
             </Box>
@@ -256,21 +258,21 @@ export const DesignEngineView: React.FC = () => {
             {/* 3 Metric Badges */}
             <Grid container spacing={1} sx={{ mb: 2.5 }}>
               <Grid item xs={4}>
-                <Box sx={{ p: 1.2, borderRadius: 1.5, backgroundColor: 'rgba(16, 185, 129, 0.1)', border: '1px solid rgba(16, 185, 129, 0.25)', textAlign: 'center' }}>
-                  <Typography variant="h5" sx={{ fontWeight: 700, color: '#34D399' }}>22</Typography>
-                  <Typography variant="caption" sx={{ color: '#10B981', fontWeight: 600, fontSize: '0.65rem' }}>PASS</Typography>
+                <Box sx={{ p: 1.2, borderRadius: '8px', backgroundColor: 'rgba(16, 185, 129, 0.1)', border: '1px solid rgba(16, 185, 129, 0.25)', textAlign: 'center' }}>
+                  <Typography variant="h5" sx={{ fontWeight: 700, color: '#64C9A1' }}>22</Typography>
+                  <Typography variant="caption" sx={{ color: '#46B98A', fontWeight: 600, fontSize: '0.75rem' }}>PASS</Typography>
                 </Box>
               </Grid>
               <Grid item xs={4}>
-                <Box sx={{ p: 1.2, borderRadius: 1.5, backgroundColor: 'rgba(245, 158, 11, 0.1)', border: '1px solid rgba(245, 158, 11, 0.25)', textAlign: 'center' }}>
-                  <Typography variant="h5" sx={{ fontWeight: 700, color: '#FBBF24' }}>4</Typography>
-                  <Typography variant="caption" sx={{ color: '#F59E0B', fontWeight: 600, fontSize: '0.65rem' }}>WARNING</Typography>
+                <Box sx={{ p: 1.2, borderRadius: '8px', backgroundColor: 'rgba(245, 158, 11, 0.1)', border: '1px solid rgba(245, 158, 11, 0.25)', textAlign: 'center' }}>
+                  <Typography variant="h5" sx={{ fontWeight: 700, color: '#EFC06A' }}>4</Typography>
+                  <Typography variant="caption" sx={{ color: '#E3A948', fontWeight: 600, fontSize: '0.75rem' }}>WARNING</Typography>
                 </Box>
               </Grid>
               <Grid item xs={4}>
-                <Box sx={{ p: 1.2, borderRadius: 1.5, backgroundColor: isAccepted1840 ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)', border: `1px solid ${isAccepted1840 ? 'rgba(16, 185, 129, 0.25)' : 'rgba(239, 68, 68, 0.25)'}`, textAlign: 'center' }}>
-                  <Typography variant="h5" sx={{ fontWeight: 700, color: isAccepted1840 ? '#34D399' : '#EF4444' }}>{isAccepted1840 ? 0 : 1}</Typography>
-                  <Typography variant="caption" sx={{ color: isAccepted1840 ? '#10B981' : '#EF4444', fontWeight: 600, fontSize: '0.65rem' }}>REVIEW</Typography>
+                <Box sx={{ p: 1.2, borderRadius: '8px', backgroundColor: isAccepted1840 ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)', border: `1px solid ${isAccepted1840 ? 'rgba(16, 185, 129, 0.25)' : 'rgba(239, 68, 68, 0.25)'}`, textAlign: 'center' }}>
+                  <Typography variant="h5" sx={{ fontWeight: 700, color: isAccepted1840 ? '#64C9A1' : '#E4695E' }}>{isAccepted1840 ? 0 : 1}</Typography>
+                  <Typography variant="caption" sx={{ color: isAccepted1840 ? '#46B98A' : '#E4695E', fontWeight: 600, fontSize: '0.75rem' }}>REVIEW</Typography>
                 </Box>
               </Grid>
             </Grid>
@@ -286,32 +288,34 @@ export const DesignEngineView: React.FC = () => {
                     key={issue.id}
                     sx={{
                       p: 1.5,
-                      borderRadius: 1.5,
-                      border: '1px solid #1E293B',
-                      backgroundColor: '#0F1626',
+                      borderRadius: '8px',
+                      border: '1px solid #1B2029',
+                      backgroundColor: '#0C1017',
                     }}
                   >
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 0.5 }}>
-                      <Typography variant="body2" sx={{ fontWeight: 600, color: '#F8FAFC', fontSize: '0.8rem', pr: 1 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5, flexWrap: 'wrap' }}>
+                      <Typography sx={{ fontWeight: 600, color: '#E7EAF0', fontSize: '0.8125rem', flex: '1 1 auto' }}>
                         {issue.title}
                       </Typography>
                       <Chip
                         label={isItemAccepted ? 'Accepted' : issue.severity}
                         size="small"
                         sx={{
-                          backgroundColor: isItemAccepted ? 'rgba(16, 185, 129, 0.15)' : isReview ? 'rgba(239, 68, 68, 0.15)' : 'rgba(245, 158, 11, 0.15)',
-                          color: isItemAccepted ? '#34D399' : isReview ? '#EF4444' : '#FBBF24',
-                          fontWeight: 600,
-                          fontSize: '0.65rem',
-                          height: 20,
+                          backgroundColor: isItemAccepted
+                            ? 'rgba(70,185,138,0.12)'
+                            : isReview
+                              ? 'rgba(228,105,94,0.12)'
+                              : 'rgba(227,169,72,0.12)',
+                          color: isItemAccepted ? '#64C9A1' : isReview ? '#EE8B82' : '#EFC06A',
+                          border: 'none',
                         }}
                       />
                     </Box>
-                    <Typography variant="caption" sx={{ color: '#94A3B8', fontSize: '0.72rem', display: 'block' }}>
+                    <Typography variant="caption" sx={{ color: '#9AA3B2', fontSize: '0.75rem', display: 'block' }}>
                       {issue.description}
                     </Typography>
                     {issue.engineerNote && (
-                      <Typography variant="caption" sx={{ color: '#38BDF8', fontSize: '0.7rem', display: 'block', mt: 0.5, fontStyle: 'italic' }}>
+                      <Typography variant="caption" sx={{ color: '#5B8DEF', fontSize: '0.75rem', display: 'block', mt: 0.5, fontStyle: 'italic' }}>
                         Note: {issue.engineerNote}
                       </Typography>
                     )}
@@ -327,19 +331,19 @@ export const DesignEngineView: React.FC = () => {
                 variant="contained"
                 onClick={() => setOpenNoteModal(true)}
                 sx={{
-                  backgroundColor: '#2563EB',
+                  backgroundColor: '#3E68BE',
                   color: '#FFFFFF',
                   fontWeight: 600,
-                  fontSize: '0.8rem',
+                  fontSize: '0.8125rem',
                   py: 1,
-                  '&:hover': { backgroundColor: '#1D4ED8' },
+                  '&:hover': { backgroundColor: '#7AA3F5' },
                 }}
               >
                 Accept Ch 1+840 with engineer note
               </Button>
             ) : (
-              <Box sx={{ p: 1.5, borderRadius: 1.5, backgroundColor: 'rgba(16, 185, 129, 0.1)', border: '1px solid #10B981', textAlign: 'center' }}>
-                <Typography variant="caption" sx={{ color: '#34D399', fontWeight: 600, display: 'block' }}>
+              <Box sx={{ p: 1.5, borderRadius: '8px', backgroundColor: 'rgba(16, 185, 129, 0.1)', border: '1px solid #46B98A', textAlign: 'center' }}>
+                <Typography variant="caption" sx={{ color: '#64C9A1', fontWeight: 600, display: 'block' }}>
                   ✓ Review item cleared with registered engineer note
                 </Typography>
               </Box>
@@ -349,12 +353,12 @@ export const DesignEngineView: React.FC = () => {
       </Grid>
 
       {/* Engineer Note Acceptance Modal */}
-      <Dialog open={openNoteModal} onClose={() => setOpenNoteModal(false)} maxWidth="sm" fullWidth PaperProps={{ sx: { backgroundColor: '#111827', border: '1px solid #1E293B' } }}>
-        <DialogTitle sx={{ color: '#F8FAFC', fontWeight: 600 }}>
+      <Dialog open={openNoteModal} onClose={() => setOpenNoteModal(false)} maxWidth="sm" fullWidth PaperProps={{ sx: { backgroundColor: '#111827', border: '1px solid #1B2029' } }}>
+        <DialogTitle sx={{ color: '#E7EAF0', fontWeight: 600 }}>
           Accept Ch 1+840 Grade Exceedance
         </DialogTitle>
         <DialogContent>
-          <Typography variant="caption" sx={{ color: '#94A3B8', display: 'block', mb: 2 }}>
+          <Typography variant="caption" sx={{ color: '#9AA3B2', display: 'block', mb: 2 }}>
             The calculated gradient is +9.20% over 100 metres (maximum standard is 8.00%). A registered engineer may accept this variant with an official design review note.
           </Typography>
           <TextField
@@ -363,12 +367,12 @@ export const DesignEngineView: React.FC = () => {
             fullWidth
             value={engineerNote}
             onChange={e => setEngineerNote(e.target.value)}
-            sx={{ backgroundColor: '#0B0F19', borderRadius: 1 }}
+            sx={{ backgroundColor: '#0A0C11', borderRadius: 1 }}
           />
         </DialogContent>
-        <DialogActions sx={{ p: 2, borderTop: '1px solid #1E293B' }}>
-          <Button onClick={() => setOpenNoteModal(false)} sx={{ color: '#94A3B8' }}>Cancel</Button>
-          <Button variant="contained" onClick={handleConfirmAccept} sx={{ backgroundColor: '#2563EB' }}>
+        <DialogActions sx={{ p: 2, borderTop: '1px solid #1B2029' }}>
+          <Button onClick={() => setOpenNoteModal(false)} sx={{ color: '#9AA3B2' }}>Cancel</Button>
+          <Button variant="contained" onClick={handleConfirmAccept} sx={{}}>
             Confirm & Sign Off
           </Button>
         </DialogActions>
