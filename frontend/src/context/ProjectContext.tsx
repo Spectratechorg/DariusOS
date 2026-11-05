@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useMemo, ReactNode } from 'react';
 import useSWR from 'swr';
-import { fetchHealth, HealthResponse } from '../api';
+import { fetchHealth, fetchProjects, fetchProjectDetail, HealthResponse, ProjectSummary, ProjectDetail } from '../api';
 import { 
   StageId, 
   ProjectData, 
@@ -81,6 +81,10 @@ interface ProjectContextType {
   backendHealth?: HealthResponse;
   backendHealthError?: Error;
   isBackendChecking: boolean;
+  backendProjects: ProjectSummary[];
+  backendProjectsError?: Error;
+  activeBackendProject?: ProjectDetail;
+  activeBackendProjectError?: Error;
 
   // Notifications
   snackbarMessage: string | null;
@@ -94,8 +98,17 @@ export const ProjectProvider: React.FC<{ children: ReactNode }> = ({ children })
     shouldRetryOnError: true,
     errorRetryCount: 3,
   });
+  const { data: backendProjects = [], error: backendProjectsError } = useSWR<ProjectSummary[]>('backend-projects', fetchProjects, {
+    shouldRetryOnError: false,
+  });
+  const activeProjectId = backendProjects[0]?.id;
+  const { data: activeBackendProject, error: activeBackendProjectError } = useSWR<ProjectDetail>(
+    activeProjectId ? ['backend-project-detail', activeProjectId] : null,
+    () => fetchProjectDetail(activeProjectId as string),
+    { shouldRetryOnError: false },
+  );
   const [activeStage, setActiveStage] = useState<StageId>('overview');
-  const [isSampleData, setIsSampleData] = useState<boolean>(true);
+  const [isSampleData, setIsSampleData] = useState<boolean>(false);
   
   const [projectData, setProjectData] = useState<ProjectData>(INITIAL_PROJECT_DATA);
   const [surveyPoints] = useState<SurveyPointRow[]>(MOCK_SURVEY_POINTS);
@@ -211,6 +224,10 @@ export const ProjectProvider: React.FC<{ children: ReactNode }> = ({ children })
       backendHealth,
       backendHealthError,
       isBackendChecking,
+      backendProjects,
+      backendProjectsError,
+      activeBackendProject,
+      activeBackendProjectError,
       snackbarMessage,
       setSnackbarMessage,
     }}>
