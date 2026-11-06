@@ -3,7 +3,6 @@ export type StageId =
   | 'setup'
   | 'survey'
   | 'terrain'
-  | 'reasoning'
   | 'design'
   | 'drawings'
   | 'beme'
@@ -61,16 +60,6 @@ export interface TerrainSummary {
     label: string;
     percentage: number;
   }[];
-}
-
-export interface CurveOption {
-  id: 'A' | 'B' | 'C';
-  radiusM: number;
-  title: string;
-  badge: 'Alternative' | 'Selected';
-  description: string;
-  cutM3: number;
-  fillM3: number;
 }
 
 export interface DesignValidationIssue {

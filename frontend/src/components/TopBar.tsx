@@ -1,77 +1,92 @@
-import React from 'react';
-import { Box, Typography, Button, InputBase, Chip } from '@mui/material';
+import React, { useState } from 'react';
+import {
+  Box,
+  Typography,
+  Button,
+  InputBase,
+  Tooltip,
+  IconButton,
+  Menu,
+  MenuItem,
+  ListItemText,
+  Divider,
+} from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
+import MenuIcon from '@mui/icons-material/Menu';
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import CheckIcon from '@mui/icons-material/Check';
 import { useProject } from '../context/ProjectContext';
-import { StageId } from '../types';
+import { tokens } from '../theme';
 
-export const TopBar: React.FC = () => {
-  const { 
-    activeStage, 
-    setActiveStage, 
-    isSampleData, 
-    setIsSampleData, 
+export const TopBar: React.FC<{ onOpenNav: () => void }> = ({ onOpenNav }) => {
+  const {
+    activeStage,
+    setActiveStage,
+    isSampleData,
+    setIsSampleData,
     setSnackbarMessage,
     backendHealth,
     backendHealthError,
     isBackendChecking,
   } = useProject();
 
-  const getBreadcrumbs = () => {
+  const [menuAnchor, setMenuAnchor] = useState<null | HTMLElement>(null);
+
+  const getHeader = () => {
     switch (activeStage) {
       case 'overview':
-        return { subtitle: 'PILOT ROAD PROJECT · MASTODON ENGINEERING SERVICES', title: 'Project overview' };
+        return { meta: 'Pilot road project', title: 'Project overview' };
       case 'setup':
-        return { subtitle: 'STAGE 1 · PROJECT SETUP', title: 'Create a project' };
+        return { meta: 'Stage 1 of 6', title: 'Create a project' };
       case 'survey':
-        return { subtitle: 'STAGE 2 · SURVEY INTAKE AND VALIDATION', title: 'Survey data' };
+        return { meta: 'Stage 2 of 6', title: 'Survey data' };
       case 'terrain':
-        return { subtitle: 'STAGE 3 · TERRAIN ENGINE', title: 'Existing terrain' };
-      case 'reasoning':
-        return { subtitle: 'STAGE 4 · INTELLIGENCE ENGINE', title: 'AI reasoning and engineer review' };
+        return { meta: 'Stage 3 of 6', title: 'Existing terrain' };
       case 'design':
-        return { subtitle: 'STAGE 5 · ENGINEERING ENGINE AND VALIDATION · REVISION C', title: 'Design engine' };
+        return { meta: 'Stage 4 of 6', title: 'Design engine', tag: 'Rev C' };
       case 'drawings':
-        return { subtitle: 'STAGE 6 · CAD ENGINE · REVISION C', title: 'Engineering drawings' };
+        return { meta: 'Stage 5 of 6', title: 'Engineering drawings', tag: 'Rev C' };
       case 'beme':
-        return { subtitle: 'STAGE 7 · QUANTITY ENGINE, BEME ENGINE AND REPORT', title: 'Quantities and BEME' };
+        return { meta: 'Stage 6 of 6', title: 'Quantities and BEME', tag: 'Draft' };
       case 'monitoring':
-        return { subtitle: 'FULL SYSTEM · DRONE-ENABLED INTELLIGENCE PACKAGE', title: 'Routes and construction monitoring' };
+        return { meta: 'Full system', title: 'Routes and monitoring' };
       default:
-        return { subtitle: 'PILOT ROAD PROJECT', title: 'Project overview' };
+        return { meta: 'Pilot road project', title: 'Project overview' };
     }
   };
 
-  const { subtitle, title } = getBreadcrumbs();
+  const { meta, title, tag } = getHeader();
 
   const getPrimaryAction = () => {
     switch (activeStage) {
       case 'overview':
         return { label: 'New project', onClick: () => setActiveStage('setup') };
       case 'setup':
-        return { label: 'Continue to survey upload', onClick: () => setActiveStage('survey') };
+        return { label: 'Continue to survey', onClick: () => setActiveStage('survey') };
       case 'survey':
         return { label: 'Build terrain model', onClick: () => setActiveStage('terrain') };
       case 'terrain':
-        return { label: 'Continue to AI reasoning', onClick: () => setActiveStage('reasoning') };
-      case 'reasoning':
-        return { label: 'Continue to design engine', onClick: () => setActiveStage('design') };
+        return { label: 'Continue to design', onClick: () => setActiveStage('design') };
       case 'design':
-        return { 
-          label: 'Approval blocked by 1 item', 
+        return {
+          label: 'Continue to drawings',
           disabled: true,
-          onClick: () => setActiveStage('drawings') 
+          hint: '1 review item must be cleared before drawings can be released.',
+          onClick: () => setActiveStage('drawings'),
         };
       case 'drawings':
         return { label: 'Continue to BEME', onClick: () => setActiveStage('beme') };
       case 'beme':
-        return { 
-          label: 'Approve BEME Rev C', 
-          onClick: () => setSnackbarMessage('BEME Rev C officially approved and signed off by Registered Engineer.') 
+        return {
+          label: 'Approve BEME',
+          onClick: () =>
+            setSnackbarMessage('BEME Rev C approved and signed off by the registered engineer.'),
         };
       case 'monitoring':
-        return { 
-          label: 'Export deviation report', 
-          onClick: () => setSnackbarMessage('Deviation report generated for flight re-survey comparison.') 
+        return {
+          label: 'Export report',
+          onClick: () =>
+            setSnackbarMessage('Deviation report generated for flight re-survey comparison.'),
         };
       default:
         return { label: 'New project', onClick: () => setActiveStage('setup') };
@@ -83,21 +98,19 @@ export const TopBar: React.FC = () => {
       case 'overview':
         return { label: 'Export report', onClick: () => setActiveStage('beme') };
       case 'setup':
-        return { label: 'Save draft', onClick: () => setSnackbarMessage('Project setup draft saved successfully.') };
+        return { label: 'Save draft', onClick: () => setSnackbarMessage('Project setup draft saved.') };
       case 'survey':
-        return { label: 'Upload another file', onClick: () => setSnackbarMessage('Survey intake modal open: drop CSV, XYZ, LAS files.') };
+        return { label: 'Upload file', onClick: () => setSnackbarMessage('Drop CSV, XYZ or LAS files to upload.') };
       case 'terrain':
-        return { label: 'Export contours', onClick: () => setSnackbarMessage('Contour shapefile and DXF contours exported.') };
-      case 'reasoning':
-        return { label: 'Reopen for changes', onClick: () => setSnackbarMessage('Parameter set v2 opened for engineer adjustments.') };
+        return { label: 'Export contours', onClick: () => setSnackbarMessage('Contour shapefile and DXF exported.') };
       case 'design':
-        return { label: 'Regenerate design', onClick: () => setSnackbarMessage('Pipeline regeneration executed. Unaffected stages served from cache.') };
+        return { label: 'Regenerate', onClick: () => setSnackbarMessage('Pipeline regenerated. Unaffected stages served from cache.') };
       case 'drawings':
-        return { label: 'Download PDF set', onClick: () => setSnackbarMessage('Complete CAD Drawing Set downloaded (PL-01, LP-01, XS-01).') };
+        return { label: 'Download PDF', onClick: () => setSnackbarMessage('Drawing set downloaded (PL-01, LP-01, XS-01).') };
       case 'beme':
-        return { label: 'Export Excel', onClick: () => setSnackbarMessage('BEME Excel workbook with active formulas downloaded.') };
+        return { label: 'Export Excel', onClick: () => setSnackbarMessage('BEME workbook with active formulas downloaded.') };
       case 'monitoring':
-        return { label: 'Upload flight data', onClick: () => setSnackbarMessage('Drone telemetry upload accepted.') };
+        return { label: 'Upload flight', onClick: () => setSnackbarMessage('Drone telemetry upload accepted.') };
       default:
         return null;
     }
@@ -106,123 +119,196 @@ export const TopBar: React.FC = () => {
   const primaryAction = getPrimaryAction();
   const secondaryAction = getSecondaryAction();
 
+  const apiState = isBackendChecking
+    ? { label: 'Connecting', color: tokens.warning }
+    : backendHealthError
+      ? { label: 'API offline', color: tokens.warning }
+      : { label: `API ${backendHealth?.status ?? 'ready'}`, color: tokens.success };
+
   return (
     <Box
       sx={{
-        height: 64,
-        px: 3,
-        backgroundColor: '#0B0F19',
-        borderBottom: '1px solid #1E293B',
+        flexShrink: 0,
+        minHeight: { xs: 60, md: 68 },
+        px: { xs: 2, md: 3 },
+        backgroundColor: tokens.base,
+        borderBottom: `1px solid ${tokens.line}`,
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'space-between',
+        gap: { xs: 1.5, md: 3 },
       }}
     >
-      {/* Title & Breadcrumbs */}
-      <Box>
-        <Typography variant="caption" sx={{ color: '#64748B', fontWeight: 600, letterSpacing: '0.04em', fontSize: '0.68rem', display: 'block' }}>
-          {subtitle}
+      <IconButton
+        aria-label="Open navigation"
+        onClick={onOpenNav}
+        sx={{
+          display: { xs: 'inline-flex', md: 'none' },
+          ml: -0.75,
+          width: 44,
+          height: 44,
+        }}
+      >
+        <MenuIcon />
+      </IconButton>
+
+      <Box sx={{ minWidth: 0, flex: 1 }}>
+        <Typography
+          variant="subtitle2"
+          noWrap
+          sx={{ color: tokens.faint, mb: 0.35, display: 'block' }}
+        >
+          {meta}
         </Typography>
-        <Typography variant="h6" sx={{ fontWeight: 600, fontSize: '1.15rem', color: '#F8FAFC', lineHeight: 1.2 }}>
-          {title}
-        </Typography>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, minWidth: 0 }}>
+          <Typography
+            noWrap
+            sx={{
+              fontSize: { xs: '1rem', md: '1.0625rem' },
+              fontWeight: 600,
+              color: tokens.text,
+              lineHeight: 1.25,
+              letterSpacing: '-0.01em',
+              minWidth: 0,
+            }}
+          >
+            {title}
+          </Typography>
+          {tag && (
+            <Box
+              sx={{
+                flexShrink: 0,
+                fontSize: '0.6875rem',
+                fontWeight: 500,
+                color: tokens.muted,
+                border: `1px solid ${tokens.lineStrong}`,
+                borderRadius: '5px',
+                px: 0.75,
+                py: '1px',
+                lineHeight: 1.5,
+              }}
+            >
+              {tag}
+            </Box>
+          )}
+        </Box>
       </Box>
 
-      {/* Right Controls */}
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-        <Chip
-          size="small"
-          label={isBackendChecking ? 'Connecting API' : backendHealthError ? 'API offline' : `API ${backendHealth?.status ?? 'ready'}`}
-          sx={{
-            color: backendHealthError ? '#FBBF24' : '#34D399',
-            backgroundColor: backendHealthError ? 'rgba(245, 158, 11, 0.12)' : 'rgba(16, 185, 129, 0.12)',
-            border: `1px solid ${backendHealthError ? '#92400E' : '#065F46'}`,
-            fontSize: '0.7rem',
-            fontWeight: 600,
-          }}
-        />
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexShrink: 0 }}>
+        <Tooltip title={backendHealthError ? 'Backend health check failed' : 'Backend health status'}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, pr: 0.5 }}>
+            <Box
+              sx={{
+                width: 6,
+                height: 6,
+                borderRadius: '50%',
+                backgroundColor: apiState.color,
+                boxShadow: `0 0 0 3px ${apiState.color}22`,
+              }}
+            />
+            <Typography sx={{ fontSize: '0.71875rem', color: tokens.faint, whiteSpace: 'nowrap', display: { xs: 'none', sm: 'block' } }}>
+              {apiState.label}
+            </Typography>
+          </Box>
+        </Tooltip>
 
-        {/* Search */}
         <Box
           sx={{
-            display: 'flex',
+            display: { xs: 'none', md: 'flex' },
             alignItems: 'center',
-            backgroundColor: '#131B2E',
-            border: '1px solid #1E293B',
-            borderRadius: 1.5,
-            px: 1.5,
-            py: 0.3,
-            width: 230,
+            backgroundColor: tokens.surface,
+            border: `1px solid ${tokens.line}`,
+            borderRadius: 2,
+            height: 34,
+            px: 1.25,
+            width: { md: 170, lg: 200 },
+            transition: 'border-color 140ms ease, box-shadow 140ms ease',
+            '&:focus-within': {
+              borderColor: '#3A4453',
+              boxShadow: '0 0 0 3px rgba(255,255,255,0.04)',
+            },
           }}
         >
-          <SearchIcon sx={{ color: '#64748B', fontSize: '1.1rem', mr: 1 }} />
+          <SearchIcon sx={{ color: tokens.faint, fontSize: '1rem', mr: 1 }} />
           <InputBase
-            placeholder="Search drawings, BEME, surveys"
+            placeholder="Search drawings, BEME"
             sx={{
-              color: '#F8FAFC',
-              fontSize: '0.78rem',
+              color: tokens.text,
+              fontSize: '0.8125rem',
               width: '100%',
-              '& input::placeholder': { color: '#64748B', opacity: 1 },
+              '& input::placeholder': { color: tokens.faint, opacity: 1 },
             }}
           />
         </Box>
 
-        {/* Sample Data Toggle Button */}
-        <Button
-          variant="outlined"
-          size="small"
-          onClick={() => {
-            setIsSampleData(!isSampleData);
-            setSnackbarMessage(isSampleData ? 'Switched to clean input mode.' : 'Sample demonstration project loaded.');
-          }}
-          sx={{
-            borderColor: '#334155',
-            color: isSampleData ? '#38BDF8' : '#94A3B8',
-            backgroundColor: isSampleData ? 'rgba(56, 189, 248, 0.08)' : 'transparent',
-            fontSize: '0.78rem',
-            '&:hover': {
-              borderColor: '#475569',
-              backgroundColor: isSampleData ? 'rgba(56, 189, 248, 0.12)' : '#1E293B',
-            },
-          }}
-        >
-          Sample data
-        </Button>
-
-        {/* Secondary Action */}
-        {secondaryAction && (
-          <Button
-            variant="outlined"
+        <Tooltip title="More actions">
+          <IconButton
             size="small"
-            onClick={secondaryAction.onClick}
-            sx={{
-              borderColor: '#334155',
-              color: '#F8FAFC',
-              fontSize: '0.78rem',
-              '&:hover': { borderColor: '#475569', backgroundColor: '#1E293B' },
+            aria-label="More actions"
+            onClick={e => setMenuAnchor(e.currentTarget)}
+            sx={{ width: { xs: 44, md: 34 }, height: { xs: 44, md: 34 }, border: `1px solid ${tokens.line}` }}
+          >
+            <MoreHorizIcon sx={{ fontSize: 18 }} />
+          </IconButton>
+        </Tooltip>
+
+        <Menu
+          anchorEl={menuAnchor}
+          open={Boolean(menuAnchor)}
+          onClose={() => setMenuAnchor(null)}
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+          transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+          slotProps={{ paper: { sx: { minWidth: 190, mt: 0.75 } } }}
+        >
+          <MenuItem
+            disabled={primaryAction.disabled}
+            onClick={() => {
+              primaryAction.onClick();
+              setMenuAnchor(null);
+            }}
+            sx={{ display: { xs: 'flex', sm: 'none' } }}
+          >
+            <ListItemText>{primaryAction.label}</ListItemText>
+          </MenuItem>
+          <Divider sx={{ display: { xs: 'block', sm: 'none' } }} />
+          {secondaryAction && (
+            <MenuItem
+              onClick={() => {
+                secondaryAction.onClick();
+                setMenuAnchor(null);
+              }}
+            >
+              <ListItemText>{secondaryAction.label}</ListItemText>
+            </MenuItem>
+          )}
+          {secondaryAction && <Divider />}
+          <MenuItem
+            onClick={() => {
+              setIsSampleData(!isSampleData);
+              setSnackbarMessage(isSampleData ? 'Switched to a clean project.' : 'Sample project loaded.');
+              setMenuAnchor(null);
             }}
           >
-            {secondaryAction.label}
-          </Button>
-        )}
+            <Box sx={{ width: 18, display: 'flex', alignItems: 'center' }}>
+              {isSampleData && <CheckIcon sx={{ fontSize: 15, color: tokens.accent }} />}
+            </Box>
+            <ListItemText>Sample data</ListItemText>
+          </MenuItem>
+        </Menu>
 
-        {/* Primary Action */}
-        <Button
-          variant="contained"
-          size="small"
-          onClick={primaryAction.onClick}
-          disabled={primaryAction.disabled}
-          sx={{
-            backgroundColor: primaryAction.disabled ? '#334155' : '#2563EB',
-            color: '#FFFFFF',
-            fontSize: '0.78rem',
-            '&:hover': {
-              backgroundColor: primaryAction.disabled ? '#334155' : '#1D4ED8',
-            },
-          }}
-        >
-          {primaryAction.label}
-        </Button>
+        <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
+          <Tooltip title={!primaryAction.disabled ? '' : (primaryAction as { hint?: string }).hint ?? ''}>
+            <span>
+              <Button
+                variant="contained"
+                size="small"
+                onClick={primaryAction.onClick}
+                disabled={primaryAction.disabled}
+              >
+                {primaryAction.label}
+              </Button>
+            </span>
+          </Tooltip>
+        </Box>
       </Box>
     </Box>
   );
