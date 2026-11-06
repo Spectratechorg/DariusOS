@@ -6,10 +6,18 @@ import {
   fetchProjectDetail, 
   fetchRunBeme,
   fetchRunTerrain,
-  uploadSurveyToBackend,
-  HealthResponse, 
-  ProjectSummary, 
+  fetchRunResult,
+  triggerPipelineRun,
+  uploadSurveyWithReport,
+  HealthResponse,
+  ProjectSummary,
   ProjectDetail,
+  PipelineRunPayload,
+  UploadSummary,
+  AlignmentPackage,
+  ProfilePackage,
+  CrossSectionPackage,
+  QuantitiesPackage,
 } from '../api';
 import { 
   StageId, 
@@ -18,7 +26,6 @@ import {
   EngineerWarning, 
   ValidationCheckItem, 
   TerrainSummary, 
-  CurveOption, 
   DesignValidationIssue, 
   BemeCategory, 
 } from '../types';
@@ -26,7 +33,6 @@ import {
   INITIAL_PROJECT_DATA, 
   MOCK_SURVEY_WARNINGS, 
   MOCK_TERRAIN_SUMMARY, 
-  MOCK_CURVE_OPTIONS, 
   MOCK_DESIGN_ISSUES, 
   MOCK_BEME_CATEGORIES, 
 } from '../data/mockData';
@@ -43,6 +49,11 @@ export interface UploadedSurveyInfo {
   maxElevation: number;
   meanElevation: number;
   uploadedAt: string;
+  verdict?: string;
+  backendStatus?: string;
+  backendSummary?: string;
+  reportWarnings?: string[];
+  reportErrors?: string[];
 }
 
 export interface AuditLogItem {
@@ -70,7 +81,7 @@ interface ProjectContextType {
   surveyWarnings: EngineerWarning[];
   toggleWarningAcknowledged: (id: string) => void;
   validationChecks: ValidationCheckItem[];
-  uploadSurveyFile: (file: File) => Promise<void>;
+  uploadSurveyFile: (file: File, crsEpsg?: number) => Promise<void>;
   loadDemoSurvey: () => void;
   isUploadingSurvey: boolean;
   
@@ -82,11 +93,6 @@ interface ProjectContextType {
   terrainSummary: TerrainSummary;
   activeTerrainTab: 'TIN' | 'Contours' | 'Alignment';
   setActiveTerrainTab: (tab: 'TIN' | 'Contours' | 'Alignment') => void;
-  
-  // AI Reasoning / Curve Options
-  curveOptions: CurveOption[];
-  selectedCurveId: 'A' | 'B' | 'C';
-  selectCurveOption: (id: 'A' | 'B' | 'C') => void;
   
   // Design Engine
   activeDesignTab: 'Longitudinal profile' | 'Horizontal alignment' | 'Cross-section';
@@ -114,7 +120,16 @@ interface ProjectContextType {
   activeBackendProject?: ProjectDetail;
   activeBackendProjectError?: Error;
   activeRun?: ProjectDetail['runs'][0];
+  activeRunId?: string;
+  activeSurveyId?: string;
   isLiveLoaded: boolean;
+  liveAlignment?: AlignmentPackage;
+  liveProfile?: ProfilePackage;
+  liveSections?: CrossSectionPackage;
+  liveQuantities?: QuantitiesPackage;
+  isRunBusy: boolean;
+  runError: string | null;
+  triggerRun: (payload: PipelineRunPayload) => Promise<void>;
 
   // Notifications
   snackbarMessage: string | null;
@@ -134,7 +149,7 @@ export const ProjectProvider: React.FC<{ children: ReactNode }> = ({ children })
   });
 
   const activeProjectId = backendProjects[0]?.id;
-  const { data: activeBackendProject, error: activeBackendProjectError } = useSWR<ProjectDetail>(
+  const { data: activeBackendProject, error: activeBackendProjectError, mutate: mutateActiveProject } = useSWR<ProjectDetail>(
     activeProjectId ? ['backend-project-detail', activeProjectId] : null,
     () => fetchProjectDetail(activeProjectId as string),
     { shouldRetryOnError: false },
@@ -155,6 +170,27 @@ export const ProjectProvider: React.FC<{ children: ReactNode }> = ({ children })
     { shouldRetryOnError: false }
   );
 
+  const { data: liveAlignment } = useSWR<AlignmentPackage>(
+    activeRunId ? ['run-alignment', activeRunId] : null,
+    () => fetchRunResult(activeRunId as string, 'alignment') as Promise<AlignmentPackage>,
+    { shouldRetryOnError: false }
+  );
+  const { data: liveProfile } = useSWR<ProfilePackage>(
+    activeRunId ? ['run-profile', activeRunId] : null,
+    () => fetchRunResult(activeRunId as string, 'profile') as Promise<ProfilePackage>,
+    { shouldRetryOnError: false }
+  );
+  const { data: liveSections } = useSWR<CrossSectionPackage>(
+    activeRunId ? ['run-sections', activeRunId] : null,
+    () => fetchRunResult(activeRunId as string, 'sections') as Promise<CrossSectionPackage>,
+    { shouldRetryOnError: false }
+  );
+  const { data: liveQuantities } = useSWR<QuantitiesPackage>(
+    activeRunId ? ['run-quantities', activeRunId] : null,
+    () => fetchRunResult(activeRunId as string, 'quantities') as Promise<QuantitiesPackage>,
+    { shouldRetryOnError: false }
+  );
+
   const [activeStage, setActiveStage] = useState<StageId>('overview');
   const [isSampleData, setIsSampleData] = useState<boolean>(false);
   
@@ -168,6 +204,9 @@ export const ProjectProvider: React.FC<{ children: ReactNode }> = ({ children })
 
   // Dynamic Survey state: Starts empty until user uploads a CSV or loads demo
   const [hasSurveyUploaded, setHasSurveyUploaded] = useState<boolean>(false);
+  const [uploadedSurveyId, setUploadedSurveyId] = useState<string | null>(null);
+  const [isRunBusy, setIsRunBusy] = useState<boolean>(false);
+  const [runError, setRunError] = useState<string | null>(null);
   const [uploadedSurvey, setUploadedSurvey] = useState<UploadedSurveyInfo | null>(null);
   const [surveyPoints, setSurveyPoints] = useState<SurveyPointRow[]>([]);
   const [surveyWarnings, setSurveyWarnings] = useState<EngineerWarning[]>([]);
@@ -201,8 +240,6 @@ export const ProjectProvider: React.FC<{ children: ReactNode }> = ({ children })
   });
   const [activeTerrainTab, setActiveTerrainTab] = useState<'TIN' | 'Contours' | 'Alignment'>('TIN');
   
-  const [curveOptions, setCurveOptions] = useState<CurveOption[]>(MOCK_CURVE_OPTIONS);
-  const [selectedCurveId, setSelectedCurveId] = useState<'A' | 'B' | 'C'>('B');
   
   const [activeDesignTab, setActiveDesignTab] = useState<'Longitudinal profile' | 'Horizontal alignment' | 'Cross-section'>('Longitudinal profile');
   const [designIssues, setDesignIssues] = useState<DesignValidationIssue[]>(MOCK_DESIGN_ISSUES);
@@ -233,6 +270,31 @@ export const ProjectProvider: React.FC<{ children: ReactNode }> = ({ children })
     }
   }, [liveTerrain]);
 
+  // Hydrate client survey state from the active backend project so a seeded
+  // project shows its survey instead of zeros on first load.
+  useEffect(() => {
+    if (!hasSurveyUploaded && activeBackendProject?.surveys?.length) {
+      const survey =
+        activeBackendProject.surveys.find(item => item.id === activeRun?.survey_file_id) ??
+        activeBackendProject.surveys[0];
+      setUploadedSurvey({
+        filename: survey.original_filename,
+        fileSizeBytes: survey.file_size_bytes,
+        pointCount: survey.point_count ?? 0,
+        columnsMapped: [],
+        sha256Hash: survey.sha256_hash,
+        minElevation: 0,
+        maxElevation: 0,
+        meanElevation: 0,
+        uploadedAt: survey.uploaded_at,
+        backendStatus: survey.status,
+        verdict: survey.status,
+      });
+      setUploadedSurveyId(survey.id);
+      setHasSurveyUploaded(true);
+    }
+  }, [activeBackendProject, activeRun?.survey_file_id, hasSurveyUploaded]);
+
   // Synchronize project data with active backend project if connected
   useEffect(() => {
     if (activeBackendProject) {
@@ -246,19 +308,6 @@ export const ProjectProvider: React.FC<{ children: ReactNode }> = ({ children })
     }
   }, [activeBackendProject]);
 
-  // Update curve options earthwork numbers if active run has live volume data
-  useEffect(() => {
-    if (activeRun?.total_cut_volume_m3) {
-      const cut = Math.round(activeRun.total_cut_volume_m3);
-      const fill = Math.round(activeRun.total_fill_volume_m3 || 0);
-      setCurveOptions([
-        { id: 'A', radiusM: 180, title: 'Tighter curve', badge: 'Alternative', description: 'Minimizes excavation volumes.', cutM3: Math.round(cut * 0.91), fillM3: Math.round(fill * 0.93) },
-        { id: 'B', radiusM: 260, title: 'Balanced alignment (Live DAG)', badge: 'Selected', description: 'Single source of truth computed directly by engineering pipeline.', cutM3: cut, fillM3: fill },
-        { id: 'C', radiusM: 420, title: 'Long radius', badge: 'Alternative', description: 'Improves high-speed comfort and stopping sight distance.', cutM3: Math.round(cut * 1.18), fillM3: Math.round(fill * 1.15) },
-      ]);
-    }
-  }, [activeRun]);
-
   const updateProjectData = (data: Partial<ProjectData>) => {
     setProjectData(prev => {
       const updated = { ...prev, ...data };
@@ -271,59 +320,97 @@ export const ProjectProvider: React.FC<{ children: ReactNode }> = ({ children })
     });
   };
 
-  const uploadSurveyFile = async (file: File) => {
+  const uploadSurveyFile = async (file: File, crsEpsg: number = 32632) => {
     setIsUploadingSurvey(true);
+    setRunError(null);
     try {
+      const isPointCloud = /\.(las|laz)$/i.test(file.name);
       const sha256 = await computeSha256(file);
-      const text = await file.text();
-      const parsed = parseSurveyCsv(text, file.name, file.size, sha256);
+      let parsed: ReturnType<typeof parseSurveyCsv> | null = null;
+
+      if (!isPointCloud) {
+        const text = await file.text();
+        parsed = parseSurveyCsv(text, file.name, file.size, sha256);
+        setSurveyPoints(parsed.points);
+        setValidationChecks(parsed.validationChecks);
+        setSurveyWarnings(parsed.warnings.length > 0 ? parsed.warnings : []);
+        setTerrainSummary(prev => ({
+          ...prev,
+          surveyPointsUsed: parsed!.totalPoints,
+          tinTriangles: Math.round(parsed!.totalPoints * 1.9),
+          lowestGroundM: parsed!.minElevation,
+          highestGroundM: parsed!.maxElevation,
+          meanSlopePercent: Math.max(1, Math.min(12, Math.round(((parsed!.maxElevation - parsed!.minElevation) / 200) * 100))),
+          classification: (parsed!.maxElevation - parsed!.minElevation) < 5 ? 'Flat' : 'Rolling',
+        }));
+      }
+
+      let summary: UploadSummary | null = null;
+      if (activeProjectId) {
+        summary = await uploadSurveyWithReport(activeProjectId, file, crsEpsg);
+      }
+
+      const pointCount =
+        summary?.quality_report?.valid_points ?? summary?.quality_report?.total_raw_points ?? parsed?.totalPoints ?? 0;
 
       setUploadedSurvey({
-        filename: parsed.filename,
-        fileSizeBytes: parsed.fileSizeBytes,
-        pointCount: parsed.totalPoints,
-        columnsMapped: parsed.columnsMapped,
-        sha256Hash: parsed.sha256Hash,
-        minElevation: parsed.minElevation,
-        maxElevation: parsed.maxElevation,
-        meanElevation: parsed.meanElevation,
+        filename: summary?.original_filename ?? file.name,
+        fileSizeBytes: summary?.file_size_bytes ?? file.size,
+        pointCount,
+        columnsMapped: parsed?.columnsMapped ?? [],
+        sha256Hash: summary?.sha256_hash ?? sha256,
+        minElevation: parsed?.minElevation ?? 0,
+        maxElevation: parsed?.maxElevation ?? 0,
+        meanElevation: parsed?.meanElevation ?? 0,
         uploadedAt: 'Just now',
+        verdict: summary?.quality_report?.verdict ?? summary?.status,
+        backendStatus: summary?.status,
+        backendSummary: summary?.plain_language_summary ?? summary?.quality_report?.summary_text,
+        reportWarnings: summary?.quality_report?.warnings,
+        reportErrors: summary?.quality_report?.errors,
       });
-
-      setSurveyPoints(parsed.points);
-      setValidationChecks(parsed.validationChecks);
-      setSurveyWarnings(parsed.warnings.length > 0 ? parsed.warnings : []);
+      if (summary?.file_id) setUploadedSurveyId(summary.file_id);
       setHasSurveyUploaded(true);
+      if (activeProjectId) mutateActiveProject();
 
-      setTerrainSummary(prev => ({
-        ...prev,
-        surveyPointsUsed: parsed.totalPoints,
-        tinTriangles: Math.round(parsed.totalPoints * 1.9),
-        lowestGroundM: parsed.minElevation,
-        highestGroundM: parsed.maxElevation,
-        meanSlopePercent: Math.max(1, Math.min(12, Math.round(((parsed.maxElevation - parsed.minElevation) / 200) * 100))),
-        classification: (parsed.maxElevation - parsed.minElevation) < 5 ? 'Flat' : 'Rolling',
-      }));
-
-      // Add to dynamic audit log
       addAuditLog(
-        `Survey intake validated: ${file.name} (${parsed.totalPoints.toLocaleString()} points, SHA-256 ${sha256.slice(0, 8)}...)`,
+        `Survey intake validated: ${file.name} (${pointCount.toLocaleString()} points, SHA-256 ${sha256.slice(0, 8)}...)`,
         'approval'
       );
 
-      // Try uploading to backend if backend active project is set
-      if (activeProjectId) {
-        uploadSurveyToBackend(activeProjectId, file).catch(() => {
-          // Gracefully continue in client-only or serverless mode
-        });
-      }
-
-      setSnackbarMessage(`Survey "${file.name}" uploaded successfully: ${parsed.totalPoints.toLocaleString()} points validated.`);
+      setSnackbarMessage(`Survey "${file.name}" uploaded: ${pointCount.toLocaleString()} points validated.`);
       setActiveStage('survey');
     } catch (err: any) {
       setSnackbarMessage(`Survey upload failed: ${err.message || 'Invalid survey file'}`);
+      setRunError(err.message || 'Survey upload failed');
     } finally {
       setIsUploadingSurvey(false);
+    }
+  };
+
+  const triggerRun = async (payload: PipelineRunPayload) => {
+    if (!activeProjectId) {
+      setRunError('No backend project available for the pipeline run.');
+      return;
+    }
+    setIsRunBusy(true);
+    setRunError(null);
+    try {
+      const result = await triggerPipelineRun(activeProjectId, payload);
+      await mutateActiveProject();
+      addAuditLog(
+        `Pipeline run ${result.run_id.slice(0, 8)} completed (${result.summary.total_length_m.toFixed(1)} m, cut ${result.summary.total_cut_volume_m3.toFixed(1)} m³)`,
+        'approval'
+      );
+      setSnackbarMessage(
+        `Design generated: ${result.summary.total_length_m.toFixed(0)} m, cut ${result.summary.total_cut_volume_m3.toFixed(0)} m³.`
+      );
+      setActiveStage('design');
+    } catch (err: any) {
+      setRunError(err.message || 'Pipeline run failed');
+      setSnackbarMessage(`Pipeline run failed: ${err.message || 'unknown error'}`);
+    } finally {
+      setIsRunBusy(false);
     }
   };
 
@@ -404,16 +491,6 @@ export const ProjectProvider: React.FC<{ children: ReactNode }> = ({ children })
     }));
   };
 
-  const selectCurveOption = (id: 'A' | 'B' | 'C') => {
-    setSelectedCurveId(id);
-    setCurveOptions(prev => prev.map(c => ({
-      ...c,
-      badge: c.id === id ? 'Selected' : 'Alternative'
-    })));
-    addAuditLog(`Selected curve option ${id} (Radius: ${id === 'A' ? 180 : id === 'B' ? 260 : 420}m)`, 'info');
-    setSnackbarMessage(`Curve option ${id} selected. Engineering calculations updated.`);
-  };
-
   const acceptDesignIssue = (id: string, note?: string) => {
     setDesignIssues(prev => prev.map(issue => {
       if (issue.id === id) {
@@ -475,9 +552,6 @@ export const ProjectProvider: React.FC<{ children: ReactNode }> = ({ children })
       terrainSummary,
       activeTerrainTab,
       setActiveTerrainTab,
-      curveOptions,
-      selectedCurveId,
-      selectCurveOption,
       activeDesignTab,
       setActiveDesignTab,
       designIssues,
@@ -497,7 +571,16 @@ export const ProjectProvider: React.FC<{ children: ReactNode }> = ({ children })
       activeBackendProject,
       activeBackendProjectError,
       activeRun,
+      activeRunId,
+      activeSurveyId: uploadedSurveyId ?? activeRun?.survey_file_id ?? activeBackendProject?.surveys?.[0]?.id,
       isLiveLoaded,
+      liveAlignment,
+      liveProfile,
+      liveSections,
+      liveQuantities,
+      isRunBusy,
+      runError,
+      triggerRun,
       snackbarMessage,
       setSnackbarMessage,
     }}>

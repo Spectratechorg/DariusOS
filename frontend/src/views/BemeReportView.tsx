@@ -1,23 +1,46 @@
-import React from 'react';
-import { Box, Card, Typography, Grid, Chip, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from '@mui/material';
+import React, { useState } from 'react';
+import { Box, Button, Card, CircularProgress, Typography, Grid, Chip, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 import { useProject } from '../context/ProjectContext';
+import { downloadRunExport } from '../api';
 
 export const BemeReportView: React.FC = () => {
-  const { 
-    bemeCategories, 
-    updateBemeRate, 
+  const {
+    bemeCategories,
     grandTotalBeme,
     activeBackendProject,
     activeRun,
-    isLiveLoaded 
+    activeRunId,
+    isLiveLoaded,
+    setSnackbarMessage,
   } = useProject();
+
+  const [exporting, setExporting] = useState<'beme' | 'pilot-report' | null>(null);
+  const runSurvey =
+    activeBackendProject?.surveys?.find(item => item.id === activeRun?.survey_file_id) ??
+    activeBackendProject?.surveys?.[0];
+
+  const handleExport = async (kind: 'beme' | 'pilot-report') => {
+    if (!activeRunId) {
+      setSnackbarMessage('Run the pipeline before exporting.');
+      return;
+    }
+    setExporting(kind);
+    try {
+      await downloadRunExport(activeRunId, kind);
+      setSnackbarMessage(kind === 'beme' ? 'BEME workbook downloaded.' : 'Pilot report downloaded.');
+    } catch (err: any) {
+      setSnackbarMessage(`Export failed: ${err.message || 'unknown error'}`);
+    } finally {
+      setExporting(null);
+    }
+  };
 
   const reportReadiness = [
     { title: 'Project information', status: 'Ready', color: '#10B981' },
     { title: 'Survey analysis', status: 'Ready', color: '#10B981' },
     { title: 'Engineering analysis', status: 'Ready', color: '#10B981' },
-    { title: 'AI recommendations', status: 'Ready', color: '#10B981' },
-    { title: 'Design drawings', status: 'Ready', color: '#10B981' },
+    { title: 'Design parameters', status: 'Ready', color: '#10B981' },
+    { title: 'Design outputs', status: 'Ready', color: '#10B981' },
     { title: 'Quantities and BEME', status: 'Draft', color: '#F59E0B' },
     { title: 'Technical notes', status: '3 Items', color: '#F59E0B' },
   ];
@@ -25,11 +48,11 @@ export const BemeReportView: React.FC = () => {
   return (
     <Box sx={{ p: { xs: 2, sm: 3 } }}>
       {/* Top Traceability Banner */}
-      <Card sx={{ p: 1.8, mb: 3, backgroundColor: '#0F1626', border: '1px solid #1E293B', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+      <Card sx={{ p: 1.8, mb: 3, backgroundColor: '#0F1626', border: '1px solid #1E293B', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1.5, flexWrap: 'wrap' }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, flexWrap: 'wrap', minWidth: 0 }}>
           <Chip label="Traceable" size="small" sx={{ backgroundColor: 'rgba(56, 189, 248, 0.15)', color: '#38BDF8', fontWeight: 600, fontSize: '0.7rem' }} />
           <Typography variant="body2" sx={{ color: '#CBD5E1', fontSize: '0.8rem' }}>
-            {isLiveLoaded ? `Every quantity computed by Python DAG run ${activeRun?.id.slice(0, 8)} from survey ${activeBackendProject?.surveys[0]?.original_filename || 'survey.csv'}.` : 'Every quantity comes from design Rev C, parameter set v2 and pilot_survey.csv.'}
+            {isLiveLoaded ? `Every quantity computed by Python DAG run ${activeRun?.id.slice(0, 8)} from survey ${runSurvey?.original_filename || 'survey.csv'}.` : 'Every quantity comes from design Rev C, parameter set v2 and pilot_survey.csv.'}
           </Typography>
         </Box>
         <Chip label={isLiveLoaded ? "Live Pipeline Quantities" : "Draft awaiting engineer approval"} size="small" sx={{ backgroundColor: isLiveLoaded ? 'rgba(16, 185, 129, 0.15)' : 'rgba(245, 158, 11, 0.15)', color: isLiveLoaded ? '#34D399' : '#FBBF24', fontWeight: 600, fontSize: '0.7rem' }} />
@@ -45,16 +68,38 @@ export const BemeReportView: React.FC = () => {
                   Bill of Engineering Measurement and Evaluation
                 </Typography>
                 <Typography variant="caption" sx={{ color: '#94A3B8' }}>
-                  Quantity times rate equals amount. Edit a rate and the totals follow.
+                  Quantities come from the pipeline run. Rates are provisional placeholders requiring engineer confirmation.
                 </Typography>
               </Box>
-              <Box sx={{ textAlign: 'right' }}>
+              <Box sx={{ textAlign: { xs: 'left', sm: 'right' } }}>
                 <Typography variant="caption" sx={{ color: '#64748B', display: 'block', fontWeight: 600, fontSize: '0.68rem' }}>
                   GRAND TOTAL
                 </Typography>
-                <Typography variant="h5" sx={{ fontWeight: 700, color: '#F8FAFC', fontFamily: 'monospace' }}>
+                <Typography variant="h5" sx={{ fontWeight: 700, color: '#F8FAFC', fontFamily: 'monospace', mb: 1 }}>
                   ₦{grandTotalBeme.toLocaleString()}
                 </Typography>
+                <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', justifyContent: { xs: 'flex-start', sm: 'flex-end' } }}>
+                  <Button
+                    size="small"
+                    variant="contained"
+                    disabled={!activeRunId || exporting !== null}
+                    onClick={() => handleExport('beme')}
+                    startIcon={exporting === 'beme' ? <CircularProgress size={14} color="inherit" /> : undefined}
+                    sx={{ backgroundColor: '#2563EB', '&:hover': { backgroundColor: '#1D4ED8' } }}
+                  >
+                    Export BEME
+                  </Button>
+                  <Button
+                    size="small"
+                    variant="outlined"
+                    disabled={!activeRunId || exporting !== null}
+                    onClick={() => handleExport('pilot-report')}
+                    startIcon={exporting === 'pilot-report' ? <CircularProgress size={14} color="inherit" /> : undefined}
+                    sx={{ borderColor: '#334155', color: '#F8FAFC' }}
+                  >
+                    Pilot report
+                  </Button>
+                </Box>
               </Box>
             </Box>
 
@@ -90,25 +135,8 @@ export const BemeReportView: React.FC = () => {
                           <TableCell sx={{ color: '#F8FAFC', fontSize: '0.78rem', textAlign: 'right', fontFamily: 'monospace' }}>
                             {item.quantity.toLocaleString()}
                           </TableCell>
-                          <TableCell sx={{ textAlign: 'right', width: 110 }}>
-                            <TextField
-                              size="small"
-                              type="number"
-                              value={item.unitRate}
-                              onChange={e => updateBemeRate(cat.categoryCode, item.code, parseFloat(e.target.value) || 0)}
-                              sx={{
-                                width: 95,
-                                '& input': {
-                                  textAlign: 'right',
-                                  fontSize: '0.78rem',
-                                  fontFamily: 'monospace',
-                                  p: '4px 6px',
-                                  color: '#38BDF8',
-                                  backgroundColor: '#090D16',
-                                  borderRadius: 1,
-                                },
-                              }}
-                            />
+                          <TableCell sx={{ textAlign: 'right', color: '#38BDF8', fontSize: '0.78rem', fontFamily: 'monospace' }}>
+                            {item.unitRate.toLocaleString()}
                           </TableCell>
                           <TableCell sx={{ color: '#F8FAFC', fontWeight: 600, fontSize: '0.78rem', textAlign: 'right', fontFamily: 'monospace' }}>
                             {item.amount.toLocaleString()}

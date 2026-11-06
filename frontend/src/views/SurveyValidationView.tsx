@@ -12,7 +12,9 @@ import {
   TableContainer, 
   TableHead, 
   TableRow,
-  CircularProgress
+  CircularProgress,
+  TextField,
+  Alert
 } from '@mui/material';
 import UploadFileOutlinedIcon from '@mui/icons-material/UploadFileOutlined';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
@@ -32,18 +34,20 @@ export const SurveyValidationView: React.FC = () => {
     loadDemoSurvey,
     isUploadingSurvey,
     setActiveStage,
+    runError,
   } = useProject();
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isDragOver, setIsDragOver] = useState(false);
   const [displayCount, setDisplayCount] = useState<number>(10);
+  const [crs, setCrs] = useState('32632');
 
   const acknowledgedCount = surveyWarnings.filter(w => w.isAcknowledged).length;
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      uploadSurveyFile(file);
+      uploadSurveyFile(file, parseInt(crs, 10) || 32632);
     }
   };
 
@@ -52,7 +56,7 @@ export const SurveyValidationView: React.FC = () => {
     setIsDragOver(false);
     const file = e.dataTransfer.files?.[0];
     if (file) {
-      uploadSurveyFile(file);
+      uploadSurveyFile(file, parseInt(crs, 10) || 32632);
     }
   };
 
@@ -60,10 +64,11 @@ export const SurveyValidationView: React.FC = () => {
 
   return (
     <Box sx={{ p: { xs: 2, sm: 3 } }}>
+      {runError && <Alert severity="error" sx={{ mb: 2 }}>{runError}</Alert>}
       <input
         type="file"
         ref={fileInputRef}
-        accept=".csv,.xyz,.txt"
+        accept=".csv,.xyz,.txt,.las,.laz"
         style={{ display: 'none' }}
         onChange={handleFileChange}
       />
@@ -93,7 +98,14 @@ export const SurveyValidationView: React.FC = () => {
                   Drop your CSV, XYZ, or LAS file with Easting, Northing, and Elevation coordinates.
                 </Typography>
               </Box>
-              <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+              <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', alignItems: 'center' }}>
+                <TextField
+                  size="small"
+                  label="CRS (EPSG)"
+                  value={crs}
+                  onChange={e => setCrs(e.target.value.replace(/[^0-9]/g, ''))}
+                  sx={{ width: { xs: '100%', sm: 120 }, '& input': { fontFamily: 'monospace' } }}
+                />
                 <Button
                   variant="outlined"
                   size="small"
@@ -172,7 +184,7 @@ export const SurveyValidationView: React.FC = () => {
                   />
                 </Box>
                 <Typography variant="caption" sx={{ color: '#94A3B8', display: 'block', mb: 1 }}>
-                  {surveyPoints.length.toLocaleString()} points validated · {(uploadedSurvey?.fileSizeBytes ? (uploadedSurvey.fileSizeBytes / 1024).toFixed(1) : '9.4')} KB · Coordinates in metres (UTM Zone 32N)
+                  {(uploadedSurvey?.pointCount ?? surveyPoints.length).toLocaleString()} points validated · {(uploadedSurvey?.fileSizeBytes ? (uploadedSurvey.fileSizeBytes / 1024).toFixed(1) : '9.4')} KB · Coordinates in metres (UTM Zone 32N)
                 </Typography>
                 <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
                   {(uploadedSurvey?.columnsMapped || ['Point ID', 'Easting', 'Northing', 'Elevation', 'Description']).map(col => (
@@ -186,6 +198,29 @@ export const SurveyValidationView: React.FC = () => {
                 </Box>
               </Box>
             </Box>
+
+            {uploadedSurvey?.backendSummary && (
+              <Box sx={{ mt: 1.5, p: 1.5, borderRadius: 1.5, border: '1px solid #1E293B', backgroundColor: '#0B0F19' }}>
+                <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mb: 1 }}>
+                  <Chip label={`PIPELINE ${uploadedSurvey.verdict || 'PENDING'}`} size="small" sx={{ backgroundColor: 'rgba(56,189,248,0.12)', color: '#38BDF8', fontWeight: 600, fontSize: '0.65rem' }} />
+                  {uploadedSurvey.backendStatus && (
+                    <Chip label={uploadedSurvey.backendStatus} size="small" sx={{ backgroundColor: '#1E293B', color: '#94A3B8', fontSize: '0.65rem' }} />
+                  )}
+                </Box>
+                <Typography sx={{ fontSize: '0.75rem', color: '#94A3B8', lineHeight: 1.5 }}>
+                  {uploadedSurvey.backendSummary}
+                </Typography>
+                {(uploadedSurvey.reportErrors?.length || uploadedSurvey.reportWarnings?.length) ? (
+                  <Box component="ul" sx={{ m: 0, mt: 1, pl: 2 }}>
+                    {[...(uploadedSurvey.reportErrors || []), ...(uploadedSurvey.reportWarnings || [])].slice(0, 4).map((msg, idx) => (
+                      <li key={idx}>
+                        <Typography sx={{ fontSize: '0.72rem', color: '#EFC06A' }}>{msg}</Typography>
+                      </li>
+                    ))}
+                  </Box>
+                ) : null}
+              </Box>
+            )}
           </Card>
 
           {/* Structured Project Dataset Table */}
@@ -200,7 +235,7 @@ export const SurveyValidationView: React.FC = () => {
                 </Typography>
               </Box>
               <Typography variant="caption" sx={{ color: '#64748B', fontWeight: 600, letterSpacing: '0.04em' }}>
-                SHOWING {Math.min(displayCount, surveyPoints.length)} OF {surveyPoints.length.toLocaleString()} POINTS
+                SHOWING {Math.min(displayCount, surveyPoints.length)} OF {(uploadedSurvey?.pointCount ?? surveyPoints.length).toLocaleString()} POINTS
               </Typography>
             </Box>
 

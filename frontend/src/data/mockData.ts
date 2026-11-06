@@ -1,7 +1,6 @@
 import type {
   AsBuiltComparisonRow,
   BemeCategory,
-  CurveOption,
   DesignValidationIssue,
   EngineerWarning,
   ProjectData,
@@ -60,11 +59,6 @@ export const MOCK_TERRAIN_SUMMARY: TerrainSummary = {
   ],
 };
 
-export const MOCK_CURVE_OPTIONS: CurveOption[] = [
-  { id: 'A', radiusM: 180, title: 'Tighter curve', badge: 'Alternative', description: 'Minimizes excavation volumes.', cutM3: 126, fillM3: 0 },
-  { id: 'B', radiusM: 260, title: 'Balanced alignment (Live DAG)', badge: 'Selected', description: 'Single source of truth computed directly by engineering pipeline.', cutM3: 138, fillM3: 0 },
-  { id: 'C', radiusM: 420, title: 'Long radius', badge: 'Alternative', description: 'Improves high-speed comfort and stopping sight distance.', cutM3: 163, fillM3: 0 },
-];
 
 export const MOCK_DESIGN_ISSUES: DesignValidationIssue[] = [
   { id: 'd1', title: 'Gradient review at Ch 1+840', severity: 'Review required', description: 'Gradient exceeds the preferred threshold for heavy vehicles.', isAccepted: false },
