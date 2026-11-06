@@ -58,3 +58,6 @@ pgdata/
 .DS_Store
 Thumbs.db
 .vercel
+
+# Impeccable
+.impeccable/
