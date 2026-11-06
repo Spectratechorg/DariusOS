@@ -25,8 +25,6 @@ class SurveyCleaner:
         rejected_indices = (
             validation.nan_or_inf_indices
             | validation.duplicate_indices
-            | validation.spike_indices
-            | validation.hole_indices
         )
 
         if not rejected_indices:

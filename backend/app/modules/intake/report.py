@@ -39,9 +39,9 @@ class IntakeReportGenerator:
         if validation.duplicate_indices:
             cleaning_details.append(f"{len(validation.duplicate_indices)} duplicate points removed")
         if validation.spike_indices:
-            cleaning_details.append(f"{len(validation.spike_indices)} planted elevation spikes isolated")
+            cleaning_details.append(f"{len(validation.spike_indices)} high elevation outliers flagged for review (kept)")
         if validation.hole_indices:
-            cleaning_details.append(f"{len(validation.hole_indices)} planted elevation holes isolated")
+            cleaning_details.append(f"{len(validation.hole_indices)} low elevation outliers flagged for review (kept)")
         if validation.nan_or_inf_indices:
             cleaning_details.append(f"{len(validation.nan_or_inf_indices)} invalid/blank coordinate rows dropped")
 

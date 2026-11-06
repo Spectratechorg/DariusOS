@@ -51,17 +51,80 @@ export type ProjectDetail = ProjectSummary & {
   }>
 }
 
-async function fetchJson<T>(path: string, init?: RequestInit): Promise<T> {
-  const response = await fetch(`${API_BASE_URL}${path}`, {
-    ...init,
-    headers: { 'Content-Type': 'application/json', ...init?.headers },
-  })
+const TOKEN_KEY = 'dariusos_token'
+export const getToken = () => localStorage.getItem(TOKEN_KEY)
+export const setToken = (t: string | null) =>
+  t ? localStorage.setItem(TOKEN_KEY, t) : localStorage.removeItem(TOKEN_KEY)
+
+async function fetchJson<T>(path: string, init: RequestInit = {}): Promise<T> {
+  const headers = new Headers(init.headers)
+  // Let the browser set the multipart boundary for FormData
+  if (init.body && !(init.body instanceof FormData) && !headers.has('Content-Type')) {
+    headers.set('Content-Type', 'application/json')
+  }
+  const token = getToken()
+  if (token) headers.set('Authorization', `Bearer ${token}`)
+
+  const response = await fetch(`${API_BASE_URL}${path}`, { ...init, headers })
+  if (response.status === 401) setToken(null)
   if (!response.ok) {
-    throw new Error(`Backend request failed with status ${response.status}`)
+    let detail = ''
+    try {
+      const body = await response.json()
+      detail = typeof body.detail === 'string' ? body.detail : JSON.stringify(body.detail)
+    } catch { /* ignore */ }
+    throw new Error(detail || `Request failed (${response.status})`)
   }
   return response.json() as Promise<T>
 }
 
+
+export type QualityReport = {
+  verdict: 'PASSED' | 'PASSED_WITH_WARNINGS' | 'REJECTED'
+  total_raw_points: number
+  valid_points: number
+  duplicate_count: number
+  blank_or_nan_count: number
+  spikes_count: number
+  holes_count: number
+  density_pts_m2: number
+  bounds: { min_x: number; max_x: number; min_y: number; max_y: number; min_z: number; max_z: number }
+  crs_epsg: number | null
+  warnings: string[]
+  errors: string[]
+  summary_text: string
+}
+
+export type SurveyUploadResponse = {
+  file_id: string; project_id: string; original_filename: string; file_format: string
+  sha256_hash: string; file_size_bytes: number
+  status: 'PENDING' | 'VALIDATED' | 'REJECTED'
+  quality_report: QualityReport | null
+  plain_language_summary: string
+}
+
+export function createProject(name: string, description?: string): Promise<ProjectSummary> {
+  return fetchJson<ProjectSummary>('/projects', {
+    method: 'POST',
+    body: JSON.stringify({ name, description }),
+  })
+}
+
+export function uploadSurvey(projectId: string, file: File, crsEpsg: number): Promise<SurveyUploadResponse> {
+  const form = new FormData()
+  form.append('file', file)
+  form.append('crs_epsg', String(crsEpsg))
+  return fetchJson<SurveyUploadResponse>(`/projects/${encodeURIComponent(projectId)}/surveys`, {
+    method: 'POST',
+    body: form,
+  })
+}
+
+export function fetchSurveyReport(surveyId: string) {
+  return fetchJson<{ survey_id: string; status: string; quality_report: QualityReport }>(
+    `/surveys/${encodeURIComponent(surveyId)}/report`,
+  )
+}
 export function fetchProjects(): Promise<ProjectSummary[]> {
   return fetchJson<ProjectSummary[]>('/projects')
 }
@@ -71,3 +134,13 @@ export function fetchProjectDetail(projectId: string): Promise<ProjectDetail> {
 }
 
 export { API_BASE_URL }
+
+export type SurveySummary = {
+  id: string; original_filename: string; file_format: string; sha256_hash: string
+  file_size_bytes: number; point_count: number | null; density_pts_m2: number | null
+  status: 'PENDING' | 'VALIDATED' | 'REJECTED'; uploaded_at: string
+}
+
+export function fetchSurveys(projectId: string): Promise<SurveySummary[]> {
+  return fetchJson<SurveySummary[]>(`/projects/${encodeURIComponent(projectId)}/surveys`)
+}
