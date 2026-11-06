@@ -21,7 +21,6 @@ import {
   CurveOption, 
   DesignValidationIssue, 
   BemeCategory, 
-  AsBuiltComparisonRow, 
 } from '../types';
 import { 
   INITIAL_PROJECT_DATA, 
@@ -30,7 +29,6 @@ import {
   MOCK_CURVE_OPTIONS, 
   MOCK_DESIGN_ISSUES, 
   MOCK_BEME_CATEGORIES, 
-  MOCK_AS_BUILT_ROWS, 
 } from '../data/mockData';
 import { parseSurveyCsv, computeSha256 } from '../utils/surveyParser';
 import { SLOPE_CSV_RAW, SLOPE_CSV_FILENAME, SLOPE_CSV_SIZE, SLOPE_CSV_SHA256 } from '../data/demoSurveyData';
@@ -106,13 +104,6 @@ interface ProjectContextType {
   bemeCategories: BemeCategory[];
   updateBemeRate: (categoryCode: string, itemCode: string, newRate: number) => void;
   grandTotalBeme: number;
-  
-  // Routes & Monitoring
-  selectedRouteId: string;
-  setSelectedRouteId: (id: string) => void;
-  activeTolerance: '0.5 m' | '1 m' | '2 m';
-  setActiveTolerance: (tol: '0.5 m' | '1 m' | '2 m') => void;
-  asBuiltRows: AsBuiltComparisonRow[];
   
   // Backend connection & live results
   backendHealth?: HealthResponse;
@@ -225,10 +216,6 @@ export const ProjectProvider: React.FC<{ children: ReactNode }> = ({ children })
   });
   
   const [bemeCategories, setBemeCategories] = useState<BemeCategory[]>(MOCK_BEME_CATEGORIES);
-  
-  const [selectedRouteId, setSelectedRouteId] = useState<string>('balanced');
-  const [activeTolerance, setActiveTolerance] = useState<'0.5 m' | '1 m' | '2 m'>('1 m');
-  const [asBuiltRows] = useState<AsBuiltComparisonRow[]>(MOCK_AS_BUILT_ROWS);
   
   const [snackbarMessage, setSnackbarMessage] = useState<string | null>(null);
 
@@ -502,11 +489,6 @@ export const ProjectProvider: React.FC<{ children: ReactNode }> = ({ children })
       bemeCategories,
       updateBemeRate,
       grandTotalBeme,
-      selectedRouteId,
-      setSelectedRouteId,
-      activeTolerance,
-      setActiveTolerance,
-      asBuiltRows,
       backendHealth,
       backendHealthError,
       isBackendChecking,

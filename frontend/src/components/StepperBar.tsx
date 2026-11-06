@@ -4,7 +4,7 @@ import { useProject } from '../context/ProjectContext';
 import { StageId } from '../types';
 
 export const StepperBar: React.FC = () => {
-  const { activeStage, setActiveStage } = useProject();
+  const { activeStage, setActiveStage, hasSurveyUploaded } = useProject();
 
   const steps: { id: StageId; number: number; label: string }[] = [
     { id: 'setup', number: 1, label: 'Setup' },
@@ -16,8 +16,8 @@ export const StepperBar: React.FC = () => {
   ];
 
   // Stage order index for progress indicator
-  const stageOrder: Record<StageId, number> = {
-    overview: 4,
+  const stageOrder: Record<string, number> = {
+    overview: hasSurveyUploaded ? 3 : 1,
     setup: 1,
     survey: 2,
     terrain: 3,
@@ -25,7 +25,6 @@ export const StepperBar: React.FC = () => {
     design: 4,
     drawings: 5,
     beme: 6,
-    monitoring: 6,
   };
 
   const currentStepNum = stageOrder[activeStage] || 1;
@@ -45,8 +44,8 @@ export const StepperBar: React.FC = () => {
     >
       <Box sx={{ display: 'flex', width: '100%', justifyContent: 'space-between', alignItems: 'center' }}>
         {steps.map(s => {
-          const isCompleted = s.number < currentStepNum;
-          const isCurrent = s.id === activeStage || (activeStage === 'overview' && s.number <= 4);
+          const isCompleted = s.number < currentStepNum || (hasSurveyUploaded && s.number <= 2);
+          const isCurrent = s.id === activeStage;
           const color = isCurrent ? '#38BDF8' : isCompleted ? '#10B981' : '#64748B';
 
           return (
@@ -58,46 +57,46 @@ export const StepperBar: React.FC = () => {
                 display: 'flex',
                 alignItems: 'center',
                 gap: 0.8,
-                py: 0.4,
-                px: 1,
-                borderRadius: 1,
-                '&:hover': { backgroundColor: 'rgba(255,255,255,0.03)' },
+                opacity: isCurrent || isCompleted ? 1 : 0.6,
+                transition: 'opacity 0.2s',
+                '&:hover': { opacity: 1 },
               }}
             >
+              <Box
+                sx={{
+                  width: 16,
+                  height: 16,
+                  borderRadius: '50%',
+                  border: `1.5px solid ${color}`,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  backgroundColor: isCompleted ? color : 'transparent',
+                }}
+              >
+                {isCompleted ? (
+                  <Box sx={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: '#0A0E17' }} />
+                ) : (
+                  <Typography sx={{ fontSize: '0.6rem', color, fontWeight: 700 }}>
+                    {s.number}
+                  </Typography>
+                )}
+              </Box>
+
               <Typography
                 variant="caption"
                 sx={{
-                  color,
                   fontWeight: isCurrent ? 700 : 500,
+                  color: isCurrent ? '#F8FAFC' : color,
                   fontSize: '0.75rem',
+                  letterSpacing: '0.01em',
                 }}
               >
-                {s.number} · {s.label}
+                {s.label}
               </Typography>
             </Box>
           );
         })}
-      </Box>
-
-      {/* Progress Line */}
-      <Box
-        sx={{
-          position: 'absolute',
-          bottom: 0,
-          left: 0,
-          height: 2,
-          backgroundColor: '#1E293B',
-          width: '100%',
-        }}
-      >
-        <Box
-          sx={{
-            height: '100%',
-            backgroundColor: '#10B981',
-            width: `${Math.min(100, (currentStepNum / 7) * 100)}%`,
-            transition: 'width 0.3s ease',
-          }}
-        />
       </Box>
     </Box>
   );

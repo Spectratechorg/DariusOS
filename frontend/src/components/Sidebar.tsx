@@ -1,7 +1,6 @@
 import React from 'react';
 import { Box, Typography, List, ListItemButton, ListItemText, ListItemIcon } from '@mui/material';
 import DashboardOutlinedIcon from '@mui/icons-material/DashboardOutlined';
-import LayersOutlinedIcon from '@mui/icons-material/LayersOutlined';
 import { useProject } from '../context/ProjectContext';
 import { StageId } from '../types';
 
@@ -146,42 +145,6 @@ export const Sidebar: React.FC = () => {
                 </ListItemButton>
               );
             })}
-          </List>
-        </Box>
-
-        {/* FULL SYSTEM */}
-        <Box sx={{ px: 2, mt: 2 }}>
-          <Typography variant="subtitle2" sx={{ px: 1, mb: 0.5, color: '#64748B', fontSize: '0.7rem' }}>
-            FULL SYSTEM
-          </Typography>
-          <List disablePadding>
-            <ListItemButton
-              selected={activeStage === 'monitoring'}
-              onClick={() => setActiveStage('monitoring')}
-              sx={{
-                borderRadius: 1.5,
-                py: 0.6,
-                px: 1.5,
-                backgroundColor: activeStage === 'monitoring' ? '#1E293B' : 'transparent',
-                '&.Mui-selected': {
-                  backgroundColor: '#1E293B',
-                  '&:hover': { backgroundColor: '#1E293B' },
-                },
-                '&:hover': { backgroundColor: '#131D2E' },
-              }}
-            >
-              <ListItemIcon sx={{ minWidth: 28, color: activeStage === 'monitoring' ? '#38BDF8' : '#64748B' }}>
-                <LayersOutlinedIcon fontSize="small" />
-              </ListItemIcon>
-              <ListItemText
-                primary="Routes and monitoring"
-                primaryTypographyProps={{
-                  fontSize: '0.825rem',
-                  fontWeight: activeStage === 'monitoring' ? 600 : 400,
-                  color: activeStage === 'monitoring' ? '#F8FAFC' : '#94A3B8',
-                }}
-              />
-            </ListItemButton>
           </List>
         </Box>
       </Box>

@@ -37,10 +37,10 @@ export const DesignEngineView: React.FC = () => {
               <CheckCircleOutlinedIcon sx={{ color: '#10B981', fontSize: '1.1rem' }} />
               <Box>
                 <Typography variant="body2" sx={{ fontWeight: 600, color: '#F8FAFC', fontSize: '0.8rem' }}>
-                  AI proposes
+                  Design criteria
                 </Typography>
                 <Typography variant="caption" sx={{ color: '#64748B', fontSize: '0.7rem' }}>
-                  Parameter set v2 approved
+                  FMW&H / AASHTO applied
                 </Typography>
               </Box>
             </Box>

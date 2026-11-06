@@ -8,8 +8,6 @@ export const TopBar: React.FC = () => {
   const { 
     activeStage, 
     setActiveStage, 
-    isSampleData, 
-    setIsSampleData, 
     setSnackbarMessage,
     backendHealth,
     backendHealthError,
@@ -23,20 +21,18 @@ export const TopBar: React.FC = () => {
       case 'overview':
         return { subtitle: projectSub, title: 'Project overview' };
       case 'setup':
-        return { subtitle: 'STAGE 1 · PROJECT SETUP', title: 'Create a project' };
+        return { subtitle: 'STAGE 1 · PROJECT SETUP', title: 'Corridor specifications' };
       case 'survey':
-        return { subtitle: 'STAGE 2 · SURVEY INTAKE AND VALIDATION', title: 'Survey data' };
+        return { subtitle: 'STAGE 2 · SURVEY INTAKE AND VALIDATION', title: 'Survey coordinates & validation' };
       case 'terrain':
-        return { subtitle: 'STAGE 3 · TERRAIN ENGINE', title: 'Existing terrain' };
+        return { subtitle: 'STAGE 3 · TERRAIN ENGINE', title: 'Existing terrain surface' };
       case 'design':
       case 'reasoning':
-        return { subtitle: 'STAGE 4 · ENGINEERING ENGINE AND VALIDATION', title: 'Design engine' };
+        return { subtitle: 'STAGE 4 · ENGINEERING ENGINE AND VALIDATION', title: 'Geometric design engine' };
       case 'drawings':
-        return { subtitle: 'STAGE 5 · CAD ENGINE', title: 'Engineering drawings' };
+        return { subtitle: 'STAGE 5 · CAD ENGINE', title: 'Engineering CAD drawings' };
       case 'beme':
-        return { subtitle: 'STAGE 6 · QUANTITY ENGINE, BEME ENGINE AND REPORT', title: 'Quantities and BEME' };
-      case 'monitoring':
-        return { subtitle: 'FULL SYSTEM · DRONE-ENABLED INTELLIGENCE PACKAGE', title: 'Routes and construction monitoring' };
+        return { subtitle: 'STAGE 6 · QUANTITY ENGINE, BEME ENGINE AND REPORT', title: 'Quantities and BEME schedule' };
       default:
         return { subtitle: projectSub, title: 'Project overview' };
     }
@@ -47,9 +43,9 @@ export const TopBar: React.FC = () => {
   const getPrimaryAction = (): { label: string; onClick: () => void; disabled?: boolean } => {
     switch (activeStage) {
       case 'overview':
-        return { label: 'New project', onClick: () => setActiveStage('setup') };
+        return { label: 'New project setup', onClick: () => setActiveStage('setup') };
       case 'setup':
-        return { label: 'Continue to survey upload', onClick: () => setActiveStage('survey') };
+        return { label: 'Proceed to survey intake', onClick: () => setActiveStage('survey') };
       case 'survey':
         return { label: 'Build terrain model', onClick: () => setActiveStage('terrain') };
       case 'terrain':
@@ -58,15 +54,13 @@ export const TopBar: React.FC = () => {
         return { label: 'Continue to design engine', onClick: () => setActiveStage('design') };
       case 'design':
         return { 
-          label: 'Continue to drawings', 
+          label: 'Continue to CAD drawings', 
           onClick: () => setActiveStage('drawings')
         };
       case 'drawings':
         return { label: 'Generate BEME and report', onClick: () => setActiveStage('beme') };
       case 'beme':
         return { label: 'Sign & release package', onClick: () => setSnackbarMessage('Release package generated. COREN digital signature required.') };
-      case 'monitoring':
-        return { label: 'Run tolerance analysis', onClick: () => setSnackbarMessage('Tolerance analysis run. 8 deviations flagged.') };
       default:
         return { label: 'Action', onClick: () => {} };
     }
@@ -77,9 +71,9 @@ export const TopBar: React.FC = () => {
       case 'overview':
         return { label: 'Export report', onClick: () => setActiveStage('beme') };
       case 'setup':
-        return { label: 'Save draft', onClick: () => setSnackbarMessage('Project setup draft saved successfully.') };
+        return { label: 'Save draft', onClick: () => setSnackbarMessage('Project setup specifications saved.') };
       case 'survey':
-        return { label: 'Upload another file', onClick: () => setSnackbarMessage('Survey intake modal open: drop CSV, XYZ, LAS files.') };
+        return { label: 'Upload another file', onClick: () => setSnackbarMessage('Survey intake dropzone active.') };
       case 'terrain':
         return { label: 'Export contours', onClick: () => setSnackbarMessage('Contour shapefile and DXF contours exported.') };
       case 'reasoning':
@@ -89,8 +83,6 @@ export const TopBar: React.FC = () => {
         return { label: 'Download PDF set', onClick: () => setSnackbarMessage('Complete CAD Drawing Set downloaded (PL-01, LP-01, XS-01).') };
       case 'beme':
         return { label: 'Export Excel', onClick: () => setSnackbarMessage('BEME Excel workbook with active formulas downloaded.') };
-      case 'monitoring':
-        return { label: 'Upload flight data', onClick: () => setSnackbarMessage('Drone telemetry upload accepted.') };
       default:
         return null;
     }
@@ -199,28 +191,6 @@ export const TopBar: React.FC = () => {
             }}
           />
         </Box>
-
-        {/* Sample Data Toggle Button */}
-        <Button
-          variant="outlined"
-          size="small"
-          onClick={() => {
-            setIsSampleData(!isSampleData);
-            setSnackbarMessage(isSampleData ? 'Switched to clean input mode.' : 'Sample demonstration project loaded.');
-          }}
-          sx={{
-            borderColor: '#334155',
-            color: isSampleData ? '#38BDF8' : '#94A3B8',
-            backgroundColor: isSampleData ? 'rgba(56, 189, 248, 0.08)' : 'transparent',
-            fontSize: '0.78rem',
-            '&:hover': {
-              borderColor: '#475569',
-              backgroundColor: isSampleData ? 'rgba(56, 189, 248, 0.12)' : '#1E293B',
-            },
-          }}
-        >
-          Sample data
-        </Button>
 
         {/* Secondary Action */}
         {secondaryAction && (

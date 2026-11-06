@@ -12,11 +12,9 @@ import { OverviewView } from './views/OverviewView';
 import { ProjectSetupView } from './views/ProjectSetupView';
 import { SurveyValidationView } from './views/SurveyValidationView';
 import { TerrainView } from './views/TerrainView';
-import { AiReasoningView } from './views/AiReasoningView';
 import { DesignEngineView } from './views/DesignEngineView';
 import { DrawingsView } from './views/DrawingsView';
 import { BemeReportView } from './views/BemeReportView';
-import { RoutesMonitoringView } from './views/RoutesMonitoringView';
 
 const MainLayout: React.FC = () => {
   const { activeStage, snackbarMessage, setSnackbarMessage } = useProject();
@@ -31,16 +29,13 @@ const MainLayout: React.FC = () => {
         return <SurveyValidationView />;
       case 'terrain':
         return <TerrainView />;
-      case 'reasoning':
-        return <DesignEngineView />;
       case 'design':
+      case 'reasoning':
         return <DesignEngineView />;
       case 'drawings':
         return <DrawingsView />;
       case 'beme':
         return <BemeReportView />;
-      case 'monitoring':
-        return <RoutesMonitoringView />;
       default:
         return <OverviewView />;
     }

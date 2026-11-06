@@ -144,10 +144,10 @@ export const OverviewView: React.FC = () => {
                 variant="contained"
                 size="small"
                 startIcon={<UploadFileOutlinedIcon />}
-                onClick={() => setActiveStage('setup')}
+                onClick={() => setActiveStage('survey')}
                 sx={{ backgroundColor: '#2563EB', '&:hover': { backgroundColor: '#1D4ED8' }, textTransform: 'none', fontWeight: 600, fontSize: '0.8rem' }}
               >
-                Upload survey CSV
+                Upload survey CSV (Stage 2)
               </Button>
               <Button
                 variant="outlined"
