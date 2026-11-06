@@ -41,14 +41,6 @@ const pipelineStatus: {
   },
   {
     num: 4,
-    name: 'AI reasoning',
-    desc: 'Parameter set approved by the engineering lead',
-    engine: 'Intelligence engine',
-    status: { label: 'Approved', color: tokens.success },
-    stageId: 'reasoning',
-  },
-  {
-    num: 5,
     name: 'Design engine',
     desc: '22 of 27 checks pass, 1 needs review',
     engine: 'Engineering engine',
@@ -56,7 +48,7 @@ const pipelineStatus: {
     stageId: 'design',
   },
   {
-    num: 6,
+    num: 5,
     name: 'Drawings',
     desc: 'Plan, profile and cross-sections as DXF and PDF',
     engine: 'CAD engine',
@@ -64,7 +56,7 @@ const pipelineStatus: {
     stageId: 'drawings',
   },
   {
-    num: 7,
+    num: 6,
     name: 'BEME and report',
     desc: 'Quantity times rate, traced to one design revision',
     engine: 'Quantity and BEME',
@@ -87,13 +79,6 @@ const reviewItems = [
     badge: 'Warning',
     color: tokens.warning,
     stage: 'design',
-  },
-  {
-    title: 'Curve radius options for the bend at Ch 0+950',
-    meta: 'AI reasoning · three alternatives compared',
-    badge: 'Awaiting approval',
-    color: tokens.accent,
-    stage: 'reasoning',
   },
 ] as const;
 
@@ -147,19 +132,15 @@ export const OverviewView: React.FC = () => {
   const { setActiveStage } = useProject();
 
   return (
-    <Box sx={{ p: 3 }}>
+    <Box sx={{ p: { xs: 2, sm: 3 } }}>
       {/* Summary strip */}
       <Paper
         sx={{
-          display: 'flex',
-          alignItems: 'stretch',
+          display: 'grid',
+          gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', lg: 'repeat(4, 1fr)' },
           mb: 2.5,
           overflow: 'hidden',
-          '& > *:not(:last-of-type)': { borderRight: `1px solid ${tokens.line}` },
-          '@media (max-width: 900px)': {
-            flexWrap: 'wrap',
-            '& > *': { flex: '1 1 50%' },
-          },
+          '& > *': { borderTop: `1px solid ${tokens.line}`, borderLeft: `1px solid ${tokens.line}` },
         }}
       >
         <Stat
@@ -209,10 +190,10 @@ export const OverviewView: React.FC = () => {
               <Box>
                 <Typography variant="h6">Workflow pipeline</Typography>
                 <Typography variant="caption" sx={{ color: tokens.faint }}>
-                  Seven stages from survey to signed report
+                  Six stages from survey to signed report
                 </Typography>
               </Box>
-              <Typography sx={{ fontSize: '0.71875rem', color: tokens.faint }}>Design revision C</Typography>
+              <Typography sx={{ fontSize: '0.71875rem', color: tokens.faint, display: { xs: 'none', sm: 'block' } }}>Design revision C</Typography>
             </Box>
             <Divider />
             <Box sx={{ px: 1 }}>
@@ -228,7 +209,7 @@ export const OverviewView: React.FC = () => {
                   sx={{
                     display: 'flex',
                     alignItems: 'center',
-                    gap: 2,
+                    gap: { xs: 1.5, md: 2 },
                     px: 1.5,
                     py: 1.25,
                     borderRadius: '8px',
@@ -297,18 +278,18 @@ export const OverviewView: React.FC = () => {
               How every output is produced
             </Typography>
             <Typography variant="caption" sx={{ color: tokens.muted, display: 'block', mb: 2.5 }}>
-              The AI never issues the final answer. It proposes, the engine calculates, validation checks, and an
-              engineer approves.
+              The engine never issues the final answer on its own. It calculates, validation checks every result, and an
+              engineer reviews the output.
             </Typography>
 
             <Box sx={{ display: 'flex', gap: 2.5, flexWrap: 'wrap' }}>
               {[
-                ['AI proposes', 'Suggests parameters and alternatives, with reasons.'],
+                ['Survey is ingested', 'Points are validated and cleaned before design.'],
                 ['Engine calculates', 'Deterministic maths produces alignment, profile and volumes.'],
                 ['Validation checks', 'Every result is marked pass, warning or review.'],
                 ['Engineer approves', 'Nothing is released without a qualified sign-off.'],
               ].map(([title, body], i) => (
-                <Box key={title} sx={{ flex: '1 1 170px', minWidth: 0, position: 'relative', pl: 0 }}>
+                <Box key={title} sx={{ flex: '1 1 150px', minWidth: 0, position: 'relative', pl: 0 }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.75 }}>
                     <Typography
                       sx={{
@@ -337,7 +318,7 @@ export const OverviewView: React.FC = () => {
           <Paper sx={{ mb: 2.5 }}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', px: 2.25, pt: 2, pb: 1.5 }}>
               <Typography variant="h6">Needs engineer review</Typography>
-              <Typography sx={{ fontSize: '0.71875rem', color: tokens.danger, fontWeight: 500 }}>3 open</Typography>
+              <Typography sx={{ fontSize: '0.71875rem', color: tokens.danger, fontWeight: 500 }}>2 open</Typography>
             </Box>
             <Divider />
             <Box sx={{ px: 1, py: 0.5 }}>
@@ -353,7 +334,7 @@ export const OverviewView: React.FC = () => {
                     '&:hover': { backgroundColor: 'rgba(255,255,255,0.03)' },
                   }}
                 >
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 1.5, mb: 0.4 }}>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 1.5, mb: 0.4, flexWrap: 'wrap' }}>
                     <Typography sx={{ fontSize: '0.8125rem', fontWeight: 600, color: tokens.text, lineHeight: 1.45 }}>
                       {item.title}
                     </Typography>

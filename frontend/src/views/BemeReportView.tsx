@@ -13,17 +13,17 @@ export const BemeReportView: React.FC = () => {
     { title: 'Project information', status: 'Ready', color: '#46B98A' },
     { title: 'Survey analysis', status: 'Ready', color: '#46B98A' },
     { title: 'Engineering analysis', status: 'Ready', color: '#46B98A' },
-    { title: 'AI recommendations', status: 'Ready', color: '#46B98A' },
+    { title: 'Design parameters', status: 'Ready', color: '#46B98A' },
     { title: 'Design drawings', status: 'Ready', color: '#46B98A' },
     { title: 'Quantities and BEME', status: 'Draft', color: '#E3A948' },
     { title: 'Technical notes', status: '3 Items', color: '#E3A948' },
   ];
 
   return (
-    <Box sx={{ p: 3 }}>
+    <Box sx={{ p: { xs: 2, sm: 3 } }}>
       {/* Top Traceability Banner */}
-      <Card sx={{ p: 1.8, mb: 3, backgroundColor: '#0C1017', border: '1px solid #1B2029', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+      <Card sx={{ p: 1.8, mb: 3, backgroundColor: '#0C1017', border: '1px solid #1B2029', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1.5, flexWrap: 'wrap' }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, flexWrap: 'wrap', minWidth: 0 }}>
           <Chip label="Traceable" size="small" sx={{ backgroundColor: 'rgba(56, 189, 248, 0.15)', color: '#5B8DEF', fontWeight: 600, fontSize: '0.75rem' }} />
           <Typography variant="body2" sx={{ color: '#C3C9D4', fontSize: '0.8125rem' }}>
             Every quantity comes from design Rev C, parameter set v2 and pilot_survey.csv.
@@ -32,11 +32,11 @@ export const BemeReportView: React.FC = () => {
         <Chip label="Draft awaiting engineer approval" size="small" sx={{ backgroundColor: 'rgba(245, 158, 11, 0.15)', color: '#EFC06A', fontWeight: 600, fontSize: '0.75rem' }} />
       </Card>
 
-      <Grid container spacing={3}>
+      <Grid container spacing={{ xs: 2, sm: 3 }}>
         {/* Left Column (2/3): BEME Table */}
         <Grid item xs={12} lg={8}>
-          <Card sx={{ p: 3 }}>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
+          <Card sx={{ p: { xs: 2, sm: 3 } }}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2, gap: 1.5, flexWrap: 'wrap' }}>
               <Box>
                 <Typography variant="h6" sx={{ fontWeight: 600 }}>
                   Bill of Engineering Measurement and Evaluation
@@ -45,7 +45,7 @@ export const BemeReportView: React.FC = () => {
                   Quantity times rate equals amount. Edit a rate and the totals follow.
                 </Typography>
               </Box>
-              <Box sx={{ textAlign: 'right' }}>
+              <Box sx={{ textAlign: { xs: 'left', sm: 'right' } }}>
                 <Typography variant="caption" sx={{ color: '#6C7686', display: 'block', fontWeight: 600, fontSize: '0.75rem' }}>
                   GRAND TOTAL
                 </Typography>
@@ -55,8 +55,8 @@ export const BemeReportView: React.FC = () => {
               </Box>
             </Box>
 
-            <TableContainer sx={{ border: 'none' }}>
-              <Table size="small">
+            <TableContainer sx={{ border: 'none', overflowX: 'auto' }}>
+              <Table size="small" sx={{ minWidth: 620 }}>
                 <TableHead sx={{ backgroundColor: '#080A0E' }}>
                   <TableRow>
                     <TableCell sx={{ color: '#6C7686', fontWeight: 600, fontSize: '0.75rem', py: 1 }}>ITEM</TableCell>
@@ -134,7 +134,7 @@ export const BemeReportView: React.FC = () => {
         {/* Right Column (1/3): Report Readiness & Notes */}
         <Grid item xs={12} lg={4}>
           {/* Engineering Report Readiness */}
-          <Card sx={{ p: 3, mb: 3 }}>
+          <Card sx={{ p: { xs: 2, sm: 3 }, mb: 3 }}>
             <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
               Engineering report
             </Typography>
@@ -170,7 +170,7 @@ export const BemeReportView: React.FC = () => {
           </Card>
 
           {/* For Engineer Verification */}
-          <Card sx={{ p: 3 }}>
+          <Card sx={{ p: { xs: 2, sm: 3 } }}>
             <Typography variant="h6" sx={{ fontWeight: 600, mb: 1.5 }}>
               For engineer verification
             </Typography>

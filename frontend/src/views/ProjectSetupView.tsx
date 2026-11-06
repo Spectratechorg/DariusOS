@@ -6,12 +6,12 @@ export const ProjectSetupView: React.FC = () => {
   const { projectData, updateProjectData } = useProject();
 
   return (
-    <Box sx={{ p: 3 }}>
-      <Grid container spacing={3}>
+    <Box sx={{ p: { xs: 2, sm: 3 } }}>
+      <Grid container spacing={{ xs: 2, sm: 3 }}>
         {/* Left Column (2/3) */}
         <Grid item xs={12} lg={8}>
           {/* Project Details */}
-          <Card sx={{ p: 3, mb: 3 }}>
+          <Card sx={{ p: { xs: 2, sm: 3 }, mb: 3 }}>
             <Typography variant="h6" sx={{ fontWeight: 600, mb: 0.5 }}>
               Project details
             </Typography>
@@ -81,12 +81,12 @@ export const ProjectSetupView: React.FC = () => {
           </Card>
 
           {/* Road and Design Requirements */}
-          <Card sx={{ p: 3, mb: 3 }}>
+          <Card sx={{ p: { xs: 2, sm: 3 }, mb: 3 }}>
             <Typography variant="h6" sx={{ fontWeight: 600, mb: 0.5 }}>
               Road and design requirements
             </Typography>
             <Typography variant="caption" sx={{ color: '#9AA3B2', display: 'block', mb: 2.5 }}>
-              The engineer sets these. The AI may suggest values later but never overwrites them.
+              The engineer sets these. They form the design constraints for every later stage.
             </Typography>
 
             <Grid container spacing={2}>
@@ -157,7 +157,7 @@ export const ProjectSetupView: React.FC = () => {
           </Card>
 
           {/* Pavement and Drainage */}
-          <Card sx={{ p: 3, mb: 3 }}>
+          <Card sx={{ p: { xs: 2, sm: 3 }, mb: 3 }}>
             <Typography variant="h6" sx={{ fontWeight: 600, mb: 0.5 }}>
               Pavement and drainage
             </Typography>
@@ -229,12 +229,12 @@ export const ProjectSetupView: React.FC = () => {
           </Card>
 
           {/* Site Constraints and Notes */}
-          <Card sx={{ p: 3 }}>
+          <Card sx={{ p: { xs: 2, sm: 3 } }}>
             <Typography variant="h6" sx={{ fontWeight: 600, mb: 0.5 }}>
               Site constraints and notes
             </Typography>
             <Typography variant="caption" sx={{ color: '#9AA3B2', display: 'block', mb: 2 }}>
-              Known constraints the reasoning layer must respect.
+              Known constraints the design must respect.
             </Typography>
             <TextField
               multiline
@@ -251,7 +251,7 @@ export const ProjectSetupView: React.FC = () => {
         {/* Right Column (1/3) */}
         <Grid item xs={12} lg={4}>
           {/* What this unlocks */}
-          <Card sx={{ p: 3, mb: 3 }}>
+          <Card sx={{ p: { xs: 2, sm: 3 }, mb: 3 }}>
             <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
               What this unlocks
             </Typography>
@@ -297,10 +297,10 @@ export const ProjectSetupView: React.FC = () => {
                 <Typography variant="caption" sx={{ color: '#46B98A', fontWeight: 700 }}>4</Typography>
                 <Box>
                   <Typography variant="body2" sx={{ fontWeight: 600, color: '#E7EAF0' }}>
-                    AI context
+                    Site constraints
                   </Typography>
                   <Typography variant="caption" sx={{ color: '#9AA3B2' }}>
-                    Constraints become part of what the reasoning layer reads.
+                    Constraints are carried into the design stage.
                   </Typography>
                 </Box>
               </Box>
@@ -308,13 +308,13 @@ export const ProjectSetupView: React.FC = () => {
           </Card>
 
           {/* Roles on this Project */}
-          <Card sx={{ p: 3 }}>
+          <Card sx={{ p: { xs: 2, sm: 3 } }}>
             <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
               Roles on this project
             </Typography>
 
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 1.5, flexWrap: 'wrap' }}>
                 <Box>
                   <Typography variant="body2" sx={{ fontWeight: 600, color: '#E7EAF0' }}>
                     Engineering lead
@@ -326,7 +326,7 @@ export const ProjectSetupView: React.FC = () => {
                 <Chip label="Approver" size="small" sx={{ backgroundColor: 'rgba(16, 185, 129, 0.15)', color: '#64C9A1', fontWeight: 600, fontSize: '0.75rem' }} />
               </Box>
 
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 1.5, flexWrap: 'wrap' }}>
                 <Box>
                   <Typography variant="body2" sx={{ fontWeight: 600, color: '#E7EAF0' }}>
                     Business owner
@@ -338,7 +338,7 @@ export const ProjectSetupView: React.FC = () => {
                 <Chip label="Approver" size="small" sx={{ backgroundColor: 'rgba(16, 185, 129, 0.15)', color: '#64C9A1', fontWeight: 600, fontSize: '0.75rem' }} />
               </Box>
 
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 1.5, flexWrap: 'wrap' }}>
                 <Box>
                   <Typography variant="body2" sx={{ fontWeight: 600, color: '#E7EAF0' }}>
                     Engineer

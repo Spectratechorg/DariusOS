@@ -10,7 +10,6 @@ const pipelineStages: { id: StageId; label: string }[] = [
   { id: 'setup', label: 'Project setup' },
   { id: 'survey', label: 'Survey and validation' },
   { id: 'terrain', label: 'Terrain' },
-  { id: 'reasoning', label: 'AI reasoning' },
   { id: 'design', label: 'Design engine' },
   { id: 'drawings', label: 'Drawings' },
   { id: 'beme', label: 'BEME and report' },
@@ -35,7 +34,7 @@ const NavRow: React.FC<{
       display: 'flex',
       alignItems: 'center',
       gap: 1.25,
-      height: 34,
+      height: { xs: 44, md: 34 },
       px: 1.25,
       mb: 0.25,
       borderRadius: '8px',
@@ -79,8 +78,12 @@ const NavRow: React.FC<{
   </Box>
 );
 
-export const Sidebar: React.FC = () => {
+export const Sidebar: React.FC<{ onNavigate?: () => void }> = ({ onNavigate }) => {
   const { activeStage, setActiveStage } = useProject();
+  const go = (stage: StageId) => {
+    setActiveStage(stage);
+    onNavigate?.();
+  };
 
   return (
     <Box
@@ -132,7 +135,7 @@ export const Sidebar: React.FC = () => {
         <NavRow
           active={activeStage === 'overview'}
           label="Overview"
-          onClick={() => setActiveStage('overview')}
+          onClick={() => go('overview')}
           icon={<DashboardOutlinedIcon sx={{ fontSize: 16 }} />}
         />
 
@@ -144,7 +147,7 @@ export const Sidebar: React.FC = () => {
             key={stage.id}
             active={activeStage === stage.id}
             label={stage.label}
-            onClick={() => setActiveStage(stage.id)}
+            onClick={() => go(stage.id)}
           />
         ))}
 
@@ -154,7 +157,7 @@ export const Sidebar: React.FC = () => {
         <NavRow
           active={activeStage === 'monitoring'}
           label="Routes and monitoring"
-          onClick={() => setActiveStage('monitoring')}
+          onClick={() => go('monitoring')}
           icon={<LayersOutlinedIcon sx={{ fontSize: 16 }} />}
         />
       </Box>

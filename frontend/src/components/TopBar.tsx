@@ -12,12 +12,13 @@ import {
   Divider,
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
+import MenuIcon from '@mui/icons-material/Menu';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import CheckIcon from '@mui/icons-material/Check';
 import { useProject } from '../context/ProjectContext';
 import { tokens } from '../theme';
 
-export const TopBar: React.FC = () => {
+export const TopBar: React.FC<{ onOpenNav: () => void }> = ({ onOpenNav }) => {
   const {
     activeStage,
     setActiveStage,
@@ -36,19 +37,17 @@ export const TopBar: React.FC = () => {
       case 'overview':
         return { meta: 'Pilot road project', title: 'Project overview' };
       case 'setup':
-        return { meta: 'Stage 1 of 7', title: 'Create a project' };
+        return { meta: 'Stage 1 of 6', title: 'Create a project' };
       case 'survey':
-        return { meta: 'Stage 2 of 7', title: 'Survey data' };
+        return { meta: 'Stage 2 of 6', title: 'Survey data' };
       case 'terrain':
-        return { meta: 'Stage 3 of 7', title: 'Existing terrain' };
-      case 'reasoning':
-        return { meta: 'Stage 4 of 7', title: 'AI reasoning' };
+        return { meta: 'Stage 3 of 6', title: 'Existing terrain' };
       case 'design':
-        return { meta: 'Stage 5 of 7', title: 'Design engine', tag: 'Rev C' };
+        return { meta: 'Stage 4 of 6', title: 'Design engine', tag: 'Rev C' };
       case 'drawings':
-        return { meta: 'Stage 6 of 7', title: 'Engineering drawings', tag: 'Rev C' };
+        return { meta: 'Stage 5 of 6', title: 'Engineering drawings', tag: 'Rev C' };
       case 'beme':
-        return { meta: 'Stage 7 of 7', title: 'Quantities and BEME', tag: 'Draft' };
+        return { meta: 'Stage 6 of 6', title: 'Quantities and BEME', tag: 'Draft' };
       case 'monitoring':
         return { meta: 'Full system', title: 'Routes and monitoring' };
       default:
@@ -67,8 +66,6 @@ export const TopBar: React.FC = () => {
       case 'survey':
         return { label: 'Build terrain model', onClick: () => setActiveStage('terrain') };
       case 'terrain':
-        return { label: 'Continue to reasoning', onClick: () => setActiveStage('reasoning') };
-      case 'reasoning':
         return { label: 'Continue to design', onClick: () => setActiveStage('design') };
       case 'design':
         return {
@@ -106,8 +103,6 @@ export const TopBar: React.FC = () => {
         return { label: 'Upload file', onClick: () => setSnackbarMessage('Drop CSV, XYZ or LAS files to upload.') };
       case 'terrain':
         return { label: 'Export contours', onClick: () => setSnackbarMessage('Contour shapefile and DXF exported.') };
-      case 'reasoning':
-        return { label: 'Reopen', onClick: () => setSnackbarMessage('Parameter set v2 opened for engineer adjustments.') };
       case 'design':
         return { label: 'Regenerate', onClick: () => setSnackbarMessage('Pipeline regenerated. Unaffected stages served from cache.') };
       case 'drawings':
@@ -134,15 +129,28 @@ export const TopBar: React.FC = () => {
     <Box
       sx={{
         flexShrink: 0,
-        minHeight: 68,
-        px: 3,
+        minHeight: { xs: 60, md: 68 },
+        px: { xs: 2, md: 3 },
         backgroundColor: tokens.base,
         borderBottom: `1px solid ${tokens.line}`,
         display: 'flex',
         alignItems: 'center',
-        gap: 3,
+        gap: { xs: 1.5, md: 3 },
       }}
     >
+      <IconButton
+        aria-label="Open navigation"
+        onClick={onOpenNav}
+        sx={{
+          display: { xs: 'inline-flex', md: 'none' },
+          ml: -0.75,
+          width: 44,
+          height: 44,
+        }}
+      >
+        <MenuIcon />
+      </IconButton>
+
       <Box sx={{ minWidth: 0, flex: 1 }}>
         <Typography
           variant="subtitle2"
@@ -155,7 +163,7 @@ export const TopBar: React.FC = () => {
           <Typography
             noWrap
             sx={{
-              fontSize: '1.0625rem',
+              fontSize: { xs: '1rem', md: '1.0625rem' },
               fontWeight: 600,
               color: tokens.text,
               lineHeight: 1.25,
@@ -197,7 +205,7 @@ export const TopBar: React.FC = () => {
                 boxShadow: `0 0 0 3px ${apiState.color}22`,
               }}
             />
-            <Typography sx={{ fontSize: '0.71875rem', color: tokens.faint, whiteSpace: 'nowrap' }}>
+            <Typography sx={{ fontSize: '0.71875rem', color: tokens.faint, whiteSpace: 'nowrap', display: { xs: 'none', sm: 'block' } }}>
               {apiState.label}
             </Typography>
           </Box>
@@ -205,7 +213,7 @@ export const TopBar: React.FC = () => {
 
         <Box
           sx={{
-            display: 'flex',
+            display: { xs: 'none', md: 'flex' },
             alignItems: 'center',
             backgroundColor: tokens.surface,
             border: `1px solid ${tokens.line}`,
@@ -237,7 +245,7 @@ export const TopBar: React.FC = () => {
             size="small"
             aria-label="More actions"
             onClick={e => setMenuAnchor(e.currentTarget)}
-            sx={{ width: 34, height: 34, border: `1px solid ${tokens.line}` }}
+            sx={{ width: { xs: 44, md: 34 }, height: { xs: 44, md: 34 }, border: `1px solid ${tokens.line}` }}
           >
             <MoreHorizIcon sx={{ fontSize: 18 }} />
           </IconButton>
@@ -251,6 +259,17 @@ export const TopBar: React.FC = () => {
           transformOrigin={{ vertical: 'top', horizontal: 'right' }}
           slotProps={{ paper: { sx: { minWidth: 190, mt: 0.75 } } }}
         >
+          <MenuItem
+            disabled={primaryAction.disabled}
+            onClick={() => {
+              primaryAction.onClick();
+              setMenuAnchor(null);
+            }}
+            sx={{ display: { xs: 'flex', sm: 'none' } }}
+          >
+            <ListItemText>{primaryAction.label}</ListItemText>
+          </MenuItem>
+          <Divider sx={{ display: { xs: 'block', sm: 'none' } }} />
           {secondaryAction && (
             <MenuItem
               onClick={() => {
@@ -276,18 +295,20 @@ export const TopBar: React.FC = () => {
           </MenuItem>
         </Menu>
 
-        <Tooltip title={!primaryAction.disabled ? '' : (primaryAction as { hint?: string }).hint ?? ''}>
-          <span>
-            <Button
-              variant="contained"
-              size="small"
-              onClick={primaryAction.onClick}
-              disabled={primaryAction.disabled}
-            >
-              {primaryAction.label}
-            </Button>
-          </span>
-        </Tooltip>
+        <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
+          <Tooltip title={!primaryAction.disabled ? '' : (primaryAction as { hint?: string }).hint ?? ''}>
+            <span>
+              <Button
+                variant="contained"
+                size="small"
+                onClick={primaryAction.onClick}
+                disabled={primaryAction.disabled}
+              >
+                {primaryAction.label}
+              </Button>
+            </span>
+          </Tooltip>
+        </Box>
       </Box>
     </Box>
   );

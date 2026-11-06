@@ -8,7 +8,6 @@ import {
   EngineerWarning, 
   ValidationCheckItem, 
   TerrainSummary, 
-  CurveOption, 
   DesignValidationIssue, 
   BemeCategory, 
   AsBuiltComparisonRow, 
@@ -20,7 +19,6 @@ import {
   MOCK_SURVEY_WARNINGS, 
   MOCK_VALIDATION_CHECKS, 
   MOCK_TERRAIN_SUMMARY, 
-  MOCK_CURVE_OPTIONS, 
   MOCK_DESIGN_ISSUES, 
   MOCK_BEME_CATEGORIES, 
   MOCK_AS_BUILT_ROWS, 
@@ -47,11 +45,6 @@ interface ProjectContextType {
   terrainSummary: TerrainSummary;
   activeTerrainTab: 'TIN' | 'Contours' | 'Alignment';
   setActiveTerrainTab: (tab: 'TIN' | 'Contours' | 'Alignment') => void;
-  
-  // AI Reasoning
-  curveOptions: CurveOption[];
-  selectedCurveId: 'A' | 'B' | 'C';
-  selectCurveOption: (id: 'A' | 'B' | 'C') => void;
   
   // Design Engine
   activeDesignTab: 'Longitudinal profile' | 'Horizontal alignment' | 'Cross-section';
@@ -105,8 +98,6 @@ export const ProjectProvider: React.FC<{ children: ReactNode }> = ({ children })
   const [terrainSummary] = useState<TerrainSummary>(MOCK_TERRAIN_SUMMARY);
   const [activeTerrainTab, setActiveTerrainTab] = useState<'TIN' | 'Contours' | 'Alignment'>('TIN');
   
-  const [curveOptions, setCurveOptions] = useState<CurveOption[]>(MOCK_CURVE_OPTIONS);
-  const [selectedCurveId, setSelectedCurveId] = useState<'A' | 'B' | 'C'>('B');
   
   const [activeDesignTab, setActiveDesignTab] = useState<'Longitudinal profile' | 'Horizontal alignment' | 'Cross-section'>('Longitudinal profile');
   const [designIssues, setDesignIssues] = useState<DesignValidationIssue[]>(MOCK_DESIGN_ISSUES);
@@ -133,15 +124,6 @@ export const ProjectProvider: React.FC<{ children: ReactNode }> = ({ children })
 
   const toggleWarningAcknowledged = (id: string) => {
     setSurveyWarnings(prev => prev.map(w => w.id === id ? { ...w, isAcknowledged: !w.isAcknowledged } : w));
-  };
-
-  const selectCurveOption = (id: 'A' | 'B' | 'C') => {
-    setSelectedCurveId(id);
-    setCurveOptions(prev => prev.map(c => ({
-      ...c,
-      badge: c.id === id ? 'Selected' : 'Alternative'
-    })));
-    setSnackbarMessage(`Curve option ${id} selected. Engineering calculations updated.`);
   };
 
   const acceptDesignIssue = (id: string, note?: string) => {
@@ -189,9 +171,6 @@ export const ProjectProvider: React.FC<{ children: ReactNode }> = ({ children })
       terrainSummary,
       activeTerrainTab,
       setActiveTerrainTab,
-      curveOptions,
-      selectedCurveId,
-      selectCurveOption,
       activeDesignTab,
       setActiveDesignTab,
       designIssues,

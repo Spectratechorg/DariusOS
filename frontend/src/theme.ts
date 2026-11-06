@@ -69,12 +69,15 @@ export const theme = createTheme({
   components: {
     MuiCssBaseline: {
       styleOverrides: {
-        html: { WebkitFontSmoothing: 'antialiased', MozOsxFontSmoothing: 'grayscale' },
+        html: { WebkitFontSmoothing: 'antialiased', MozOsxFontSmoothing: 'grayscale', height: '100%' },
         body: {
           backgroundColor: ink.base,
           color: ink.text,
           fontFeatureSettings: '"cv02","cv03","cv04","ss01"',
+          height: '100%',
+          overflowX: 'hidden',
         },
+        '#root': { height: '100%' },
         '::selection': { backgroundColor: 'rgba(91,141,239,0.32)' },
         '*': { boxSizing: 'border-box' },
         '::-webkit-scrollbar': { width: 10, height: 10 },
@@ -118,7 +121,8 @@ export const theme = createTheme({
           textTransform: 'none',
           fontWeight: 500,
           borderRadius: 8,
-          minHeight: 34,
+          minHeight: 44,
+          '@media (min-width:900px)': { minHeight: 34 },
           padding: '6px 13px',
           fontSize: '0.8125rem',
           whiteSpace: 'nowrap',

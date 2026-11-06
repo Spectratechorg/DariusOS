@@ -15,7 +15,7 @@ export const EngineerBanner: React.FC = () => {
           backgroundColor: 'rgba(227,169,72,0.06)',
           borderBottom: `1px solid rgba(227,169,72,0.18)`,
           height: 30,
-          px: 3,
+          px: { xs: 2, md: 3 },
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -33,6 +33,7 @@ export const EngineerBanner: React.FC = () => {
             whiteSpace: 'nowrap',
             overflow: 'hidden',
             textOverflow: 'ellipsis',
+            minWidth: 0,
           }}
         >
           Preliminary output · to be confirmed by a registered engineer

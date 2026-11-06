@@ -28,7 +28,7 @@ export const DesignEngineView: React.FC = () => {
   };
 
   return (
-    <Box sx={{ p: 3 }}>
+    <Box sx={{ p: { xs: 2, sm: 3 } }}>
       {/* Top Engine Progress Bar */}
       <Card sx={{ p: 2, mb: 3, backgroundColor: '#080A0E', border: '1px solid #1B2029' }}>
         <Grid container spacing={2} alignItems="center">
@@ -37,10 +37,10 @@ export const DesignEngineView: React.FC = () => {
               <CheckCircleOutlinedIcon sx={{ color: '#46B98A', fontSize: '1.1rem' }} />
               <Box>
                 <Typography variant="body2" sx={{ fontWeight: 600, color: '#E7EAF0', fontSize: '0.8125rem' }}>
-                  AI proposes
+                  Survey ingested
                 </Typography>
                 <Typography variant="caption" sx={{ color: '#6C7686', fontSize: '0.75rem' }}>
-                  Parameter set v2 approved
+                  Existing survey validated
                 </Typography>
               </Box>
             </Box>
@@ -94,13 +94,13 @@ export const DesignEngineView: React.FC = () => {
         </Grid>
       </Card>
 
-      <Grid container spacing={3}>
+      <Grid container spacing={{ xs: 2, sm: 3 }}>
         {/* Left Column (2/3) */}
         <Grid item xs={12} lg={8}>
           {/* Main Visual Profile / Alignment / Cross-section Card */}
-          <Card sx={{ p: 3, mb: 3 }}>
+          <Card sx={{ p: { xs: 2, sm: 3 }, mb: 3 }}>
             {/* View Switcher Tabs */}
-            <Box sx={{ display: 'flex', gap: 1, mb: 2.5, borderBottom: '1px solid #1B2029', pb: 1.5 }}>
+            <Box sx={{ display: 'flex', gap: 1, mb: 2.5, borderBottom: '1px solid #1B2029', pb: 1.5, overflowX: 'auto', '& > *': { flexShrink: 0 } }}>
               {(['Longitudinal profile', 'Horizontal alignment', 'Cross-section'] as const).map(tab => (
                 <Button
                   key={tab}
@@ -142,7 +142,7 @@ export const DesignEngineView: React.FC = () => {
             <Box
               sx={{
                 width: '100%',
-                height: 250,
+                height: { xs: 220, sm: 250 },
                 backgroundColor: '#080A0E',
                 borderRadius: '8px',
                 border: '1px solid #1B2029',
@@ -159,10 +159,10 @@ export const DesignEngineView: React.FC = () => {
                 <line x1="40" y1="180" x2="680" y2="180" stroke="#1B2029" strokeDasharray="3,3" />
                 <line x1="40" y1="220" x2="680" y2="220" stroke="#1B2029" />
 
-                <text x="15" y="34" fill="#6C7686" fontSize="9" fontFamily="monospace">275</text>
-                <text x="15" y="84" fill="#6C7686" fontSize="9" fontFamily="monospace">266</text>
-                <text x="15" y="134" fill="#6C7686" fontSize="9" fontFamily="monospace">257</text>
-                <text x="15" y="184" fill="#6C7686" fontSize="9" fontFamily="monospace">248</text>
+                <text x="15" y="34" fill="#6C7686" fontSize="11" fontFamily="monospace">275</text>
+                <text x="15" y="84" fill="#6C7686" fontSize="11" fontFamily="monospace">266</text>
+                <text x="15" y="134" fill="#6C7686" fontSize="11" fontFamily="monospace">257</text>
+                <text x="15" y="184" fill="#6C7686" fontSize="11" fontFamily="monospace">248</text>
 
                 {/* Existing Ground (Blue line) */}
                 <polyline
@@ -181,29 +181,29 @@ export const DesignEngineView: React.FC = () => {
                 />
 
                 {/* Annotations */}
-                <text x="310" y="150" fill="#6C7686" fontSize="9" fontFamily="sans-serif">CUT through the ridge</text>
-                <text x="470" y="195" fill="#6C7686" fontSize="9" fontFamily="sans-serif">FILL across the valley</text>
+                <text x="310" y="150" fill="#6C7686" fontSize="11" fontFamily="sans-serif">CUT through the ridge</text>
+                <text x="470" y="195" fill="#6C7686" fontSize="11" fontFamily="sans-serif">FILL across the valley</text>
 
                 {/* Flagged Review Point at Ch 1+840 */}
                 <circle cx="380" cy="68" r="5" fill="#E4695E" stroke="#FFFFFF" strokeWidth="1.5" />
                 <line x1="380" y1="68" x2="415" y2="40" stroke="#E4695E" strokeWidth="1.2" />
-                <rect x="420" y="30" width="95" height="18" rx="3" fill="#2A1B18" stroke="#E4695E" strokeWidth="1" />
-                <text x="426" y="42" fill="#EE8B82" fontSize="9" fontWeight="700" fontFamily="sans-serif">Ch 1+840 · 9.2 %</text>
+                <rect x="420" y="28" width="112" height="21" rx="3" fill="#2A1B18" stroke="#E4695E" strokeWidth="1" />
+                <text x="426" y="42" fill="#EE8B82" fontSize="11" fontWeight="700" fontFamily="sans-serif">Ch 1+840 · 9.2 %</text>
 
                 {/* X Axis Chainage */}
-                <text x="40" y="238" fill="#6C7686" fontSize="9" fontFamily="sans-serif">0+000</text>
-                <text x="180" y="238" fill="#6C7686" fontSize="9" fontFamily="sans-serif">0+800</text>
-                <text x="320" y="238" fill="#6C7686" fontSize="9" fontFamily="sans-serif">1+650</text>
-                <text x="480" y="238" fill="#6C7686" fontSize="9" fontFamily="sans-serif">2+400</text>
-                <text x="640" y="238" fill="#6C7686" fontSize="9" fontFamily="sans-serif">3+200</text>
+                <text x="40" y="238" fill="#6C7686" fontSize="11" fontFamily="sans-serif">0+000</text>
+                <text x="180" y="238" fill="#6C7686" fontSize="11" fontFamily="sans-serif">0+800</text>
+                <text x="320" y="238" fill="#6C7686" fontSize="11" fontFamily="sans-serif">1+650</text>
+                <text x="480" y="238" fill="#6C7686" fontSize="11" fontFamily="sans-serif">2+400</text>
+                <text x="640" y="238" fill="#6C7686" fontSize="11" fontFamily="sans-serif">3+200</text>
               </svg>
 
 
             </Box>
 
             {/* Gradient Segments Table */}
-            <TableContainer sx={{ border: 'none' }}>
-              <Table size="small">
+            <TableContainer sx={{ border: 'none', overflowX: 'auto' }}>
+              <Table size="small" sx={{ minWidth: 420 }}>
                 <TableHead sx={{ backgroundColor: '#080A0E' }}>
                   <TableRow>
                     <TableCell sx={{ color: '#6C7686', fontWeight: 600, fontSize: '0.75rem', py: 1 }}>CHAINAGE</TableCell>
@@ -245,7 +245,7 @@ export const DesignEngineView: React.FC = () => {
 
         {/* Right Column (1/3) */}
         <Grid item xs={12} lg={4}>
-          <Card sx={{ p: 3 }}>
+          <Card sx={{ p: { xs: 2, sm: 3 } }}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
               <Typography variant="h6" sx={{ fontWeight: 600 }}>
                 Validation

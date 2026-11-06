@@ -1,5 +1,5 @@
-import React from 'react';
-import { Box, ThemeProvider, CssBaseline, Snackbar, Alert } from '@mui/material';
+import React, { useState } from 'react';
+import { Box, Drawer, ThemeProvider, CssBaseline, Snackbar, Alert } from '@mui/material';
 import { theme, tokens } from './theme';
 import { ProjectProvider, useProject } from './context/ProjectContext';
 import { Sidebar } from './components/Sidebar';
@@ -12,7 +12,6 @@ import { OverviewView } from './views/OverviewView';
 import { ProjectSetupView } from './views/ProjectSetupView';
 import { SurveyValidationView } from './views/SurveyValidationView';
 import { TerrainView } from './views/TerrainView';
-import { AiReasoningView } from './views/AiReasoningView';
 import { DesignEngineView } from './views/DesignEngineView';
 import { DrawingsView } from './views/DrawingsView';
 import { BemeReportView } from './views/BemeReportView';
@@ -20,6 +19,7 @@ import { RoutesMonitoringView } from './views/RoutesMonitoringView';
 
 const MainLayout: React.FC = () => {
   const { activeStage, snackbarMessage, setSnackbarMessage } = useProject();
+  const [navOpen, setNavOpen] = useState(false);
 
   const renderActiveView = () => {
     switch (activeStage) {
@@ -31,8 +31,6 @@ const MainLayout: React.FC = () => {
         return <SurveyValidationView />;
       case 'terrain':
         return <TerrainView />;
-      case 'reasoning':
-        return <AiReasoningView />;
       case 'design':
         return <DesignEngineView />;
       case 'drawings':
@@ -60,12 +58,33 @@ const MainLayout: React.FC = () => {
       <EngineerBanner />
 
       <Box sx={{ display: 'flex', flex: 1, minHeight: 0, overflow: 'hidden' }}>
-        <Sidebar />
+        <Box sx={{ display: { xs: 'none', md: 'block' }, height: '100%' }}>
+          <Sidebar />
+        </Box>
+
+        <Drawer
+          open={navOpen}
+          onClose={() => setNavOpen(false)}
+          ModalProps={{ keepMounted: true }}
+          sx={{ display: { xs: 'block', md: 'none' } }}
+          slotProps={{
+            paper: {
+              sx: {
+                width: 248,
+                backgroundColor: '#0B0E14',
+                backgroundImage: 'none',
+                borderRight: `1px solid ${tokens.line}`,
+              },
+            },
+          }}
+        >
+          <Sidebar onNavigate={() => setNavOpen(false)} />
+        </Drawer>
 
         <Box sx={{ display: 'flex', flexDirection: 'column', flex: 1, minWidth: 0, height: '100%', overflow: 'hidden' }}>
-          <TopBar />
+          <TopBar onOpenNav={() => setNavOpen(true)} />
           <StepperBar />
-          <Box component="main" sx={{ flex: 1, overflowY: 'auto', backgroundColor: tokens.base }}>
+          <Box component="main" sx={{ flex: 1, overflowY: 'auto', overflowX: 'hidden', backgroundColor: tokens.base }}>
             {renderActiveView()}
           </Box>
         </Box>

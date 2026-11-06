@@ -1,7 +1,6 @@
 import type {
   AsBuiltComparisonRow,
   BemeCategory,
-  CurveOption,
   DesignValidationIssue,
   EngineerWarning,
   ProjectData,
@@ -25,11 +24,6 @@ export const MOCK_VALIDATION_CHECKS: ValidationCheckItem[] = [
   { id: 'v1', name: 'Coordinate system', status: 'Pass' }, { id: 'v2', name: 'Duplicate points', status: 'Warning', warningCount: 1 }, { id: 'v3', name: 'Elevation range', status: 'Pass' },
 ];
 export const MOCK_TERRAIN_SUMMARY: TerrainSummary = { surveyPointsUsed: 1248, tinTriangles: 2386, lowestGroundM: 182.4, highestGroundM: 214.8, meanSlopePercent: 6.8, classification: 'Rolling', slopeDistribution: [{ label: '0–3%', percentage: 24 }, { label: '3–6%', percentage: 38 }, { label: '6–10%', percentage: 26 }, { label: '>10%', percentage: 12 }] };
-export const MOCK_CURVE_OPTIONS: CurveOption[] = [
-  { id: 'A', radiusM: 180, title: 'Tighter curve', badge: 'Alternative', description: 'Minimizes earthworks.', cutM3: 3820, fillM3: 2960 },
-  { id: 'B', radiusM: 260, title: 'Balanced alignment', badge: 'Selected', description: 'Best balance of safety and cost.', cutM3: 4210, fillM3: 3180 },
-  { id: 'C', radiusM: 420, title: 'Long radius', badge: 'Alternative', description: 'Improves comfort and sight distance.', cutM3: 4980, fillM3: 3650 },
-];
 export const MOCK_DESIGN_ISSUES: DesignValidationIssue[] = [{ id: 'd1', title: 'Gradient review at Ch 1+840', severity: 'Review required', description: 'Gradient exceeds the preferred threshold.', isAccepted: false }];
 export const MOCK_BEME_CATEGORIES: BemeCategory[] = [{ categoryCode: 'R01', categoryName: 'Earthworks', items: [{ code: 'R01.01', description: 'Common excavation', unit: 'm³', quantity: 4210, unitRate: 18, amount: 75780 }], subtotal: 75780 }];
 export const MOCK_AS_BUILT_ROWS: AsBuiltComparisonRow[] = [{ chainage: '0+500', approvedM: 184.2, asBuiltM: 184.4, deviationM: 0.2, status: 'Within tolerance' }, { chainage: '1+000', approvedM: 188.6, asBuiltM: 189.4, deviationM: 0.8, status: 'Watch' }, { chainage: '1+500', approvedM: 194.1, asBuiltM: 195.5, deviationM: 1.4, status: 'Flagged' }];

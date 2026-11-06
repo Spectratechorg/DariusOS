@@ -17,8 +17,8 @@ export const DrawingsView: React.FC = () => {
   ];
 
   return (
-    <Box sx={{ p: 3 }}>
-      <Grid container spacing={3}>
+    <Box sx={{ p: { xs: 2, sm: 3 } }}>
+      <Grid container spacing={{ xs: 2, sm: 3 }}>
         {/* Left Column: Sheets Selector */}
         <Grid item xs={12} md={3} lg={2.5}>
           <Card sx={{ p: 2.5, mb: 3 }}>
@@ -68,7 +68,7 @@ export const DrawingsView: React.FC = () => {
             <Box
               sx={{
                 width: '100%',
-                height: 520,
+                height: { xs: 'auto', sm: 520 },
                 backgroundColor: '#080A0E',
                 border: '1px solid #252B36',
                 position: 'relative',
@@ -86,7 +86,7 @@ export const DrawingsView: React.FC = () => {
               </Box>
 
               {/* Vector CAD Drawing Simulation */}
-              <Box sx={{ width: '100%', height: 380, position: 'relative' }}>
+              <Box sx={{ width: '100%', height: { xs: 240, sm: 380 }, position: 'relative' }}>
                 <svg width="100%" height="100%" viewBox="0 0 650 380">
                   {/* Drawing Grid Frame */}
                   <rect x="0" y="0" width="650" height="380" fill="none" stroke="#1B2029" strokeWidth="0.5" />
@@ -128,7 +128,7 @@ export const DrawingsView: React.FC = () => {
 
                   {/* Chainage Labels Layer */}
                   {cadLayers['Chainage labels'] && (
-                    <g fill="#9AA3B2" fontSize="8" fontFamily="monospace">
+                    <g fill="#9AA3B2" fontSize="10" fontFamily="monospace">
                       <text x="35" y="318">0+000</text>
                       <text x="175" y="268">0+950</text>
                       <text x="325" y="218">1+840</text>
@@ -149,7 +149,8 @@ export const DrawingsView: React.FC = () => {
                   sx={{
                     border: '1.5px solid #252B36',
                     backgroundColor: '#0C1017',
-                    width: 440,
+                    width: '100%',
+                    maxWidth: 440,
                     fontSize: '0.75rem',
                   }}
                 >
@@ -165,19 +166,19 @@ export const DrawingsView: React.FC = () => {
                   </Grid>
 
                   <Grid container>
-                    <Grid item xs={4} sx={{ p: 1, borderRight: '1px solid #1B2029' }}>
+                    <Grid item xs={6} sm={4} sx={{ p: 1, borderRight: '1px solid #1B2029', borderBottom: { xs: '1px solid #1B2029', sm: 'none' } }}>
                       <Typography variant="caption" sx={{ color: '#6C7686', display: 'block', fontSize: '0.75rem' }}>DRAWING</Typography>
                       <Typography variant="body2" sx={{ fontWeight: 600, color: '#E7EAF0', fontSize: '0.75rem' }}>Plan, alignment & drainage</Typography>
                     </Grid>
-                    <Grid item xs={2.5} sx={{ p: 1, borderRight: '1px solid #1B2029' }}>
+                    <Grid item xs={6} sm={2.5} sx={{ p: 1, borderRight: '1px solid #1B2029', borderBottom: { xs: '1px solid #1B2029', sm: 'none' } }}>
                       <Typography variant="caption" sx={{ color: '#6C7686', display: 'block', fontSize: '0.75rem' }}>SHEET</Typography>
                       <Typography variant="body2" sx={{ fontWeight: 600, color: '#E7EAF0', fontSize: '0.75rem' }}>{activeCadSheet}</Typography>
                     </Grid>
-                    <Grid item xs={2} sx={{ p: 1, borderRight: '1px solid #1B2029' }}>
+                    <Grid item xs={6} sm={2} sx={{ p: 1, borderRight: '1px solid #1B2029' }}>
                       <Typography variant="caption" sx={{ color: '#6C7686', display: 'block', fontSize: '0.75rem' }}>REVISION</Typography>
                       <Typography variant="body2" sx={{ fontWeight: 600, color: '#E7EAF0', fontSize: '0.75rem' }}>C</Typography>
                     </Grid>
-                    <Grid item xs={3.5} sx={{ p: 1 }}>
+                    <Grid item xs={6} sm={3.5} sx={{ p: 1 }}>
                       <Typography variant="caption" sx={{ color: '#6C7686', display: 'block', fontSize: '0.75rem' }}>STATUS</Typography>
                       <Typography variant="body2" sx={{ fontWeight: 600, color: '#46B98A', fontSize: '0.75rem' }}>For engineer approval</Typography>
                     </Grid>
@@ -231,7 +232,7 @@ export const DrawingsView: React.FC = () => {
               How these were made
             </Typography>
             <Typography variant="caption" sx={{ color: '#9AA3B2', display: 'block', lineHeight: 1.45, mb: 2 }}>
-              Each sheet is built from exact design geometry: points, lines, curves, chainage and labels. They are CAD output, not AI-generated pictures.
+              Each sheet is built from exact design geometry: points, lines, curves, chainage and labels. They are CAD output, not generated imagery.
             </Typography>
 
             <Box sx={{ display: 'flex', gap: 1 }}>

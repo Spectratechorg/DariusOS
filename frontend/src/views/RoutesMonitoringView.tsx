@@ -24,9 +24,9 @@ export const RoutesMonitoringView: React.FC = () => {
   ];
 
   return (
-    <Box sx={{ p: 3 }}>
+    <Box sx={{ p: { xs: 2, sm: 3 } }}>
       {/* Sub-tabs Navigation */}
-      <Box sx={{ display: 'flex', gap: 1, mb: 3, overflowX: 'auto', borderBottom: '1px solid #1B2029', pb: 1 }}>
+      <Box sx={{ display: 'flex', gap: 1, mb: 3, overflowX: 'auto', borderBottom: '1px solid #1B2029', pb: 1, '& > *': { flexShrink: 0, whiteSpace: 'nowrap' } }}>
         {subTabs.map(tab => {
           const isActive = tab === 'Route analysis';
           return (
@@ -50,12 +50,12 @@ export const RoutesMonitoringView: React.FC = () => {
         })}
       </Box>
 
-      <Grid container spacing={3}>
+      <Grid container spacing={{ xs: 2, sm: 3 }}>
         {/* Left Column (2/3) */}
         <Grid item xs={12} lg={8}>
           {/* Route Analysis Card */}
-          <Card sx={{ p: 3, mb: 3 }}>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 0.5 }}>
+          <Card sx={{ p: { xs: 2, sm: 3 }, mb: 3 }}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 0.5, gap: 1.5, flexWrap: 'wrap' }}>
               <Typography variant="h6" sx={{ fontWeight: 600 }}>
                 Route analysis
               </Typography>
@@ -158,12 +158,12 @@ export const RoutesMonitoringView: React.FC = () => {
           </Card>
 
           {/* As-Built Compared with Approved Design */}
-          <Card sx={{ p: 3 }}>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 0.5 }}>
+          <Card sx={{ p: { xs: 2, sm: 3 } }}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 0.5, gap: 1.5, flexWrap: 'wrap' }}>
               <Typography variant="h6" sx={{ fontWeight: 600 }}>
                 As-built compared with approved design
               </Typography>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
                 <Typography variant="caption" sx={{ color: '#6C7686', fontSize: '0.75rem' }}>TOLERANCE</Typography>
                 {(['0.5 m', '1 m', '2 m'] as const).map(tol => (
                   <Chip
@@ -228,8 +228,8 @@ export const RoutesMonitoringView: React.FC = () => {
             </Box>
 
             {/* Deviation Table */}
-            <TableContainer sx={{ border: 'none' }}>
-              <Table size="small">
+            <TableContainer sx={{ border: 'none', overflowX: 'auto' }}>
+              <Table size="small" sx={{ minWidth: 560 }}>
                 <TableHead sx={{ backgroundColor: '#080A0E' }}>
                   <TableRow>
                     <TableCell sx={{ color: '#6C7686', fontWeight: 600, fontSize: '0.75rem', py: 1 }}>CHAINAGE</TableCell>
@@ -281,7 +281,7 @@ export const RoutesMonitoringView: React.FC = () => {
         {/* Right Column (1/3) */}
         <Grid item xs={12} lg={4}>
           {/* Drone Data Pipeline */}
-          <Card sx={{ p: 3, mb: 3 }}>
+          <Card sx={{ p: { xs: 2, sm: 3 }, mb: 3 }}>
             <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
               Drone data pipeline
             </Typography>
@@ -317,7 +317,7 @@ export const RoutesMonitoringView: React.FC = () => {
           </Card>
 
           {/* Data Sources */}
-          <Card sx={{ p: 3, mb: 3 }}>
+          <Card sx={{ p: { xs: 2, sm: 3 }, mb: 3 }}>
             <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
               Data sources
             </Typography>
@@ -340,7 +340,7 @@ export const RoutesMonitoringView: React.FC = () => {
           </Card>
 
           {/* Next Re-Survey */}
-          <Card sx={{ p: 3 }}>
+          <Card sx={{ p: { xs: 2, sm: 3 } }}>
             <Typography variant="h6" sx={{ fontWeight: 600, mb: 1 }}>
               Next re-survey
             </Typography>

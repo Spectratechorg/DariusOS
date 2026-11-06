@@ -14,8 +14,8 @@ export const SurveyValidationView: React.FC = () => {
   const acknowledgedCount = surveyWarnings.filter(w => w.isAcknowledged).length;
 
   return (
-    <Box sx={{ p: 3 }}>
-      <Grid container spacing={3}>
+    <Box sx={{ p: { xs: 2, sm: 3 } }}>
+      <Grid container spacing={{ xs: 2, sm: 3 }}>
         {/* Left Column (2/3) */}
         <Grid item xs={12} lg={8}>
           {/* Uploaded File Banner */}
@@ -41,7 +41,7 @@ export const SurveyValidationView: React.FC = () => {
               <Typography variant="caption" sx={{ color: '#9AA3B2', display: 'block', mb: 1 }}>
                 1,842 rows · 5 columns mapped · units in metres · CSV, Excel and TXT accepted
               </Typography>
-              <Box sx={{ display: 'flex', gap: 1 }}>
+              <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
                 {['Point ID', 'Easting', 'Northing', 'Elevation', 'Description'].map(col => (
                   <Chip
                     key={col}
@@ -55,8 +55,8 @@ export const SurveyValidationView: React.FC = () => {
           </Card>
 
           {/* Structured Project Dataset Table */}
-          <Card sx={{ p: 3, mb: 3 }}>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+          <Card sx={{ p: { xs: 2, sm: 3 }, mb: 3 }}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2, gap: 1.5, flexWrap: 'wrap' }}>
               <Typography variant="h6" sx={{ fontWeight: 600 }}>
                 Structured project dataset
               </Typography>
@@ -65,8 +65,8 @@ export const SurveyValidationView: React.FC = () => {
               </Typography>
             </Box>
 
-            <TableContainer sx={{ border: 'none' }}>
-              <Table size="small">
+            <TableContainer sx={{ border: 'none', overflowX: 'auto' }}>
+              <Table size="small" sx={{ minWidth: 560 }}>
                 <TableHead sx={{ backgroundColor: '#080A0E' }}>
                   <TableRow>
                     <TableCell sx={{ color: '#6C7686', fontWeight: 600, fontSize: '0.75rem', py: 1 }}>POINT ID</TableCell>
@@ -116,7 +116,7 @@ export const SurveyValidationView: React.FC = () => {
           </Card>
 
           {/* Warnings for the Engineer */}
-          <Card sx={{ p: 3 }}>
+          <Card sx={{ p: { xs: 2, sm: 3 } }}>
             <Typography variant="h6" sx={{ fontWeight: 600, mb: 0.5 }}>
               Warnings for the engineer
             </Typography>
@@ -136,9 +136,11 @@ export const SurveyValidationView: React.FC = () => {
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
+                    gap: 1.5,
+                    flexWrap: 'wrap',
                   }}
                 >
-                  <Box sx={{ pr: 2 }}>
+                  <Box sx={{ pr: 2, minWidth: 0 }}>
                     <Typography variant="body2" sx={{ fontWeight: 600, color: '#E7EAF0' }}>
                       {w.title}
                     </Typography>
@@ -167,7 +169,7 @@ export const SurveyValidationView: React.FC = () => {
         {/* Right Column (1/3) */}
         <Grid item xs={12} lg={4}>
           {/* Validation Checks */}
-          <Card sx={{ p: 3 }}>
+          <Card sx={{ p: { xs: 2, sm: 3 } }}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2.5 }}>
               <Typography variant="h6" sx={{ fontWeight: 600 }}>
                 Validation checks

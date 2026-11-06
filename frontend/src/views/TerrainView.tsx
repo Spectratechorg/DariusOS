@@ -11,17 +11,17 @@ export const TerrainView: React.FC = () => {
   } = useProject();
 
   return (
-    <Box sx={{ p: 3 }}>
-      <Grid container spacing={3}>
+    <Box sx={{ p: { xs: 2, sm: 3 } }}>
+      <Grid container spacing={{ xs: 2, sm: 3 }}>
         {/* Left Column (2/3) */}
         <Grid item xs={12} lg={8}>
           {/* Terrain Model Canvas Card */}
-          <Card sx={{ p: 3, mb: 3 }}>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+          <Card sx={{ p: { xs: 2, sm: 3 }, mb: 3 }}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2, gap: 1.5, flexWrap: 'wrap' }}>
               <Typography variant="h6" sx={{ fontWeight: 600 }}>
                 Terrain model
               </Typography>
-              <Box sx={{ display: 'flex', backgroundColor: '#080A0E', borderRadius: '8px', p: 0.3, border: '1px solid #1B2029' }}>
+              <Box sx={{ display: 'flex', backgroundColor: '#080A0E', borderRadius: '8px', p: 0.3, border: '1px solid #1B2029', overflowX: 'auto', maxWidth: '100%', '& > *': { flexShrink: 0 } }}>
                 {(['TIN', 'Contours', 'Alignment'] as const).map(tab => (
                   <Button
                     key={tab}
@@ -47,7 +47,7 @@ export const TerrainView: React.FC = () => {
             <Box
               sx={{
                 width: '100%',
-                height: 320,
+                height: { xs: 260, sm: 320 },
                 backgroundColor: '#080A0E',
                 borderRadius: '8px',
                 border: '1px solid #1B2029',
@@ -102,14 +102,14 @@ export const TerrainView: React.FC = () => {
                 )}
 
                 {/* Contour Elevation Labels */}
-                <text x="135" y="144" fill="#5A6472" fontSize="9" fontFamily="monospace">248</text>
-                <text x="160" y="144" fill="#5A6472" fontSize="9" fontFamily="monospace">254</text>
-                <text x="190" y="144" fill="#5A6472" fontSize="9" fontFamily="monospace">260</text>
-                <text x="220" y="143" fill="#7AA3F5" fontSize="9" fontFamily="monospace">268</text>
+                <text x="135" y="144" fill="#5A6472" fontSize="11" fontFamily="monospace">248</text>
+                <text x="160" y="144" fill="#5A6472" fontSize="11" fontFamily="monospace">254</text>
+                <text x="190" y="144" fill="#5A6472" fontSize="11" fontFamily="monospace">260</text>
+                <text x="220" y="143" fill="#7AA3F5" fontSize="11" fontFamily="monospace">268</text>
 
-                <text x="450" y="214" fill="#5A6472" fontSize="9" fontFamily="monospace">246</text>
-                <text x="480" y="214" fill="#5A6472" fontSize="9" fontFamily="monospace">250</text>
-                <text x="510" y="214" fill="#5A6472" fontSize="9" fontFamily="monospace">254</text>
+                <text x="450" y="214" fill="#5A6472" fontSize="11" fontFamily="monospace">246</text>
+                <text x="480" y="214" fill="#5A6472" fontSize="11" fontFamily="monospace">250</text>
+                <text x="510" y="214" fill="#5A6472" fontSize="11" fontFamily="monospace">254</text>
 
                 {/* Road Alignment Centreline Preview */}
                 <path
@@ -122,28 +122,12 @@ export const TerrainView: React.FC = () => {
 
                 {/* Start Point & Label */}
                 <circle cx="50" cy="260" r="4.5" fill="#46B98A" />
-                <text x="35" y="282" fill="#9AA3B2" fontSize="10" fontWeight="600" fontFamily="sans-serif">Ch 0+000</text>
+                <text x="35" y="282" fill="#9AA3B2" fontSize="11.5" fontWeight="600" fontFamily="sans-serif">Ch 0+000</text>
 
                 {/* End Point & Label */}
                 <circle cx="650" cy="80" r="4.5" fill="#E4695E" />
-                <text x="605" y="65" fill="#9AA3B2" fontSize="10" fontWeight="600" fontFamily="sans-serif">Ch 3+200</text>
+                <text x="605" y="65" fill="#9AA3B2" fontSize="11.5" fontWeight="600" fontFamily="sans-serif">Ch 3+200</text>
               </svg>
-
-              {/* Legend & Scale bottom */}
-              <Box sx={{ position: 'absolute', bottom: 12, left: 16, display: 'flex', gap: 2, alignItems: 'center' }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8 }}>
-                  <Box sx={{ width: 14, height: 2, backgroundColor: '#2E3644' }} />
-                  <Typography variant="caption" sx={{ color: '#6C7686', fontSize: '0.75rem' }}>Contours</Typography>
-                </Box>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8 }}>
-                  <Box sx={{ width: 14, height: 2, backgroundColor: '#1B2029' }} />
-                  <Typography variant="caption" sx={{ color: '#6C7686', fontSize: '0.75rem' }}>TIN edges</Typography>
-                </Box>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8 }}>
-                  <Box sx={{ width: 14, height: 2, backgroundColor: '#E3A948', borderBottom: '1px dashed #E3A948' }} />
-                  <Typography variant="caption" sx={{ color: '#E3A948', fontSize: '0.75rem' }}>Alignment (preview)</Typography>
-                </Box>
-              </Box>
 
               <Typography
                 sx={{
@@ -158,15 +142,33 @@ export const TerrainView: React.FC = () => {
                 metres · not to scale
               </Typography>
             </Box>
+
+            <Box sx={{ display: 'flex', gap: { xs: 1.25, sm: 2 }, alignItems: 'center', flexWrap: 'wrap', mt: 1.5 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8 }}>
+                <Box sx={{ width: 14, height: 2, backgroundColor: '#2E3644' }} />
+                <Typography variant="caption" sx={{ color: '#6C7686', fontSize: '0.75rem' }}>Contours</Typography>
+              </Box>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8 }}>
+                <Box sx={{ width: 14, height: 2, backgroundColor: '#1B2029' }} />
+                <Typography variant="caption" sx={{ color: '#6C7686', fontSize: '0.75rem' }}>TIN edges</Typography>
+              </Box>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8 }}>
+                <Box sx={{ width: 14, height: 2, backgroundColor: '#E3A948', borderBottom: '1px dashed #E3A948' }} />
+                <Typography variant="caption" sx={{ color: '#E3A948', fontSize: '0.75rem' }}>Alignment (preview)</Typography>
+              </Box>
+            </Box>
           </Card>
 
           {/* Existing Ground Profile Along Alignment Card */}
-          <Card sx={{ p: 3 }}>
+          <Card sx={{ p: { xs: 2, sm: 3 } }}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1.5 }}>
               <Typography variant="h6" sx={{ fontWeight: 600 }}>
                 Existing-ground profile along the alignment
               </Typography>
-              <Typography variant="caption" sx={{ color: '#6C7686', fontWeight: 600, fontSize: '0.75rem' }}>
+              <Typography
+                variant="caption"
+                sx={{ color: '#6C7686', fontWeight: 600, fontSize: '0.75rem', display: { xs: 'none', sm: 'block' } }}
+              >
                 ELEVATION IN METRES
               </Typography>
             </Box>
@@ -186,10 +188,10 @@ export const TerrainView: React.FC = () => {
                 <line x1="40" y1="100" x2="680" y2="100" stroke="#1B2029" strokeDasharray="3,3" />
                 <line x1="40" y1="140" x2="680" y2="140" stroke="#1B2029" />
 
-                <text x="15" y="24" fill="#6C7686" fontSize="9" fontFamily="monospace">270</text>
-                <text x="15" y="64" fill="#6C7686" fontSize="9" fontFamily="monospace">260</text>
-                <text x="15" y="104" fill="#6C7686" fontSize="9" fontFamily="monospace">250</text>
-                <text x="15" y="144" fill="#6C7686" fontSize="9" fontFamily="monospace">244</text>
+                <text x="15" y="24" fill="#6C7686" fontSize="11" fontFamily="monospace">270</text>
+                <text x="15" y="64" fill="#6C7686" fontSize="11" fontFamily="monospace">260</text>
+                <text x="15" y="104" fill="#6C7686" fontSize="11" fontFamily="monospace">250</text>
+                <text x="15" y="144" fill="#6C7686" fontSize="11" fontFamily="monospace">244</text>
 
                 {/* Profile Filled Area */}
                 <polygon
@@ -206,10 +208,10 @@ export const TerrainView: React.FC = () => {
                 />
 
                 {/* Chainage X Axis Labels */}
-                <text x="40" y="155" fill="#6C7686" fontSize="9" fontFamily="sans-serif">0+000</text>
-                <text x="240" y="155" fill="#6C7686" fontSize="9" fontFamily="sans-serif">1+000</text>
-                <text x="440" y="155" fill="#6C7686" fontSize="9" fontFamily="sans-serif">2+000</text>
-                <text x="640" y="155" fill="#6C7686" fontSize="9" fontFamily="sans-serif">3+200</text>
+                <text x="40" y="155" fill="#6C7686" fontSize="11" fontFamily="sans-serif">0+000</text>
+                <text x="240" y="155" fill="#6C7686" fontSize="11" fontFamily="sans-serif">1+000</text>
+                <text x="440" y="155" fill="#6C7686" fontSize="11" fontFamily="sans-serif">2+000</text>
+                <text x="640" y="155" fill="#6C7686" fontSize="11" fontFamily="sans-serif">3+200</text>
               </svg>
             </Box>
           </Card>
@@ -218,7 +220,7 @@ export const TerrainView: React.FC = () => {
         {/* Right Column (1/3) */}
         <Grid item xs={12} lg={4}>
           {/* Terrain Summary Card */}
-          <Card sx={{ p: 3, mb: 3 }}>
+          <Card sx={{ p: { xs: 2, sm: 3 }, mb: 3 }}>
             <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
               Terrain summary
             </Typography>
@@ -262,7 +264,7 @@ export const TerrainView: React.FC = () => {
           </Card>
 
           {/* Terrain Classification Card */}
-          <Card sx={{ p: 3, mb: 3 }}>
+          <Card sx={{ p: { xs: 2, sm: 3 }, mb: 3 }}>
             <Typography variant="h6" sx={{ fontWeight: 600, mb: 1.5 }}>
               Terrain classification
             </Typography>
@@ -295,12 +297,12 @@ export const TerrainView: React.FC = () => {
             </Grid>
 
             <Typography variant="caption" sx={{ color: '#6C7686', display: 'block', lineHeight: 1.4 }}>
-              Detected from slope and elevation variation. This feeds the project profile the AI reads next.
+              Detected from slope and elevation variation. This feeds the project profile used at the design stage.
             </Typography>
           </Card>
 
           {/* Slope Distribution Card */}
-          <Card sx={{ p: 3 }}>
+          <Card sx={{ p: { xs: 2, sm: 3 } }}>
             <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
               Slope distribution
             </Typography>
