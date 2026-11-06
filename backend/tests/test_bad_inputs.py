@@ -145,12 +145,12 @@ def test_bad_input_7_planted_spike():
     validation = SurveyValidator.validate_points(points, {})
     assert len(validation.spike_indices) == 1
     assert 10 in validation.spike_indices
-    assert any("elevation spikes" in w for w in validation.warnings)
+    assert any("outliers above" in w for w in validation.warnings)
 
     cleaned = SurveyCleaner.clean_points(points, validation)
-    assert len(cleaned) == original_count - 1
-    assert np.max(cleaned["z"]) == 100.0
-
+    assert len(cleaned) == original_count
+    assert cleaned["z"].max() == 1100.0  # outlier kept for engineer review
+    
 
 def test_bad_input_8_planted_hole():
     """Scenario 8: Planted elevation hole (-500m anomaly) detected and filtered."""
@@ -163,11 +163,12 @@ def test_bad_input_8_planted_hole():
     validation = SurveyValidator.validate_points(points, {})
     assert len(validation.hole_indices) == 1
     assert 25 in validation.hole_indices
-    assert any("elevation holes" in w for w in validation.warnings)
+    assert any("outliers below" in w for w in validation.warnings)
 
     cleaned = SurveyCleaner.clean_points(points, validation)
-    assert len(cleaned) == original_count - 1
-    assert np.min(cleaned["z"]) == 100.0
+    assert len(cleaned) == original_count
+    assert cleaned["z"].min() == -400.0  # outlier kept for engineer review
+   
 
 
 def test_bad_input_9_wrong_coordinate_system():
@@ -178,7 +179,8 @@ def test_bad_input_9_wrong_coordinate_system():
     points["y"] += 45.0
 
     validation = SurveyValidator.validate_points(points, {})
-    assert any("geographic (degrees WGS84)" in w for w in validation.warnings)
+    assert any("geographic (degrees WGS84)" in e for e in validation.errors)
+    assert validation.verdict.value == "REJECTED"
 
 
 def test_bad_input_10_too_sparse_survey():

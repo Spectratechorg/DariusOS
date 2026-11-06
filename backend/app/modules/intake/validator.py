@@ -2,6 +2,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Dict, List, Set, Tuple
 import numpy as np
+from scipy.spatial import cKDTree
 
 from app.schemas.survey import BoundingBox3D, QualityVerdict
 
@@ -27,8 +28,10 @@ class SurveyValidator:
     Validates point cloud quality, detects anomalies (spikes, holes, duplicates, blanks),
     evaluates survey density, and checks spatial bounds sanity.
     """
-    MIN_ACCEPTABLE_DENSITY_PTS_M2: float = 0.05
-    IQR_MULTIPLIER: float = 3.0
+    MAX_SPACING_M: float = 50.0      # placeholder, engineer to confirm
+    SPIKE_MIN_M: float = 2.0         # placeholder, engineer to confirm
+    SPIKE_MAD_MULT: float = 6.0
+    NEIGHBOURS: int = 8
 
     @classmethod
     def validate_raw_file(cls, file_path: Path, max_bytes: int = 104857600) -> None:
@@ -101,68 +104,72 @@ class SurveyValidator:
         is_degree_span = span_x < 0.2 and span_y < 0.2
         is_nonzero_base = (abs(min_x) > 2.0 or abs(min_y) > 2.0)
         if is_degree_range and is_degree_span and is_nonzero_base:
-            warnings.append(
+            errors.append(
                 "Coordinates appear to be geographic (degrees WGS84) instead of projected metric coordinates (UTM). "
                 "Road design requires metric coordinates."
             )
 
         # 3. Duplicate point detection (within 1mm in 2D plan)
         # Round x and y to 3 decimal places (1 millimeter precision)
-        coords_rounded = np.column_stack([np.round(x_clean, 3), np.round(y_clean, 3)])
+        # 3. Duplicates: same X, Y and Z within 1 mm
+        coords_rounded = np.column_stack(
+            [np.round(x_clean, 3), np.round(y_clean, 3), np.round(z_clean, 3)]
+        )
         _, unique_indices = np.unique(coords_rounded, axis=0, return_index=True)
-        unique_set = set(valid_idx[unique_indices])
-        duplicate_indices = set(valid_idx) - unique_set
-
+        unique_indices = np.sort(unique_indices)
+        duplicate_indices = set(valid_idx.tolist()) - set(valid_idx[unique_indices].tolist())
         if duplicate_indices:
-            warnings.append(f"Detected {len(duplicate_indices)} duplicate points within 1mm spatial threshold.")
+            warnings.append(f"Detected {len(duplicate_indices)} duplicate points (same X, Y, Z within 1mm).")
 
-        # 4. Outlier detection on elevation (Z): IQR method
-        q25, q75 = np.percentile(z_clean, [25, 75])
-        iqr = q75 - q25
+        # 4. Spacing and local elevation outliers (compare each point to its neighbours)
+        uniq_idx = valid_idx[unique_indices]
+        ux, uy, uz = x[uniq_idx], y[uniq_idx], z[uniq_idx]
         spike_indices: Set[int] = set()
         hole_indices: Set[int] = set()
-
-        if iqr > 1e-4:
-            upper_bound = q75 + cls.IQR_MULTIPLIER * iqr
-            lower_bound = q25 - cls.IQR_MULTIPLIER * iqr
-
-            spike_mask = z_clean > upper_bound
-            hole_mask = z_clean < lower_bound
-
-            spike_indices = set(valid_idx[spike_mask].tolist())
-            hole_indices = set(valid_idx[hole_mask].tolist())
-
-            if spike_indices:
-                warnings.append(f"Detected {len(spike_indices)} planted elevation spikes (z > {upper_bound:.2f}m).")
-            if hole_indices:
-                warnings.append(f"Detected {len(hole_indices)} planted elevation holes (z < {lower_bound:.2f}m).")
-        else:
-            # Flat plane: check absolute differences from median
-            median_z = float(np.median(z_clean))
-            diffs = np.abs(z_clean - median_z)
-            outliers = np.where(diffs > 10.0)[0]
-            if len(outliers) > 0:
-                for idx in outliers:
-                    real_idx = valid_idx[idx]
-                    if z[real_idx] > median_z:
-                        spike_indices.add(real_idx)
-                    else:
-                        hole_indices.add(real_idx)
+        spacing = 0.0
+        n_u = len(uniq_idx)
+        if n_u >= 2:
+            pts_xy = np.column_stack([ux, uy])
+            k = min(cls.NEIGHBOURS + 1, n_u)
+            dists, nbrs = cKDTree(pts_xy).query(pts_xy, k=k, workers=-1)
+            spacing = float(np.median(dists[:, 1]))
+            if k == cls.NEIGHBOURS + 1:
+                resid = uz - np.median(uz[nbrs[:, 1:]], axis=1)
+                mad = float(np.median(np.abs(resid - np.median(resid))))
+                limit = max(cls.SPIKE_MIN_M, cls.SPIKE_MAD_MULT * 1.4826 * mad)
+                spike_indices = set(uniq_idx[resid > limit].tolist())
+                hole_indices = set(uniq_idx[resid < -limit].tolist())
                 if spike_indices:
-                    warnings.append(f"Detected {len(spike_indices)} elevation spikes on flat terrain.")
+                    warnings.append(
+                        f"Detected {len(spike_indices)} elevation outliers above their neighbours "
+                        f"(> {limit:.1f} m). Kept in the dataset for engineer review."
+                    )
                 if hole_indices:
-                    warnings.append(f"Detected {len(hole_indices)} elevation holes on flat terrain.")
+                    warnings.append(
+                        f"Detected {len(hole_indices)} elevation outliers below their neighbours "
+                        f"(> {limit:.1f} m). Kept in the dataset for engineer review."
+                    )
 
-        # 5. Density and spatial coverage
-        span_x = max(1.0, max_x - min_x)
-        span_y = max(1.0, max_y - min_y)
-        approx_area_m2 = max(1.0, span_x * span_y)
+        # 5. Density over occupied area (works for corridors) and spacing
+        if spacing > 0:
+            cell = max(1.0, 3.0 * spacing)
+            cx = np.floor((ux - min_x) / cell).astype(np.int64)
+            cy = np.floor((uy - min_y) / cell).astype(np.int64)
+            occupied = np.unique(cx * (int(cy.max()) + 1) + cy).size
+            approx_area_m2 = occupied * cell * cell
+        else:
+            approx_area_m2 = max(1.0, (max_x - min_x) * (max_y - min_y))
         density = len(valid_idx) / approx_area_m2
 
-        if density < cls.MIN_ACCEPTABLE_DENSITY_PTS_M2:
+        if spacing > cls.MAX_SPACING_M:
             warnings.append(
-                f"Survey density ({density:.4f} pts/m²) is sparse (recommended: >= {cls.MIN_ACCEPTABLE_DENSITY_PTS_M2} pts/m²)."
+                f"Survey is sparse: median point spacing {spacing:.1f} m "
+                f"(density {density:.4f} pts/m² over occupied area; recommended spacing <= {cls.MAX_SPACING_M:.0f} m)."
             )
+
+        # Compute final valid count (outliers are flagged, not removed)
+        all_bad_indices = nan_indices | duplicate_indices
+        valid_points_count = total_raw - len(all_bad_indices)
 
         # 6. Spatial gap check (grid occupancy)
         grid_bins = 5
@@ -187,6 +194,8 @@ class SurveyValidator:
 
         verdict = QualityVerdict.PASSED
         if errors or valid_points_count < 3:
+            if valid_points_count < 3:
+                errors.append(f"Only {valid_points_count} valid points remain after cleaning; at least 3 are required.")
             verdict = QualityVerdict.REJECTED
         elif warnings:
             verdict = QualityVerdict.PASSED_WITH_WARNINGS
