@@ -12,13 +12,26 @@ export type HealthResponse = {
 
 export async function fetchHealth(): Promise<HealthResponse> {
   const token = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null
-  const response = await fetch(`${API_BASE_URL}/health`, {
-    headers: token ? { Authorization: `Bearer ${token}` } : {},
-  })
-  if (!response.ok) {
-    throw new Error(`Backend health check failed with status ${response.status}`)
+  const headers: Record<string, string> = token ? { Authorization: `Bearer ${token}` } : {}
+  try {
+    const response = await fetch(`${API_BASE_URL}/health`, { headers })
+    if (response.ok) {
+      return (await response.json()) as HealthResponse
+    }
+  } catch (e) {
+    // Continue to fallback
   }
-  return response.json() as Promise<HealthResponse>
+
+  try {
+    const fallback = await fetch('/api/health', { headers })
+    if (fallback.ok) {
+      return (await fallback.json()) as HealthResponse
+    }
+  } catch (e) {
+    // Throw below
+  }
+
+  throw new Error('Backend health check failed')
 }
 
 export type ProjectSummary = {
@@ -71,14 +84,34 @@ async function fetchJson<T>(path: string, init?: RequestInit): Promise<T> {
     ...(token ? { Authorization: `Bearer ${token}` } : {}),
     ...((init?.headers as Record<string, string>) || {}),
   }
-  const response = await fetch(`${API_BASE_URL}${path}`, {
-    ...init,
-    headers,
-  })
-  if (!response.ok) {
-    throw new Error(`Backend request failed with status ${response.status}`)
+
+  try {
+    const response = await fetch(`${API_BASE_URL}${path}`, {
+      ...init,
+      headers,
+    })
+    if (response.ok) {
+      return (await response.json()) as T
+    }
+  } catch (e) {
+    // Continue to fallback
   }
-  return response.json() as Promise<T>
+
+  // Fallback to /api prefix if /api/v1 wasn't mapped
+  try {
+    const fallbackPath = path.startsWith('/v1') ? `/api${path}` : `/api${path.startsWith('/') ? '' : '/'}${path}`
+    const fallbackResponse = await fetch(fallbackPath, {
+      ...init,
+      headers,
+    })
+    if (fallbackResponse.ok) {
+      return (await fallbackResponse.json()) as T
+    }
+  } catch (e) {
+    // Throw below
+  }
+
+  throw new Error(`Backend request failed for ${path}`)
 }
 
 export function fetchProjects(): Promise<ProjectSummary[]> {
