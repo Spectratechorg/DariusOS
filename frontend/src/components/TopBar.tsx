@@ -26,14 +26,13 @@ export const TopBar: React.FC = () => {
         return { subtitle: 'STAGE 2 · SURVEY INTAKE AND VALIDATION', title: 'Survey data' };
       case 'terrain':
         return { subtitle: 'STAGE 3 · TERRAIN ENGINE', title: 'Existing terrain' };
-      case 'reasoning':
-        return { subtitle: 'STAGE 4 · INTELLIGENCE ENGINE', title: 'AI reasoning and engineer review' };
       case 'design':
-        return { subtitle: 'STAGE 5 · ENGINEERING ENGINE AND VALIDATION · REVISION C', title: 'Design engine' };
+      case 'reasoning':
+        return { subtitle: 'STAGE 4 · ENGINEERING ENGINE AND VALIDATION · REVISION C', title: 'Design engine' };
       case 'drawings':
-        return { subtitle: 'STAGE 6 · CAD ENGINE · REVISION C', title: 'Engineering drawings' };
+        return { subtitle: 'STAGE 5 · CAD ENGINE · REVISION C', title: 'Engineering drawings' };
       case 'beme':
-        return { subtitle: 'STAGE 7 · QUANTITY ENGINE, BEME ENGINE AND REPORT', title: 'Quantities and BEME' };
+        return { subtitle: 'STAGE 6 · QUANTITY ENGINE, BEME ENGINE AND REPORT', title: 'Quantities and BEME' };
       case 'monitoring':
         return { subtitle: 'FULL SYSTEM · DRONE-ENABLED INTELLIGENCE PACKAGE', title: 'Routes and construction monitoring' };
       default:
@@ -52,7 +51,7 @@ export const TopBar: React.FC = () => {
       case 'survey':
         return { label: 'Build terrain model', onClick: () => setActiveStage('terrain') };
       case 'terrain':
-        return { label: 'Continue to AI reasoning', onClick: () => setActiveStage('reasoning') };
+        return { label: 'Continue to design engine', onClick: () => setActiveStage('design') };
       case 'reasoning':
         return { label: 'Continue to design engine', onClick: () => setActiveStage('design') };
       case 'design':
@@ -89,7 +88,7 @@ export const TopBar: React.FC = () => {
       case 'terrain':
         return { label: 'Export contours', onClick: () => setSnackbarMessage('Contour shapefile and DXF contours exported.') };
       case 'reasoning':
-        return { label: 'Reopen for changes', onClick: () => setSnackbarMessage('Parameter set v2 opened for engineer adjustments.') };
+        return { label: 'Regenerate design', onClick: () => setSnackbarMessage('Pipeline regeneration executed.') };
       case 'design':
         return { label: 'Regenerate design', onClick: () => setSnackbarMessage('Pipeline regeneration executed. Unaffected stages served from cache.') };
       case 'drawings':

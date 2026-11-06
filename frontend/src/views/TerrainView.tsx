@@ -1,13 +1,15 @@
 import React from 'react';
 import { Box, Card, Typography, Grid, Button, LinearProgress } from '@mui/material';
 import NavigationOutlinedIcon from '@mui/icons-material/NavigationOutlined';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { useProject } from '../context/ProjectContext';
 
 export const TerrainView: React.FC = () => {
   const { 
     terrainSummary, 
     activeTerrainTab, 
-    setActiveTerrainTab 
+    setActiveTerrainTab,
+    setActiveStage,
   } = useProject();
 
   return (
@@ -286,7 +288,7 @@ export const TerrainView: React.FC = () => {
             </Grid>
 
             <Typography variant="caption" sx={{ color: '#64748B', display: 'block', lineHeight: 1.4 }}>
-              Detected from slope and elevation variation. This feeds the project profile the AI reads next.
+              Detected from slope and elevation variation. This feeds the geometric alignment calculations the design engine reads next.
             </Typography>
           </Card>
 
@@ -323,6 +325,32 @@ export const TerrainView: React.FC = () => {
                 </Box>
               ))}
             </Box>
+          </Card>
+
+          {/* Proceed to Design Engine Card */}
+          <Card sx={{ p: 2.5, mt: 3, backgroundColor: '#0F1626', border: '1px solid #1E293B', display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+            <Typography variant="subtitle2" sx={{ fontWeight: 600, color: '#F8FAFC' }}>
+              Proceed to Design
+            </Typography>
+            <Typography variant="caption" sx={{ color: '#94A3B8' }}>
+              Terrain TIN surface ready. Generate longitudinal profile and horizontal alignments.
+            </Typography>
+            <Button
+              fullWidth
+              variant="contained"
+              endIcon={<ArrowForwardIcon />}
+              onClick={() => setActiveStage('design')}
+              sx={{
+                backgroundColor: '#10B981',
+                color: '#0B0F19',
+                fontWeight: 700,
+                textTransform: 'none',
+                py: 1,
+                '&:hover': { backgroundColor: '#059669' },
+              }}
+            >
+              Continue to Design Engine (Stage 4)
+            </Button>
           </Card>
         </Grid>
       </Grid>

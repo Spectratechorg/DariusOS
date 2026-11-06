@@ -10,23 +10,22 @@ export const StepperBar: React.FC = () => {
     { id: 'setup', number: 1, label: 'Setup' },
     { id: 'survey', number: 2, label: 'Survey' },
     { id: 'terrain', number: 3, label: 'Terrain' },
-    { id: 'reasoning', number: 4, label: 'AI reasoning' },
-    { id: 'design', number: 5, label: 'Design' },
-    { id: 'drawings', number: 6, label: 'Drawings' },
-    { id: 'beme', number: 7, label: 'BEME and report' },
+    { id: 'design', number: 4, label: 'Design' },
+    { id: 'drawings', number: 5, label: 'Drawings' },
+    { id: 'beme', number: 6, label: 'BEME and report' },
   ];
 
   // Stage order index for progress indicator
   const stageOrder: Record<StageId, number> = {
-    overview: 5,
+    overview: 4,
     setup: 1,
     survey: 2,
     terrain: 3,
     reasoning: 4,
-    design: 5,
-    drawings: 6,
-    beme: 7,
-    monitoring: 7,
+    design: 4,
+    drawings: 5,
+    beme: 6,
+    monitoring: 6,
   };
 
   const currentStepNum = stageOrder[activeStage] || 1;

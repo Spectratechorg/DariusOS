@@ -12,10 +12,9 @@ export const Sidebar: React.FC = () => {
     { id: 'setup', number: 1, label: 'Project setup' },
     { id: 'survey', number: 2, label: 'Survey and validation' },
     { id: 'terrain', number: 3, label: 'Terrain' },
-    { id: 'reasoning', number: 4, label: 'AI reasoning' },
-    { id: 'design', number: 5, label: 'Design engine' },
-    { id: 'drawings', number: 6, label: 'Drawings' },
-    { id: 'beme', number: 7, label: 'BEME and report' },
+    { id: 'design', number: 4, label: 'Design engine' },
+    { id: 'drawings', number: 5, label: 'Drawings' },
+    { id: 'beme', number: 6, label: 'BEME and report' },
   ];
 
   return (

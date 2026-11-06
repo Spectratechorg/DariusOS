@@ -45,12 +45,11 @@ export const OverviewView: React.FC = () => {
 
   const pipelineStatus = [
     { num: 1, name: 'Project setup', desc: 'Road class, standards, pavement and drainage requirements set', engine: 'PROJECT CONTEXT', status: 'Complete', color: '#10B981', stageId: 'setup' },
-    { num: 2, name: 'Survey and validation', desc: '1,842 points checked, 3 warnings acknowledged', engine: 'VALIDATION', status: 'Complete', color: '#10B981', stageId: 'survey' },
+    { num: 2, name: 'Survey and validation', desc: `${pointsCount.toLocaleString()} points checked, warnings acknowledged`, engine: 'VALIDATION', status: 'Complete', color: '#10B981', stageId: 'survey' },
     { num: 3, name: 'Terrain', desc: 'TIN, contours, existing-ground profile and slope analysis', engine: 'TERRAIN ENGINE', status: 'Complete', color: '#10B981', stageId: 'terrain' },
-    { num: 4, name: 'AI reasoning', desc: 'Parameter set approved by the engineering lead', engine: 'INTELLIGENCE ENGINE', status: 'Approved', color: '#10B981', stageId: 'reasoning' },
-    { num: 5, name: 'Design engine', desc: '22 of 27 checks pass, 1 needs review', engine: 'ENGINEERING ENGINE', status: 'In progress', color: '#38BDF8', stageId: 'design' },
-    { num: 6, name: 'Drawings', desc: 'Plan, profile and cross-sections as DXF and PDF', engine: 'CAD ENGINE', status: 'Waiting', color: '#64748B', stageId: 'drawings' },
-    { num: 7, name: 'BEME and report', desc: 'Quantity times rate, traced to one design revision', engine: 'QUANTITY AND BEME', status: 'Draft', color: '#F59E0B', stageId: 'beme' },
+    { num: 4, name: 'Design engine', desc: '22 of 27 checks pass, 1 needs review', engine: 'ENGINEERING ENGINE', status: 'In progress', color: '#38BDF8', stageId: 'design' },
+    { num: 5, name: 'Drawings', desc: 'Plan, profile and cross-sections as DXF and PDF', engine: 'CAD ENGINE', status: 'Waiting', color: '#64748B', stageId: 'drawings' },
+    { num: 6, name: 'BEME and report', desc: 'Quantity times rate, traced to one design revision', engine: 'QUANTITY AND BEME', status: 'Draft', color: '#F59E0B', stageId: 'beme' },
   ];
 
   return (
@@ -316,9 +315,9 @@ export const OverviewView: React.FC = () => {
                   <Chip label="Awaiting approval" size="small" sx={{ backgroundColor: 'rgba(56, 189, 248, 0.15)', color: '#38BDF8', fontSize: '0.65rem' }} />
                 </Box>
                 <Typography variant="caption" sx={{ color: '#94A3B8', display: 'block', mb: 1 }}>
-                  AI reasoning · three alternatives compared
+                  Design engine · geometric curve alternatives
                 </Typography>
-                <Button size="small" onClick={() => setActiveStage('reasoning')} sx={{ color: '#38BDF8', p: 0, fontSize: '0.75rem', textTransform: 'none' }}>
+                <Button size="small" onClick={() => setActiveStage('design')} sx={{ color: '#38BDF8', p: 0, fontSize: '0.75rem', textTransform: 'none' }}>
                   Open item →
                 </Button>
               </Box>

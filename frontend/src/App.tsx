@@ -32,7 +32,7 @@ const MainLayout: React.FC = () => {
       case 'terrain':
         return <TerrainView />;
       case 'reasoning':
-        return <AiReasoningView />;
+        return <DesignEngineView />;
       case 'design':
         return <DesignEngineView />;
       case 'drawings':
