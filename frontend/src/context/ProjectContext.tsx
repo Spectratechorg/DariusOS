@@ -161,9 +161,6 @@ export const ProjectProvider: React.FC<{ children: ReactNode }> = ({ children })
   // Default project data starts clean for a new road corridor
   const [projectData, setProjectData] = useState<ProjectData>({
     ...INITIAL_PROJECT_DATA,
-    projectName: 'East-West Road Corridor (Port Harcourt)',
-    client: 'Federal Ministry of Works / Regional Infrastructure',
-    projectLocation: 'Port Harcourt - Rivers State Corridor',
   });
 
   // Dynamic Survey state: Starts empty until user uploads a CSV or loads demo
@@ -240,7 +237,7 @@ export const ProjectProvider: React.FC<{ children: ReactNode }> = ({ children })
         ...prev,
         projectName: activeBackendProject.name || prev.projectName,
         client: 'Federal Ministry of Works / Infrastructure Authority',
-        projectLocation: 'Port Harcourt Corridor',
+        projectLocation: prev.projectLocation,
         carriagewayWidthM: 7.3,
       }));
     }
