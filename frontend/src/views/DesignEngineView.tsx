@@ -28,7 +28,7 @@ export const DesignEngineView: React.FC = () => {
   };
 
   return (
-    <Box sx={{ p: 3 }}>
+    <Box sx={{ p: { xs: 2, sm: 3 } }}>
       {/* Top Engine Progress Bar */}
       <Card sx={{ p: 2, mb: 3, backgroundColor: '#0A0E17', border: '1px solid #1E293B' }}>
         <Grid container spacing={2} alignItems="center">
@@ -94,13 +94,13 @@ export const DesignEngineView: React.FC = () => {
         </Grid>
       </Card>
 
-      <Grid container spacing={3}>
+      <Grid container spacing={{ xs: 2, sm: 3 }}>
         {/* Left Column (2/3) */}
         <Grid item xs={12} lg={8}>
           {/* Main Visual Profile / Alignment / Cross-section Card */}
-          <Card sx={{ p: 3, mb: 3 }}>
+          <Card sx={{ p: { xs: 2, sm: 3 }, mb: 3 }}>
             {/* View Switcher Tabs */}
-            <Box sx={{ display: 'flex', gap: 1, mb: 2.5, borderBottom: '1px solid #1E293B', pb: 1.5 }}>
+            <Box sx={{ display: 'flex', gap: 1, mb: 2.5, borderBottom: '1px solid #1E293B', pb: 1.5, overflowX: 'auto', '& > *': { flexShrink: 0, whiteSpace: 'nowrap' } }}>
               {(['Longitudinal profile', 'Horizontal alignment', 'Cross-section'] as const).map(tab => (
                 <Button
                   key={tab}
@@ -122,11 +122,27 @@ export const DesignEngineView: React.FC = () => {
               ))}
             </Box>
 
+            {/* Legend */}
+            <Box sx={{ display: 'flex', gap: { xs: 1.5, sm: 2.5 }, alignItems: 'center', mb: 1.5, flexWrap: 'wrap' }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
+                <Box sx={{ width: 14, height: 2, backgroundColor: '#38BDF8' }} />
+                <Typography sx={{ fontSize: '0.71875rem', color: '#9AA3B2' }}>Existing ground</Typography>
+              </Box>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
+                <Box sx={{ width: 14, height: 2, backgroundColor: '#F59E0B' }} />
+                <Typography sx={{ fontSize: '0.71875rem', color: '#9AA3B2' }}>Proposed profile</Typography>
+              </Box>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
+                <Box sx={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: '#EF4444' }} />
+                <Typography sx={{ fontSize: '0.71875rem', color: '#EF4444' }}>Flagged for review</Typography>
+              </Box>
+            </Box>
+
             {/* Profile Chart Canvas */}
             <Box
               sx={{
                 width: '100%',
-                height: 250,
+                height: { xs: 220, sm: 250 },
                 backgroundColor: '#090D16',
                 borderRadius: 1.5,
                 border: '1px solid #1E293B',
@@ -143,10 +159,10 @@ export const DesignEngineView: React.FC = () => {
                 <line x1="40" y1="180" x2="680" y2="180" stroke="#162238" strokeDasharray="3,3" />
                 <line x1="40" y1="220" x2="680" y2="220" stroke="#162238" />
 
-                <text x="15" y="34" fill="#64748B" fontSize="9" fontFamily="monospace">275</text>
-                <text x="15" y="84" fill="#64748B" fontSize="9" fontFamily="monospace">266</text>
-                <text x="15" y="134" fill="#64748B" fontSize="9" fontFamily="monospace">257</text>
-                <text x="15" y="184" fill="#64748B" fontSize="9" fontFamily="monospace">248</text>
+                <text x="15" y="34" fill="#64748B" fontSize="11" fontFamily="monospace">275</text>
+                <text x="15" y="84" fill="#64748B" fontSize="11" fontFamily="monospace">266</text>
+                <text x="15" y="134" fill="#64748B" fontSize="11" fontFamily="monospace">257</text>
+                <text x="15" y="184" fill="#64748B" fontSize="11" fontFamily="monospace">248</text>
 
                 {/* Existing Ground (Blue line) */}
                 <polyline
@@ -165,43 +181,28 @@ export const DesignEngineView: React.FC = () => {
                 />
 
                 {/* Annotations */}
-                <text x="310" y="150" fill="#64748B" fontSize="9" fontFamily="sans-serif">CUT through the ridge</text>
-                <text x="470" y="195" fill="#64748B" fontSize="9" fontFamily="sans-serif">FILL across the valley</text>
+                <text x="310" y="150" fill="#64748B" fontSize="11" fontFamily="sans-serif">CUT through the ridge</text>
+                <text x="470" y="195" fill="#64748B" fontSize="11" fontFamily="sans-serif">FILL across the valley</text>
 
                 {/* Flagged Review Point at Ch 1+840 */}
                 <circle cx="380" cy="68" r="5" fill="#EF4444" stroke="#FFFFFF" strokeWidth="1.5" />
                 <line x1="380" y1="68" x2="415" y2="40" stroke="#EF4444" strokeWidth="1.2" />
-                <rect x="420" y="30" width="95" height="18" rx="3" fill="#1E1515" stroke="#EF4444" strokeWidth="1" />
-                <text x="426" y="42" fill="#F87171" fontSize="9" fontWeight="700" fontFamily="sans-serif">Ch 1+840 · 9.2 %</text>
+                <rect x="420" y="28" width="112" height="21" rx="3" fill="#1E1515" stroke="#EF4444" strokeWidth="1" />
+                <text x="426" y="42" fill="#F87171" fontSize="11" fontWeight="700" fontFamily="sans-serif">Ch 1+840 · 9.2 %</text>
 
                 {/* X Axis Chainage */}
-                <text x="40" y="238" fill="#64748B" fontSize="9" fontFamily="sans-serif">0+000</text>
-                <text x="180" y="238" fill="#64748B" fontSize="9" fontFamily="sans-serif">0+800</text>
-                <text x="320" y="238" fill="#64748B" fontSize="9" fontFamily="sans-serif">1+650</text>
-                <text x="480" y="238" fill="#64748B" fontSize="9" fontFamily="sans-serif">2+400</text>
-                <text x="640" y="238" fill="#64748B" fontSize="9" fontFamily="sans-serif">3+200</text>
+                <text x="40" y="238" fill="#64748B" fontSize="11" fontFamily="sans-serif">0+000</text>
+                <text x="180" y="238" fill="#64748B" fontSize="11" fontFamily="sans-serif">0+800</text>
+                <text x="320" y="238" fill="#64748B" fontSize="11" fontFamily="sans-serif">1+650</text>
+                <text x="480" y="238" fill="#64748B" fontSize="11" fontFamily="sans-serif">2+400</text>
+                <text x="640" y="238" fill="#64748B" fontSize="11" fontFamily="sans-serif">3+200</text>
               </svg>
 
-              {/* Legend Bottom */}
-              <Box sx={{ position: 'absolute', bottom: 8, left: 16, display: 'flex', gap: 2.5, alignItems: 'center' }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8 }}>
-                  <Box sx={{ width: 14, height: 2, backgroundColor: '#38BDF8' }} />
-                  <Typography variant="caption" sx={{ color: '#94A3B8', fontSize: '0.7rem' }}>Existing ground</Typography>
-                </Box>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8 }}>
-                  <Box sx={{ width: 14, height: 2, backgroundColor: '#F59E0B' }} />
-                  <Typography variant="caption" sx={{ color: '#94A3B8', fontSize: '0.7rem' }}>Proposed profile</Typography>
-                </Box>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8 }}>
-                  <Box sx={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: '#EF4444' }} />
-                  <Typography variant="caption" sx={{ color: '#EF4444', fontSize: '0.7rem' }}>Flagged for review</Typography>
-                </Box>
-              </Box>
             </Box>
 
             {/* Gradient Segments Table */}
-            <TableContainer sx={{ borderRadius: 1, border: '1px solid #1E293B' }}>
-              <Table size="small">
+            <TableContainer sx={{ borderRadius: 1, border: '1px solid #1E293B', overflowX: 'auto' }}>
+              <Table size="small" sx={{ minWidth: 420 }}>
                 <TableHead sx={{ backgroundColor: '#0A0E17' }}>
                   <TableRow>
                     <TableCell sx={{ color: '#64748B', fontWeight: 600, fontSize: '0.72rem', py: 1 }}>CHAINAGE</TableCell>
@@ -243,7 +244,7 @@ export const DesignEngineView: React.FC = () => {
 
         {/* Right Column (1/3) */}
         <Grid item xs={12} lg={4}>
-          <Card sx={{ p: 3 }}>
+          <Card sx={{ p: { xs: 2, sm: 3 } }}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
               <Typography variant="h6" sx={{ fontWeight: 600 }}>
                 Validation

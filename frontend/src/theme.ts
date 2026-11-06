@@ -99,12 +99,21 @@ export const theme = createTheme({
           borderRadius: 6,
           fontSize: '0.8125rem',
           padding: '6px 14px',
+          minHeight: 44,
+          '@media (min-width:900px)': { minHeight: 34 },
         },
         containedPrimary: {
           backgroundColor: '#2563EB',
           '&:hover': {
             backgroundColor: '#1D4ED8',
           },
+        },
+      },
+    },
+    MuiListItemButton: {
+      styleOverrides: {
+        root: {
+          '@media (max-width:899px)': { minHeight: 44 },
         },
       },
     },

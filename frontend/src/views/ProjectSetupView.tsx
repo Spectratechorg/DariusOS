@@ -12,12 +12,12 @@ export const ProjectSetupView: React.FC = () => {
   } = useProject();
 
   return (
-    <Box sx={{ p: 3 }}>
-      <Grid container spacing={3}>
+    <Box sx={{ p: { xs: 2, sm: 3 } }}>
+      <Grid container spacing={{ xs: 2, sm: 3 }}>
         {/* Left Column (2/3) */}
         <Grid item xs={12} lg={8}>
           {/* Project Corridor Info */}
-          <Card sx={{ p: 3, mb: 3 }}>
+          <Card sx={{ p: { xs: 2, sm: 3 }, mb: 3 }}>
             <Typography variant="h6" sx={{ fontWeight: 600, mb: 0.5 }}>
               Project corridor details
             </Typography>
@@ -90,7 +90,7 @@ export const ProjectSetupView: React.FC = () => {
           </Card>
 
           {/* Road and Design Requirements */}
-          <Card sx={{ p: 3, mb: 3 }}>
+          <Card sx={{ p: { xs: 2, sm: 3 }, mb: 3 }}>
             <Typography variant="h6" sx={{ fontWeight: 600, mb: 0.5 }}>
               Road and design standards
             </Typography>
@@ -170,7 +170,7 @@ export const ProjectSetupView: React.FC = () => {
           </Card>
 
           {/* Pavement Layer Structure */}
-          <Card sx={{ p: 3, mb: 3 }}>
+          <Card sx={{ p: { xs: 2, sm: 3 }, mb: 3 }}>
             <Typography variant="h6" sx={{ fontWeight: 600, mb: 0.5 }}>
               Pavement structural layers
             </Typography>
@@ -224,7 +224,7 @@ export const ProjectSetupView: React.FC = () => {
           </Card>
 
           {/* Site Constraints and Notes */}
-          <Card sx={{ p: 3, mb: 3 }}>
+          <Card sx={{ p: { xs: 2, sm: 3 }, mb: 3 }}>
             <Typography variant="h6" sx={{ fontWeight: 600, mb: 0.5 }}>
               Site constraints and notes
             </Typography>
@@ -294,7 +294,7 @@ export const ProjectSetupView: React.FC = () => {
         {/* Right Column (1/3) */}
         <Grid item xs={12} lg={4}>
           {/* Next Step Card */}
-          <Card sx={{ p: 3, mb: 3, border: '1px solid #1E293B', backgroundColor: '#0F1626' }}>
+          <Card sx={{ p: { xs: 2, sm: 3 }, mb: 3, border: '1px solid #1E293B', backgroundColor: '#0F1626' }}>
             <Typography variant="subtitle2" sx={{ color: '#38BDF8', fontWeight: 700, letterSpacing: '0.04em', fontSize: '0.72rem', mb: 1 }}>
               NEXT STEP IN PIPELINE
             </Typography>
@@ -322,7 +322,7 @@ export const ProjectSetupView: React.FC = () => {
           </Card>
 
           {/* What this unlocks */}
-          <Card sx={{ p: 3, mb: 3 }}>
+          <Card sx={{ p: { xs: 2, sm: 3 }, mb: 3 }}>
             <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
               What this unlocks
             </Typography>
@@ -367,7 +367,7 @@ export const ProjectSetupView: React.FC = () => {
           </Card>
 
           {/* Engineering Roles */}
-          <Card sx={{ p: 3 }}>
+          <Card sx={{ p: { xs: 2, sm: 3 } }}>
             <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
               Sign-off hierarchy
             </Typography>

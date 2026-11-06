@@ -17,8 +17,8 @@ export const DrawingsView: React.FC = () => {
   ];
 
   return (
-    <Box sx={{ p: 3 }}>
-      <Grid container spacing={3}>
+    <Box sx={{ p: { xs: 2, sm: 3 } }}>
+      <Grid container spacing={{ xs: 2, sm: 3 }}>
         {/* Left Column: Sheets Selector */}
         <Grid item xs={12} md={3} lg={2.5}>
           <Card sx={{ p: 2.5, mb: 3 }}>
@@ -68,7 +68,7 @@ export const DrawingsView: React.FC = () => {
             <Box
               sx={{
                 width: '100%',
-                height: 520,
+                height: { xs: 'auto', sm: 520 },
                 backgroundColor: '#070B12',
                 border: '2px solid #334155',
                 position: 'relative',
@@ -86,7 +86,7 @@ export const DrawingsView: React.FC = () => {
               </Box>
 
               {/* Vector CAD Drawing Simulation */}
-              <Box sx={{ width: '100%', height: 380, position: 'relative' }}>
+              <Box sx={{ width: '100%', height: { xs: 240, sm: 380 }, position: 'relative' }}>
                 <svg width="100%" height="100%" viewBox="0 0 650 380">
                   {/* Drawing Grid Frame */}
                   <rect x="0" y="0" width="650" height="380" fill="none" stroke="#162238" strokeWidth="0.5" />
@@ -149,7 +149,8 @@ export const DrawingsView: React.FC = () => {
                   sx={{
                     border: '1.5px solid #334155',
                     backgroundColor: '#0F1626',
-                    width: 440,
+                    width: '100%',
+                    maxWidth: 440,
                     fontSize: '0.72rem',
                   }}
                 >
@@ -165,19 +166,19 @@ export const DrawingsView: React.FC = () => {
                   </Grid>
 
                   <Grid container>
-                    <Grid item xs={4} sx={{ p: 1, borderRight: '1px solid #1E293B' }}>
+                    <Grid item xs={6} sm={4} sx={{ p: 1, borderRight: '1px solid #1E293B', borderBottom: { xs: '1px solid #1E293B', sm: 'none' } }}>
                       <Typography variant="caption" sx={{ color: '#64748B', display: 'block', fontSize: '0.62rem' }}>DRAWING</Typography>
                       <Typography variant="body2" sx={{ fontWeight: 600, color: '#F8FAFC', fontSize: '0.75rem' }}>Plan, alignment & drainage</Typography>
                     </Grid>
-                    <Grid item xs={2.5} sx={{ p: 1, borderRight: '1px solid #1E293B' }}>
+                    <Grid item xs={6} sm={2.5} sx={{ p: 1, borderRight: '1px solid #1E293B', borderBottom: { xs: '1px solid #1E293B', sm: 'none' } }}>
                       <Typography variant="caption" sx={{ color: '#64748B', display: 'block', fontSize: '0.62rem' }}>SHEET</Typography>
                       <Typography variant="body2" sx={{ fontWeight: 600, color: '#F8FAFC', fontSize: '0.75rem' }}>{activeCadSheet}</Typography>
                     </Grid>
-                    <Grid item xs={2} sx={{ p: 1, borderRight: '1px solid #1E293B' }}>
+                    <Grid item xs={6} sm={2} sx={{ p: 1, borderRight: '1px solid #1E293B' }}>
                       <Typography variant="caption" sx={{ color: '#64748B', display: 'block', fontSize: '0.62rem' }}>REVISION</Typography>
                       <Typography variant="body2" sx={{ fontWeight: 600, color: '#F8FAFC', fontSize: '0.75rem' }}>C</Typography>
                     </Grid>
-                    <Grid item xs={3.5} sx={{ p: 1 }}>
+                    <Grid item xs={6} sm={3.5} sx={{ p: 1 }}>
                       <Typography variant="caption" sx={{ color: '#64748B', display: 'block', fontSize: '0.62rem' }}>STATUS</Typography>
                       <Typography variant="body2" sx={{ fontWeight: 600, color: '#10B981', fontSize: '0.75rem' }}>For engineer approval</Typography>
                     </Grid>
@@ -218,19 +219,19 @@ export const DrawingsView: React.FC = () => {
                     <Chip
                       label={enabled ? 'On' : 'Off'}
                       size="small"
-                      onClick={() => toggleCadLayer(layer)}
+                      aria-hidden
                       sx={{
                         backgroundColor: enabled ? 'rgba(16, 185, 129, 0.15)' : '#1E293B',
                         color: enabled ? '#34D399' : '#64748B',
                         fontWeight: 600,
                         fontSize: '0.68rem',
-                        cursor: 'pointer',
                       }}
                     />
                     <Switch
                       size="small"
                       checked={enabled}
                       onChange={() => toggleCadLayer(layer)}
+                      inputProps={{ 'aria-label': `${layer} layer` }}
                       sx={{ '& .MuiSwitch-thumb': { backgroundColor: enabled ? '#10B981' : '#64748B' } }}
                     />
                   </Box>

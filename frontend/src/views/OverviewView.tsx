@@ -122,7 +122,7 @@ export const OverviewView: React.FC = () => {
   const openIssues = designIssues.filter(i => !i.isAccepted);
 
   return (
-    <Box sx={{ p: 3 }}>
+    <Box sx={{ p: { xs: 2, sm: 3 } }}>
       {/* Dynamic Project Banner / Quick Actions */}
       <Card sx={{ p: 2, mb: 3, backgroundColor: '#0F1626', border: '1px solid #1E293B', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 2 }}>
         <Box>
@@ -275,11 +275,11 @@ export const OverviewView: React.FC = () => {
       </Grid>
 
       {/* Main Content Grid */}
-      <Grid container spacing={3}>
+      <Grid container spacing={{ xs: 2, sm: 3 }}>
         {/* Left Column (2/3) */}
         <Grid item xs={12} lg={8}>
           {/* Workflow Pipeline */}
-          <Card sx={{ p: 3, mb: 3 }}>
+          <Card sx={{ p: { xs: 2, sm: 3 }, mb: 3 }}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
               <Typography variant="h6" sx={{ fontWeight: 600 }}>
                 Workflow pipeline
@@ -358,7 +358,7 @@ export const OverviewView: React.FC = () => {
           </Card>
 
           {/* How Every Output is Produced Card */}
-          <Card sx={{ p: 3 }}>
+          <Card sx={{ p: { xs: 2, sm: 3 } }}>
             <Typography variant="h6" sx={{ fontWeight: 600, mb: 0.5 }}>
               Deterministic Engineering Architecture
             </Typography>
@@ -429,7 +429,7 @@ export const OverviewView: React.FC = () => {
         {/* Right Column (1/3) */}
         <Grid item xs={12} lg={4}>
           {/* Needs Engineer Review */}
-          <Card sx={{ p: 3, mb: 3 }}>
+          <Card sx={{ p: { xs: 2, sm: 3 }, mb: 3 }}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
               <Typography variant="h6" sx={{ fontWeight: 600 }}>
                 Needs engineer review
@@ -499,7 +499,7 @@ export const OverviewView: React.FC = () => {
           </Card>
 
           {/* Dynamic Audit Trail */}
-          <Card sx={{ p: 3 }}>
+          <Card sx={{ p: { xs: 2, sm: 3 } }}>
             <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
               Audit trail
             </Typography>

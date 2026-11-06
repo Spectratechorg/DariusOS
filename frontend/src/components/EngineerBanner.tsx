@@ -9,7 +9,7 @@ export const EngineerBanner: React.FC = () => {
         backgroundColor: '#1E1512',
         borderBottom: '1px solid #78350F',
         py: 0.5,
-        px: 3,
+        px: { xs: 2, md: 3 },
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',

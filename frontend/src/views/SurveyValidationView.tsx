@@ -59,7 +59,7 @@ export const SurveyValidationView: React.FC = () => {
   const visiblePoints = surveyPoints.slice(0, displayCount);
 
   return (
-    <Box sx={{ p: 3 }}>
+    <Box sx={{ p: { xs: 2, sm: 3 } }}>
       <input
         type="file"
         ref={fileInputRef}
@@ -68,7 +68,7 @@ export const SurveyValidationView: React.FC = () => {
         onChange={handleFileChange}
       />
 
-      <Grid container spacing={3}>
+      <Grid container spacing={{ xs: 2, sm: 3 }}>
         {/* Left Column (2/3) */}
         <Grid item xs={12} lg={8}>
           {/* Upload Dropzone Card */}
@@ -77,14 +77,14 @@ export const SurveyValidationView: React.FC = () => {
             onDragLeave={() => setIsDragOver(false)}
             onDrop={handleDrop}
             sx={{ 
-              p: 3, 
+              p: { xs: 2, sm: 3 }, 
               mb: 3, 
               border: isDragOver ? '2px dashed #38BDF8' : '1px dashed #334155',
               backgroundColor: isDragOver ? 'rgba(56, 189, 248, 0.08)' : '#0F1626',
               transition: 'all 0.2s ease',
             }}
           >
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+            <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'space-between', alignItems: { xs: 'stretch', sm: 'center' }, mb: 2, gap: 1.5 }}>
               <Box>
                 <Typography variant="h6" sx={{ fontWeight: 600 }}>
                   Upload survey point cloud
@@ -93,13 +93,14 @@ export const SurveyValidationView: React.FC = () => {
                   Drop your CSV, XYZ, or LAS file with Easting, Northing, and Elevation coordinates.
                 </Typography>
               </Box>
-              <Box sx={{ display: 'flex', gap: 1 }}>
+              <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
                 <Button
                   variant="outlined"
                   size="small"
                   startIcon={<AutoFixHighIcon />}
                   onClick={loadDemoSurvey}
                   sx={{
+                    flex: { xs: '1 1 100%', sm: '0 0 auto' },
                     borderColor: '#334155',
                     color: '#38BDF8',
                     fontSize: '0.75rem',
@@ -115,6 +116,7 @@ export const SurveyValidationView: React.FC = () => {
                   startIcon={<CloudUploadOutlinedIcon />}
                   onClick={() => fileInputRef.current?.click()}
                   sx={{
+                    flex: { xs: '1 1 100%', sm: '0 0 auto' },
                     backgroundColor: '#2563EB',
                     '&:hover': { backgroundColor: '#1D4ED8' },
                     fontSize: '0.75rem',
@@ -137,7 +139,7 @@ export const SurveyValidationView: React.FC = () => {
             )}
 
             {/* Uploaded File Details Banner */}
-            <Box sx={{ p: 2, borderRadius: 1.5, backgroundColor: '#0B0F19', border: '1px solid #1E293B', display: 'flex', alignItems: 'center', gap: 2 }}>
+            <Box sx={{ p: 2, borderRadius: 1.5, backgroundColor: '#0B0F19', border: '1px solid #1E293B', display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap' }}>
               <Box
                 sx={{
                   width: 44,
@@ -152,8 +154,8 @@ export const SurveyValidationView: React.FC = () => {
               >
                 <UploadFileOutlinedIcon fontSize="medium" />
               </Box>
-              <Box sx={{ flex: 1 }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 0.5 }}>
+              <Box sx={{ flex: 1, minWidth: 0 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 0.5, flexWrap: 'wrap' }}>
                   <Typography variant="body1" sx={{ fontWeight: 600, color: '#F8FAFC' }}>
                     {uploadedSurvey?.filename || 'slope.csv'}
                   </Typography>
@@ -187,8 +189,8 @@ export const SurveyValidationView: React.FC = () => {
           </Card>
 
           {/* Structured Project Dataset Table */}
-          <Card sx={{ p: 3, mb: 3 }}>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+          <Card sx={{ p: { xs: 2, sm: 3 }, mb: 3 }}>
+            <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'space-between', alignItems: { xs: 'flex-start', sm: 'center' }, mb: 2, gap: 1 }}>
               <Box>
                 <Typography variant="h6" sx={{ fontWeight: 600 }}>
                   Structured project dataset
@@ -202,8 +204,8 @@ export const SurveyValidationView: React.FC = () => {
               </Typography>
             </Box>
 
-            <TableContainer sx={{ borderRadius: 1, border: '1px solid #1E293B', maxHeight: 380 }}>
-              <Table size="small" stickyHeader>
+            <TableContainer sx={{ borderRadius: 1, border: '1px solid #1E293B', maxHeight: 380, overflowX: 'auto' }}>
+              <Table size="small" stickyHeader sx={{ minWidth: 560 }}>
                 <TableHead sx={{ backgroundColor: '#0A0E17' }}>
                   <TableRow>
                     <TableCell sx={{ backgroundColor: '#0A0E17', color: '#64748B', fontWeight: 600, fontSize: '0.72rem', py: 1 }}>POINT ID</TableCell>
@@ -260,7 +262,7 @@ export const SurveyValidationView: React.FC = () => {
 
             {/* Pagination Controls */}
             {surveyPoints.length > 10 && (
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 2 }}>
+              <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'space-between', alignItems: { xs: 'flex-start', sm: 'center' }, mt: 2, gap: 1 }}>
                 <Typography variant="caption" sx={{ color: '#94A3B8' }}>
                   Elevation bounds: {uploadedSurvey ? `${uploadedSurvey.minElevation.toFixed(1)}m min – ${uploadedSurvey.maxElevation.toFixed(1)}m max` : '—'}
                 </Typography>
@@ -298,7 +300,7 @@ export const SurveyValidationView: React.FC = () => {
           </Card>
 
           {/* Warnings for the Engineer */}
-          <Card sx={{ p: 3, mb: 3 }}>
+          <Card sx={{ p: { xs: 2, sm: 3 }, mb: 3 }}>
             <Typography variant="h6" sx={{ fontWeight: 600, mb: 0.5 }}>
               Warnings for the engineer
             </Typography>
@@ -318,9 +320,11 @@ export const SurveyValidationView: React.FC = () => {
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
+                    flexWrap: 'wrap',
+                    gap: 1.5,
                   }}
                 >
-                  <Box sx={{ pr: 2 }}>
+                  <Box sx={{ pr: 2, minWidth: 0 }}>
                     <Typography variant="body2" sx={{ fontWeight: 600, color: '#F8FAFC' }}>
                       {w.title}
                     </Typography>
@@ -346,13 +350,14 @@ export const SurveyValidationView: React.FC = () => {
           </Card>
 
           {/* Next Stage Button */}
-          <Box sx={{ display: 'flex', justifyContent: 'flex-end', pb: 4 }}>
+          <Box sx={{ display: 'flex', justifyContent: { xs: 'stretch', sm: 'flex-end' }, pb: 4 }}>
             <Button
               variant="contained"
               size="medium"
               endIcon={<ArrowForwardIcon />}
               onClick={() => setActiveStage('terrain')}
               sx={{
+                width: { xs: '100%', sm: 'auto' },
                 backgroundColor: '#10B981',
                 color: '#0B0F19',
                 fontWeight: 700,
@@ -371,7 +376,7 @@ export const SurveyValidationView: React.FC = () => {
         {/* Right Column (1/3) */}
         <Grid item xs={12} lg={4}>
           {/* Validation Checks */}
-          <Card sx={{ p: 3, mb: 3 }}>
+          <Card sx={{ p: { xs: 2, sm: 3 }, mb: 3 }}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2.5 }}>
               <Typography variant="h6" sx={{ fontWeight: 600 }}>
                 Validation checks
@@ -395,9 +400,10 @@ export const SurveyValidationView: React.FC = () => {
                       alignItems: 'center',
                       py: 0.8,
                       borderBottom: '1px solid #1A2436',
+                      gap: 1.5,
                     }}
                   >
-                    <Typography variant="body2" sx={{ color: '#CBD5E1', fontSize: '0.825rem' }}>
+                    <Typography variant="body2" sx={{ color: '#CBD5E1', fontSize: '0.825rem', minWidth: 0 }}>
                       {check.name}
                     </Typography>
                     <Chip
@@ -417,7 +423,7 @@ export const SurveyValidationView: React.FC = () => {
           </Card>
 
           {/* Terrain Generation Readiness Card */}
-          <Card sx={{ p: 3, backgroundColor: '#0F1626', border: '1px solid #1E293B' }}>
+          <Card sx={{ p: { xs: 2, sm: 3 }, backgroundColor: '#0F1626', border: '1px solid #1E293B' }}>
             <Typography variant="subtitle2" sx={{ color: '#10B981', fontWeight: 700, letterSpacing: '0.04em', fontSize: '0.72rem', mb: 1 }}>
               DATASET QUALITY
             </Typography>

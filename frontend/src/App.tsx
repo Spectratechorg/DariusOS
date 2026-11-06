@@ -1,5 +1,5 @@
-import React from 'react';
-import { Box, ThemeProvider, CssBaseline, Snackbar, Alert } from '@mui/material';
+import React, { useState } from 'react';
+import { Box, Drawer, ThemeProvider, CssBaseline, Snackbar, Alert } from '@mui/material';
 import { theme } from './theme';
 import { ProjectProvider, useProject } from './context/ProjectContext';
 import { Sidebar } from './components/Sidebar';
@@ -18,6 +18,7 @@ import { BemeReportView } from './views/BemeReportView';
 
 const MainLayout: React.FC = () => {
   const { activeStage, snackbarMessage, setSnackbarMessage } = useProject();
+  const [navOpen, setNavOpen] = useState(false);
 
   const renderActiveView = () => {
     switch (activeStage) {
@@ -30,7 +31,6 @@ const MainLayout: React.FC = () => {
       case 'terrain':
         return <TerrainView />;
       case 'design':
-      case 'reasoning':
         return <DesignEngineView />;
       case 'drawings':
         return <DrawingsView />;
@@ -42,20 +42,41 @@ const MainLayout: React.FC = () => {
   };
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh', width: '100vw', overflow: 'hidden', backgroundColor: '#0B0F19' }}>
+    <Box sx={{ display: 'flex', flexDirection: 'column', height: '100dvh', width: '100vw', overflow: 'hidden', backgroundColor: '#0B0F19' }}>
       {/* Top Persistent Mandatory Registered Engineer Banner */}
       <EngineerBanner />
 
       {/* Main Workspace Frame */}
       <Box sx={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
         {/* Left Navigation Sidebar */}
-        <Sidebar />
+        <Box sx={{ display: { xs: 'none', md: 'block' }, height: '100%' }}>
+          <Sidebar />
+        </Box>
+
+        <Drawer
+          open={navOpen}
+          onClose={() => setNavOpen(false)}
+          ModalProps={{ keepMounted: true }}
+          sx={{ display: { xs: 'block', md: 'none' } }}
+          slotProps={{
+            paper: {
+              sx: {
+                width: 248,
+                backgroundColor: '#0A0E17',
+                backgroundImage: 'none',
+                borderRight: '1px solid #1E293B',
+              },
+            },
+          }}
+        >
+          <Sidebar onNavigate={() => setNavOpen(false)} />
+        </Drawer>
 
         {/* Center Main Stage Content */}
-        <Box sx={{ display: 'flex', flexDirection: 'column', flex: 1, height: '100%', overflow: 'hidden' }}>
-          <TopBar />
+        <Box sx={{ display: 'flex', flexDirection: 'column', flex: 1, minWidth: 0, height: '100%', overflow: 'hidden' }}>
+          <TopBar onOpenNav={() => setNavOpen(true)} />
           <StepperBar />
-          <Box sx={{ flex: 1, overflowY: 'auto', backgroundColor: '#0B0F19' }}>
+          <Box sx={{ flex: 1, overflowY: 'auto', overflowX: 'hidden', backgroundColor: '#0B0F19' }}>
             {renderActiveView()}
           </Box>
         </Box>

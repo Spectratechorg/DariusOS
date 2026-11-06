@@ -21,7 +21,6 @@ export const StepperBar: React.FC = () => {
     setup: 1,
     survey: 2,
     terrain: 3,
-    reasoning: 4,
     design: 4,
     drawings: 5,
     beme: 6,
@@ -32,7 +31,7 @@ export const StepperBar: React.FC = () => {
   return (
     <Box
       sx={{
-        px: 3,
+        px: { xs: 2, md: 3 },
         py: 1,
         backgroundColor: '#0A0E17',
         borderBottom: '1px solid #1E293B',
@@ -42,7 +41,7 @@ export const StepperBar: React.FC = () => {
         position: 'relative',
       }}
     >
-      <Box sx={{ display: 'flex', width: '100%', justifyContent: 'space-between', alignItems: 'center' }}>
+      <Box sx={{ display: 'flex', width: '100%', justifyContent: { xs: 'flex-start', md: 'space-between' }, alignItems: 'center', gap: { xs: 1.5, md: 0 }, overflowX: 'auto', '& > *': { flexShrink: 0 } }}>
         {steps.map(s => {
           const isCompleted = s.number < currentStepNum || (hasSurveyUploaded && s.number <= 2);
           const isCurrent = s.id === activeStage;

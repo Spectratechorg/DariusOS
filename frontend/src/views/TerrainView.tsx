@@ -13,17 +13,17 @@ export const TerrainView: React.FC = () => {
   } = useProject();
 
   return (
-    <Box sx={{ p: 3 }}>
-      <Grid container spacing={3}>
+    <Box sx={{ p: { xs: 2, sm: 3 } }}>
+      <Grid container spacing={{ xs: 2, sm: 3 }}>
         {/* Left Column (2/3) */}
         <Grid item xs={12} lg={8}>
           {/* Terrain Model Canvas Card */}
-          <Card sx={{ p: 3, mb: 3 }}>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+          <Card sx={{ p: { xs: 2, sm: 3 }, mb: 3 }}>
+            <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'space-between', alignItems: { xs: 'flex-start', sm: 'center' }, mb: 2, gap: 1.5 }}>
               <Typography variant="h6" sx={{ fontWeight: 600 }}>
                 Terrain model
               </Typography>
-              <Box sx={{ display: 'flex', backgroundColor: '#0A0E17', borderRadius: 1.5, p: 0.3, border: '1px solid #1E293B' }}>
+              <Box sx={{ display: 'flex', backgroundColor: '#0A0E17', borderRadius: 1.5, p: 0.3, border: '1px solid #1E293B', overflowX: 'auto', maxWidth: '100%', '& > *': { flexShrink: 0 } }}>
                 {(['TIN', 'Contours', 'Alignment'] as const).map(tab => (
                   <Button
                     key={tab}
@@ -49,7 +49,7 @@ export const TerrainView: React.FC = () => {
             <Box
               sx={{
                 width: '100%',
-                height: 320,
+                height: { xs: 260, sm: 320 },
                 backgroundColor: '#090D16',
                 borderRadius: 1.5,
                 border: '1px solid #1E293B',
@@ -131,35 +131,34 @@ export const TerrainView: React.FC = () => {
                 <text x="605" y="65" fill="#94A3B8" fontSize="10" fontWeight="600" fontFamily="sans-serif">Ch 3+200</text>
               </svg>
 
-              {/* Legend & Scale bottom */}
-              <Box sx={{ position: 'absolute', bottom: 12, left: 16, display: 'flex', gap: 2, alignItems: 'center' }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8 }}>
-                  <Box sx={{ width: 14, height: 2, backgroundColor: '#263A5E' }} />
-                  <Typography variant="caption" sx={{ color: '#64748B', fontSize: '0.7rem' }}>Contours</Typography>
-                </Box>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8 }}>
-                  <Box sx={{ width: 14, height: 2, backgroundColor: '#162238' }} />
-                  <Typography variant="caption" sx={{ color: '#64748B', fontSize: '0.7rem' }}>TIN edges</Typography>
-                </Box>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8 }}>
-                  <Box sx={{ width: 14, height: 2, backgroundColor: '#F59E0B', borderBottom: '1px dashed #F59E0B' }} />
-                  <Typography variant="caption" sx={{ color: '#F59E0B', fontSize: '0.7rem' }}>Alignment (preview)</Typography>
-                </Box>
-              </Box>
-
-              <Typography variant="caption" sx={{ position: 'absolute', bottom: 12, right: 16, color: '#475569', fontSize: '0.68rem', fontFamily: 'monospace' }}>
+              <Typography variant="caption" sx={{ position: 'absolute', top: 12, right: 12, color: '#475569', fontSize: '0.68rem', fontFamily: 'monospace' }}>
                 Sample plan · metres · Not to scale
               </Typography>
+            </Box>
+
+            <Box sx={{ display: 'flex', gap: { xs: 1.25, sm: 2 }, alignItems: 'center', flexWrap: 'wrap', mt: 1.5 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8 }}>
+                <Box sx={{ width: 14, height: 2, backgroundColor: '#263A5E' }} />
+                <Typography variant="caption" sx={{ color: '#64748B', fontSize: '0.7rem' }}>Contours</Typography>
+              </Box>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8 }}>
+                <Box sx={{ width: 14, height: 2, backgroundColor: '#162238' }} />
+                <Typography variant="caption" sx={{ color: '#64748B', fontSize: '0.7rem' }}>TIN edges</Typography>
+              </Box>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8 }}>
+                <Box sx={{ width: 14, height: 2, backgroundColor: '#F59E0B', borderBottom: '1px dashed #F59E0B' }} />
+                <Typography variant="caption" sx={{ color: '#F59E0B', fontSize: '0.7rem' }}>Alignment (preview)</Typography>
+              </Box>
             </Box>
           </Card>
 
           {/* Existing Ground Profile Along Alignment Card */}
-          <Card sx={{ p: 3 }}>
+          <Card sx={{ p: { xs: 2, sm: 3 } }}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1.5 }}>
               <Typography variant="h6" sx={{ fontWeight: 600 }}>
                 Existing-ground profile along the alignment
               </Typography>
-              <Typography variant="caption" sx={{ color: '#64748B', fontWeight: 600, fontSize: '0.68rem' }}>
+              <Typography variant="caption" sx={{ color: '#64748B', fontWeight: 600, fontSize: '0.68rem', display: { xs: 'none', sm: 'block' } }}>
                 ELEVATION IN METRES
               </Typography>
             </Box>
@@ -211,7 +210,7 @@ export const TerrainView: React.FC = () => {
         {/* Right Column (1/3) */}
         <Grid item xs={12} lg={4}>
           {/* Terrain Summary Card */}
-          <Card sx={{ p: 3, mb: 3 }}>
+          <Card sx={{ p: { xs: 2, sm: 3 }, mb: 3 }}>
             <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
               Terrain summary
             </Typography>
@@ -255,7 +254,7 @@ export const TerrainView: React.FC = () => {
           </Card>
 
           {/* Terrain Classification Card */}
-          <Card sx={{ p: 3, mb: 3 }}>
+          <Card sx={{ p: { xs: 2, sm: 3 }, mb: 3 }}>
             <Typography variant="h6" sx={{ fontWeight: 600, mb: 1.5 }}>
               Terrain classification
             </Typography>
@@ -293,7 +292,7 @@ export const TerrainView: React.FC = () => {
           </Card>
 
           {/* Slope Distribution Card */}
-          <Card sx={{ p: 3 }}>
+          <Card sx={{ p: { xs: 2, sm: 3 } }}>
             <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
               Slope distribution
             </Typography>

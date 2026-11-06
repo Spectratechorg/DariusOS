@@ -4,8 +4,12 @@ import DashboardOutlinedIcon from '@mui/icons-material/DashboardOutlined';
 import { useProject } from '../context/ProjectContext';
 import { StageId } from '../types';
 
-export const Sidebar: React.FC = () => {
+export const Sidebar: React.FC<{ onNavigate?: () => void }> = ({ onNavigate }) => {
   const { activeStage, setActiveStage } = useProject();
+  const go = (stage: StageId) => {
+    setActiveStage(stage);
+    onNavigate?.();
+  };
 
   const pipelineStages: { id: StageId; number: number; label: string }[] = [
     { id: 'setup', number: 1, label: 'Project setup' },
@@ -21,7 +25,7 @@ export const Sidebar: React.FC = () => {
       sx={{
         width: 240,
         minWidth: 240,
-        height: '100vh',
+        height: '100%',
         backgroundColor: '#0A0E17',
         borderRight: '1px solid #1E293B',
         display: 'flex',
@@ -62,7 +66,7 @@ export const Sidebar: React.FC = () => {
           <List disablePadding>
             <ListItemButton
               selected={activeStage === 'overview'}
-              onClick={() => setActiveStage('overview')}
+              onClick={() => go('overview')}
               sx={{
                 borderRadius: 1.5,
                 py: 0.7,
@@ -103,7 +107,7 @@ export const Sidebar: React.FC = () => {
                 <ListItemButton
                   key={stage.id}
                   selected={isSelected}
-                  onClick={() => setActiveStage(stage.id)}
+                  onClick={() => go(stage.id)}
                   sx={{
                     borderRadius: 1.5,
                     py: 0.6,
