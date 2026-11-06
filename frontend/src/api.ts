@@ -136,4 +136,24 @@ export function fetchRunTerrain(runId: string): Promise<TerrainSummary> {
   return fetchJson<TerrainSummary>(`/runs/${encodeURIComponent(runId)}/terrain`)
 }
 
+export async function uploadSurveyToBackend(projectId: string, file: File): Promise<Record<string, unknown>> {
+  const token = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null
+  const formData = new FormData()
+  formData.append('file', file)
+  formData.append('crs_epsg', '32632')
+
+  const headers: Record<string, string> = token ? { Authorization: `Bearer ${token}` } : {}
+
+  const response = await fetch(`${API_BASE_URL}/projects/${encodeURIComponent(projectId)}/surveys`, {
+    method: 'POST',
+    headers,
+    body: formData,
+  })
+
+  if (!response.ok) {
+    throw new Error(`Survey upload failed with status ${response.status}`)
+  }
+  return response.json()
+}
+
 export { API_BASE_URL }
