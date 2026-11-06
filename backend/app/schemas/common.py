@@ -17,3 +17,4 @@ class HealthCheck(BaseModel):
     environment: str = "development"
     engineer_disclaimer: str = "ALL GEOMETRY & RATES TO BE CONFIRMED BY A REGISTERED ENGINEER"
     rules_sha256: str
+    database: Optional[Dict[str, Any]] = None

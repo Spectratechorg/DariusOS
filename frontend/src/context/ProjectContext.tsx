@@ -6,12 +6,10 @@ import {
   fetchProjectDetail, 
   fetchRunBeme,
   fetchRunTerrain,
-  fetchRunResult,
   uploadSurveyToBackend,
   HealthResponse, 
   ProjectSummary, 
   ProjectDetail,
-  BemeResponse
 } from '../api';
 import { 
   StageId, 
@@ -24,19 +22,15 @@ import {
   DesignValidationIssue, 
   BemeCategory, 
   AsBuiltComparisonRow, 
-  RouteOption 
 } from '../types';
 import { 
   INITIAL_PROJECT_DATA, 
-  MOCK_SURVEY_POINTS, 
   MOCK_SURVEY_WARNINGS, 
-  MOCK_VALIDATION_CHECKS, 
   MOCK_TERRAIN_SUMMARY, 
   MOCK_CURVE_OPTIONS, 
   MOCK_DESIGN_ISSUES, 
   MOCK_BEME_CATEGORIES, 
   MOCK_AS_BUILT_ROWS, 
-  MOCK_ROUTE_OPTIONS 
 } from '../data/mockData';
 import { parseSurveyCsv, computeSha256 } from '../utils/surveyParser';
 import { SLOPE_CSV_RAW, SLOPE_CSV_FILENAME, SLOPE_CSV_SIZE, SLOPE_CSV_SHA256 } from '../data/demoSurveyData';
@@ -53,6 +47,13 @@ export interface UploadedSurveyInfo {
   uploadedAt: string;
 }
 
+export interface AuditLogItem {
+  id: string;
+  title: string;
+  time: string;
+  type: 'info' | 'warning' | 'approval' | 'system';
+}
+
 interface ProjectContextType {
   activeStage: StageId;
   setActiveStage: (stage: StageId) => void;
@@ -62,9 +63,11 @@ interface ProjectContextType {
   // Project Setup
   projectData: ProjectData;
   updateProjectData: (data: Partial<ProjectData>) => void;
+  resetProjectToEmpty: () => void;
   
   // Survey
-  uploadedSurvey: UploadedSurveyInfo;
+  hasSurveyUploaded: boolean;
+  uploadedSurvey: UploadedSurveyInfo | null;
   surveyPoints: SurveyPointRow[];
   surveyWarnings: EngineerWarning[];
   toggleWarningAcknowledged: (id: string) => void;
@@ -73,12 +76,16 @@ interface ProjectContextType {
   loadDemoSurvey: () => void;
   isUploadingSurvey: boolean;
   
+  // Audit Trail
+  auditLogs: AuditLogItem[];
+  addAuditLog: (title: string, type?: 'info' | 'warning' | 'approval' | 'system') => void;
+  
   // Terrain
   terrainSummary: TerrainSummary;
   activeTerrainTab: 'TIN' | 'Contours' | 'Alignment';
   setActiveTerrainTab: (tab: 'TIN' | 'Contours' | 'Alignment') => void;
   
-  // AI Reasoning
+  // AI Reasoning / Curve Options
   curveOptions: CurveOption[];
   selectedCurveId: 'A' | 'B' | 'C';
   selectCurveOption: (id: 'A' | 'B' | 'C') => void;
@@ -145,7 +152,7 @@ export const ProjectProvider: React.FC<{ children: ReactNode }> = ({ children })
   const activeRun = activeBackendProject?.runs?.[0];
   const activeRunId = activeRun?.id;
 
-  const { data: liveBeme } = useSWR<BemeResponse>(
+  const { data: liveBeme } = useSWR<{ categories: BemeCategory[]; grand_total: number }>(
     activeRunId ? ['backend-run-beme', activeRunId] : null,
     () => fetchRunBeme(activeRunId as string),
     { shouldRetryOnError: false }
@@ -160,40 +167,47 @@ export const ProjectProvider: React.FC<{ children: ReactNode }> = ({ children })
   const [activeStage, setActiveStage] = useState<StageId>('overview');
   const [isSampleData, setIsSampleData] = useState<boolean>(false);
   
-  const [projectData, setProjectData] = useState<ProjectData>(INITIAL_PROJECT_DATA);
-
-  const initialSurveyParsed = useMemo(() => {
-    try {
-      return parseSurveyCsv(SLOPE_CSV_RAW, SLOPE_CSV_FILENAME, SLOPE_CSV_SIZE, SLOPE_CSV_SHA256);
-    } catch {
-      return null;
-    }
-  }, []);
-
-  const [uploadedSurvey, setUploadedSurvey] = useState<UploadedSurveyInfo>({
-    filename: SLOPE_CSV_FILENAME,
-    fileSizeBytes: SLOPE_CSV_SIZE,
-    pointCount: initialSurveyParsed ? initialSurveyParsed.totalPoints : 287,
-    columnsMapped: ['Point ID', 'Easting', 'Northing', 'Elevation', 'Description'],
-    sha256Hash: SLOPE_CSV_SHA256,
-    minElevation: initialSurveyParsed ? initialSurveyParsed.minElevation : 300.0,
-    maxElevation: initialSurveyParsed ? initialSurveyParsed.maxElevation : 304.0,
-    meanElevation: initialSurveyParsed ? initialSurveyParsed.meanElevation : 302.0,
-    uploadedAt: 'Demonstration verified dataset',
+  // Default project data starts clean for a new road corridor
+  const [projectData, setProjectData] = useState<ProjectData>({
+    ...INITIAL_PROJECT_DATA,
+    projectName: 'East-West Road Corridor (Port Harcourt)',
+    client: 'Federal Ministry of Works / Regional Infrastructure',
+    projectLocation: 'Port Harcourt - Rivers State Corridor',
   });
 
-  const [surveyPoints, setSurveyPoints] = useState<SurveyPointRow[]>(
-    initialSurveyParsed ? initialSurveyParsed.points : MOCK_SURVEY_POINTS
-  );
-  const [surveyWarnings, setSurveyWarnings] = useState<EngineerWarning[]>(
-    initialSurveyParsed && initialSurveyParsed.warnings.length > 0 ? initialSurveyParsed.warnings : MOCK_SURVEY_WARNINGS
-  );
-  const [validationChecks, setValidationChecks] = useState<ValidationCheckItem[]>(
-    initialSurveyParsed ? initialSurveyParsed.validationChecks : MOCK_VALIDATION_CHECKS
-  );
+  // Dynamic Survey state: Starts empty until user uploads a CSV or loads demo
+  const [hasSurveyUploaded, setHasSurveyUploaded] = useState<boolean>(false);
+  const [uploadedSurvey, setUploadedSurvey] = useState<UploadedSurveyInfo | null>(null);
+  const [surveyPoints, setSurveyPoints] = useState<SurveyPointRow[]>([]);
+  const [surveyWarnings, setSurveyWarnings] = useState<EngineerWarning[]>([]);
+  const [validationChecks, setValidationChecks] = useState<ValidationCheckItem[]>([]);
   const [isUploadingSurvey, setIsUploadingSurvey] = useState<boolean>(false);
-  
-  const [terrainSummary, setTerrainSummary] = useState<TerrainSummary>(MOCK_TERRAIN_SUMMARY);
+
+  // Dynamic Audit Trail: Starts with project creation and records real events
+  const [auditLogs, setAuditLogs] = useState<AuditLogItem[]>([
+    {
+      id: 'log-1',
+      title: 'Project workspace initialized (Stage 1 Ready)',
+      time: 'Just now',
+      type: 'system',
+    },
+  ]);
+
+  const addAuditLog = (title: string, type: 'info' | 'warning' | 'approval' | 'system' = 'info') => {
+    const newLog: AuditLogItem = {
+      id: `log-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+      title,
+      time: 'Just now',
+      type,
+    };
+    setAuditLogs(prev => [newLog, ...prev.slice(0, 19)]);
+  };
+
+  const [terrainSummary, setTerrainSummary] = useState<TerrainSummary>({
+    ...MOCK_TERRAIN_SUMMARY,
+    surveyPointsUsed: 0,
+    tinTriangles: 0,
+  });
   const [activeTerrainTab, setActiveTerrainTab] = useState<'TIN' | 'Contours' | 'Alignment'>('TIN');
   
   const [curveOptions, setCurveOptions] = useState<CurveOption[]>(MOCK_CURVE_OPTIONS);
@@ -232,15 +246,15 @@ export const ProjectProvider: React.FC<{ children: ReactNode }> = ({ children })
     }
   }, [liveTerrain]);
 
-  // Synchronize project data with active backend project and run
+  // Synchronize project data with active backend project if connected
   useEffect(() => {
     if (activeBackendProject) {
       setProjectData(prev => ({
         ...prev,
         projectName: activeBackendProject.name || prev.projectName,
-        client: 'Mastodon Engineering Services / Spectra Tech',
-        projectLocation: 'Lifidi - Piapung Corridor',
-        carriagewayWidthM: 7.0,
+        client: 'Federal Ministry of Works / Infrastructure Authority',
+        projectLocation: 'Port Harcourt Corridor',
+        carriagewayWidthM: 7.3,
       }));
     }
   }, [activeBackendProject]);
@@ -259,7 +273,15 @@ export const ProjectProvider: React.FC<{ children: ReactNode }> = ({ children })
   }, [activeRun]);
 
   const updateProjectData = (data: Partial<ProjectData>) => {
-    setProjectData(prev => ({ ...prev, ...data }));
+    setProjectData(prev => {
+      const updated = { ...prev, ...data };
+      if (data.projectName && data.projectName !== prev.projectName) {
+        addAuditLog(`Project renamed: ${data.projectName}`, 'system');
+      } else if (data.roadClassification && data.roadClassification !== prev.roadClassification) {
+        addAuditLog(`Classification changed to: ${data.roadClassification}`, 'system');
+      }
+      return updated;
+    });
   };
 
   const uploadSurveyFile = async (file: File) => {
@@ -283,7 +305,8 @@ export const ProjectProvider: React.FC<{ children: ReactNode }> = ({ children })
 
       setSurveyPoints(parsed.points);
       setValidationChecks(parsed.validationChecks);
-      setSurveyWarnings(parsed.warnings.length > 0 ? parsed.warnings : MOCK_SURVEY_WARNINGS);
+      setSurveyWarnings(parsed.warnings.length > 0 ? parsed.warnings : []);
+      setHasSurveyUploaded(true);
 
       setTerrainSummary(prev => ({
         ...prev,
@@ -292,7 +315,14 @@ export const ProjectProvider: React.FC<{ children: ReactNode }> = ({ children })
         lowestGroundM: parsed.minElevation,
         highestGroundM: parsed.maxElevation,
         meanSlopePercent: Math.max(1, Math.min(12, Math.round(((parsed.maxElevation - parsed.minElevation) / 200) * 100))),
+        classification: (parsed.maxElevation - parsed.minElevation) < 5 ? 'Flat' : 'Rolling',
       }));
+
+      // Add to dynamic audit log
+      addAuditLog(
+        `Survey intake validated: ${file.name} (${parsed.totalPoints.toLocaleString()} points, SHA-256 ${sha256.slice(0, 8)}...)`,
+        'approval'
+      );
 
       // Try uploading to backend if backend active project is set
       if (activeProjectId) {
@@ -327,6 +357,8 @@ export const ProjectProvider: React.FC<{ children: ReactNode }> = ({ children })
       setSurveyPoints(parsed.points);
       setValidationChecks(parsed.validationChecks);
       setSurveyWarnings(MOCK_SURVEY_WARNINGS);
+      setHasSurveyUploaded(true);
+
       setTerrainSummary(prev => ({
         ...prev,
         surveyPointsUsed: parsed.totalPoints,
@@ -336,6 +368,12 @@ export const ProjectProvider: React.FC<{ children: ReactNode }> = ({ children })
         meanSlopePercent: 2.0,
         classification: 'Flat',
       }));
+
+      addAuditLog(
+        `Loaded demo survey dataset (${SLOPE_CSV_FILENAME} - 287 points, SHA-256 ${SLOPE_CSV_SHA256.slice(0, 8)}...)`,
+        'info'
+      );
+
       setSnackbarMessage('Demo survey "slope.csv" loaded with 287 validated points.');
       setActiveStage('survey');
     } catch {
@@ -343,8 +381,40 @@ export const ProjectProvider: React.FC<{ children: ReactNode }> = ({ children })
     }
   };
 
+  const resetProjectToEmpty = () => {
+    setHasSurveyUploaded(false);
+    setUploadedSurvey(null);
+    setSurveyPoints([]);
+    setSurveyWarnings([]);
+    setValidationChecks([]);
+    setTerrainSummary({
+      ...MOCK_TERRAIN_SUMMARY,
+      surveyPointsUsed: 0,
+      tinTriangles: 0,
+    });
+    setAuditLogs([
+      {
+        id: `log-${Date.now()}`,
+        title: 'Project workspace reset to clean state (Stage 1 Ready)',
+        time: 'Just now',
+        type: 'system',
+      },
+    ]);
+    setSnackbarMessage('Project reset to a clean dynamic state.');
+  };
+
   const toggleWarningAcknowledged = (id: string) => {
-    setSurveyWarnings(prev => prev.map(w => w.id === id ? { ...w, isAcknowledged: !w.isAcknowledged } : w));
+    setSurveyWarnings(prev => prev.map(w => {
+      if (w.id === id) {
+        const nextState = !w.isAcknowledged;
+        addAuditLog(
+          `Engineer ${nextState ? 'acknowledged' : 're-opened'} survey warning (${w.title})`,
+          nextState ? 'approval' : 'warning'
+        );
+        return { ...w, isAcknowledged: nextState };
+      }
+      return w;
+    }));
   };
 
   const selectCurveOption = (id: 'A' | 'B' | 'C') => {
@@ -353,16 +423,23 @@ export const ProjectProvider: React.FC<{ children: ReactNode }> = ({ children })
       ...c,
       badge: c.id === id ? 'Selected' : 'Alternative'
     })));
+    addAuditLog(`Selected curve option ${id} (Radius: ${id === 'A' ? 180 : id === 'B' ? 260 : 420}m)`, 'info');
     setSnackbarMessage(`Curve option ${id} selected. Engineering calculations updated.`);
   };
 
   const acceptDesignIssue = (id: string, note?: string) => {
-    setDesignIssues(prev => prev.map(issue => issue.id === id ? {
-      ...issue,
-      isAccepted: true,
-      engineerNote: note || 'Accepted by Engineering Lead with geotechnical verification note.'
-    } : issue));
-    setSnackbarMessage(`Ch 1+840 accepted with engineer note. Ready for drawing release.`);
+    setDesignIssues(prev => prev.map(issue => {
+      if (issue.id === id) {
+        addAuditLog(`Engineer approved review item: ${issue.title}`, 'approval');
+        return {
+          ...issue,
+          isAccepted: true,
+          engineerNote: note || 'Accepted by Engineering Lead with geotechnical verification note.'
+        };
+      }
+      return issue;
+    }));
+    setSnackbarMessage(`Item accepted with engineer note. Ready for drawing release.`);
   };
 
   const toggleCadLayer = (layer: string) => {
@@ -396,6 +473,8 @@ export const ProjectProvider: React.FC<{ children: ReactNode }> = ({ children })
       setIsSampleData,
       projectData,
       updateProjectData,
+      resetProjectToEmpty,
+      hasSurveyUploaded,
       uploadedSurvey,
       surveyPoints,
       surveyWarnings,
@@ -404,6 +483,8 @@ export const ProjectProvider: React.FC<{ children: ReactNode }> = ({ children })
       uploadSurveyFile,
       loadDemoSurvey,
       isUploadingSurvey,
+      auditLogs,
+      addAuditLog,
       terrainSummary,
       activeTerrainTab,
       setActiveTerrainTab,

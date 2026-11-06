@@ -14,12 +14,14 @@ export const TopBar: React.FC = () => {
     backendHealth,
     backendHealthError,
     isBackendChecking,
+    projectData,
   } = useProject();
 
   const getBreadcrumbs = () => {
+    const projectSub = `${(projectData.projectName || 'ROAD DESIGN CORRIDOR').toUpperCase()} · ${(projectData.client || 'CIVIL WORKS').toUpperCase()}`;
     switch (activeStage) {
       case 'overview':
-        return { subtitle: 'PILOT ROAD PROJECT · MASTODON ENGINEERING SERVICES', title: 'Project overview' };
+        return { subtitle: projectSub, title: 'Project overview' };
       case 'setup':
         return { subtitle: 'STAGE 1 · PROJECT SETUP', title: 'Create a project' };
       case 'survey':
@@ -28,21 +30,21 @@ export const TopBar: React.FC = () => {
         return { subtitle: 'STAGE 3 · TERRAIN ENGINE', title: 'Existing terrain' };
       case 'design':
       case 'reasoning':
-        return { subtitle: 'STAGE 4 · ENGINEERING ENGINE AND VALIDATION · REVISION C', title: 'Design engine' };
+        return { subtitle: 'STAGE 4 · ENGINEERING ENGINE AND VALIDATION', title: 'Design engine' };
       case 'drawings':
-        return { subtitle: 'STAGE 5 · CAD ENGINE · REVISION C', title: 'Engineering drawings' };
+        return { subtitle: 'STAGE 5 · CAD ENGINE', title: 'Engineering drawings' };
       case 'beme':
         return { subtitle: 'STAGE 6 · QUANTITY ENGINE, BEME ENGINE AND REPORT', title: 'Quantities and BEME' };
       case 'monitoring':
         return { subtitle: 'FULL SYSTEM · DRONE-ENABLED INTELLIGENCE PACKAGE', title: 'Routes and construction monitoring' };
       default:
-        return { subtitle: 'PILOT ROAD PROJECT', title: 'Project overview' };
+        return { subtitle: projectSub, title: 'Project overview' };
     }
   };
 
   const { subtitle, title } = getBreadcrumbs();
 
-  const getPrimaryAction = () => {
+  const getPrimaryAction = (): { label: string; onClick: () => void; disabled?: boolean } => {
     switch (activeStage) {
       case 'overview':
         return { label: 'New project', onClick: () => setActiveStage('setup') };
@@ -56,24 +58,17 @@ export const TopBar: React.FC = () => {
         return { label: 'Continue to design engine', onClick: () => setActiveStage('design') };
       case 'design':
         return { 
-          label: 'Approval blocked by 1 item', 
-          disabled: true,
-          onClick: () => setActiveStage('drawings') 
+          label: 'Continue to drawings', 
+          onClick: () => setActiveStage('drawings')
         };
       case 'drawings':
-        return { label: 'Continue to BEME', onClick: () => setActiveStage('beme') };
+        return { label: 'Generate BEME and report', onClick: () => setActiveStage('beme') };
       case 'beme':
-        return { 
-          label: 'Approve BEME Rev C', 
-          onClick: () => setSnackbarMessage('BEME Rev C officially approved and signed off by Registered Engineer.') 
-        };
+        return { label: 'Sign & release package', onClick: () => setSnackbarMessage('Release package generated. COREN digital signature required.') };
       case 'monitoring':
-        return { 
-          label: 'Export deviation report', 
-          onClick: () => setSnackbarMessage('Deviation report generated for flight re-survey comparison.') 
-        };
+        return { label: 'Run tolerance analysis', onClick: () => setSnackbarMessage('Tolerance analysis run. 8 deviations flagged.') };
       default:
-        return { label: 'New project', onClick: () => setActiveStage('setup') };
+        return { label: 'Action', onClick: () => {} };
     }
   };
 
@@ -88,7 +83,6 @@ export const TopBar: React.FC = () => {
       case 'terrain':
         return { label: 'Export contours', onClick: () => setSnackbarMessage('Contour shapefile and DXF contours exported.') };
       case 'reasoning':
-        return { label: 'Regenerate design', onClick: () => setSnackbarMessage('Pipeline regeneration executed.') };
       case 'design':
         return { label: 'Regenerate design', onClick: () => setSnackbarMessage('Pipeline regeneration executed. Unaffected stages served from cache.') };
       case 'drawings':
@@ -105,6 +99,8 @@ export const TopBar: React.FC = () => {
   const primaryAction = getPrimaryAction();
   const secondaryAction = getSecondaryAction();
 
+  const isNeonConnected = Boolean(backendHealth?.neon?.connected || backendHealth?.database?.is_neon);
+
   return (
     <Box
       sx={{
@@ -118,17 +114,55 @@ export const TopBar: React.FC = () => {
       }}
     >
       {/* Title & Breadcrumbs */}
-      <Box>
-        <Typography variant="caption" sx={{ color: '#64748B', fontWeight: 600, letterSpacing: '0.04em', fontSize: '0.68rem', display: 'block' }}>
+      <Box sx={{ maxWidth: '50%', overflow: 'hidden' }}>
+        <Typography 
+          variant="caption" 
+          sx={{ 
+            color: '#64748B', 
+            fontWeight: 600, 
+            letterSpacing: '0.04em', 
+            fontSize: '0.68rem', 
+            display: 'block',
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis'
+          }}
+        >
           {subtitle}
         </Typography>
-        <Typography variant="h6" sx={{ fontWeight: 600, fontSize: '1.15rem', color: '#F8FAFC', lineHeight: 1.2 }}>
+        <Typography 
+          variant="h6" 
+          sx={{ 
+            fontWeight: 600, 
+            fontSize: '1.15rem', 
+            color: '#F8FAFC', 
+            lineHeight: 1.2,
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis'
+          }}
+        >
           {title}
         </Typography>
       </Box>
 
       {/* Right Controls */}
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+        {/* Neon Status Badge */}
+        {isNeonConnected && (
+          <Chip
+            size="small"
+            label="Neon DB"
+            sx={{
+              color: '#38BDF8',
+              backgroundColor: 'rgba(56, 189, 248, 0.12)',
+              border: '1px solid #0284C7',
+              fontSize: '0.7rem',
+              fontWeight: 600,
+            }}
+          />
+        )}
+
         <Chip
           size="small"
           label={isBackendChecking ? 'Connecting API' : backendHealthError ? 'API offline' : `API ${backendHealth?.status ?? 'ready'}`}
@@ -151,7 +185,7 @@ export const TopBar: React.FC = () => {
             borderRadius: 1.5,
             px: 1.5,
             py: 0.3,
-            width: 230,
+            width: 200,
           }}
         >
           <SearchIcon sx={{ color: '#64748B', fontSize: '1.1rem', mr: 1 }} />

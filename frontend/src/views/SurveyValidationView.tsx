@@ -215,37 +215,45 @@ export const SurveyValidationView: React.FC = () => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {visiblePoints.map(row => (
-                    <TableRow key={row.pointId} sx={{ '&:hover': { backgroundColor: '#131D2E' } }}>
-                      <TableCell sx={{ color: '#F8FAFC', fontWeight: 500, fontSize: '0.8rem', fontFamily: 'monospace' }}>
-                        {row.pointId}
-                      </TableCell>
-                      <TableCell sx={{ color: '#CBD5E1', fontSize: '0.8rem', fontFamily: 'monospace' }}>
-                        {row.easting.toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 2 })}
-                      </TableCell>
-                      <TableCell sx={{ color: '#CBD5E1', fontSize: '0.8rem', fontFamily: 'monospace' }}>
-                        {row.northing.toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 2 })}
-                      </TableCell>
-                      <TableCell sx={{ color: '#CBD5E1', fontSize: '0.8rem', fontFamily: 'monospace' }}>
-                        {row.elevation.toFixed(1)}
-                      </TableCell>
-                      <TableCell sx={{ color: '#CBD5E1', fontSize: '0.8rem' }}>
-                        {row.description}
-                      </TableCell>
-                      <TableCell>
-                        <Chip
-                          label={row.checkStatus}
-                          size="small"
-                          sx={{
-                            backgroundColor: row.checkStatus === 'OK' ? 'rgba(16, 185, 129, 0.15)' : 'rgba(245, 158, 11, 0.15)',
-                            color: row.checkStatus === 'OK' ? '#34D399' : '#FBBF24',
-                            fontWeight: 600,
-                            fontSize: '0.68rem',
-                          }}
-                        />
+                  {visiblePoints.length > 0 ? (
+                    visiblePoints.map(row => (
+                      <TableRow key={row.pointId} sx={{ '&:hover': { backgroundColor: '#131D2E' } }}>
+                        <TableCell sx={{ color: '#F8FAFC', fontWeight: 500, fontSize: '0.8rem', fontFamily: 'monospace' }}>
+                          {row.pointId}
+                        </TableCell>
+                        <TableCell sx={{ color: '#CBD5E1', fontSize: '0.8rem', fontFamily: 'monospace' }}>
+                          {row.easting.toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 2 })}
+                        </TableCell>
+                        <TableCell sx={{ color: '#CBD5E1', fontSize: '0.8rem', fontFamily: 'monospace' }}>
+                          {row.northing.toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 2 })}
+                        </TableCell>
+                        <TableCell sx={{ color: '#CBD5E1', fontSize: '0.8rem', fontFamily: 'monospace' }}>
+                          {row.elevation.toFixed(1)}
+                        </TableCell>
+                        <TableCell sx={{ color: '#CBD5E1', fontSize: '0.8rem' }}>
+                          {row.description}
+                        </TableCell>
+                        <TableCell>
+                          <Chip
+                            label={row.checkStatus}
+                            size="small"
+                            sx={{
+                              backgroundColor: row.checkStatus === 'OK' ? 'rgba(16, 185, 129, 0.15)' : 'rgba(245, 158, 11, 0.15)',
+                              color: row.checkStatus === 'OK' ? '#34D399' : '#FBBF24',
+                              fontWeight: 600,
+                              fontSize: '0.68rem',
+                            }}
+                          />
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell colSpan={6} sx={{ textAlign: 'center', py: 4, color: '#64748B' }}>
+                        No survey points registered yet. Drop your CSV file above or click "Load Demo (slope.csv)" to intake coordinates.
                       </TableCell>
                     </TableRow>
-                  ))}
+                  )}
                 </TableBody>
               </Table>
             </TableContainer>
@@ -254,7 +262,7 @@ export const SurveyValidationView: React.FC = () => {
             {surveyPoints.length > 10 && (
               <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 2 }}>
                 <Typography variant="caption" sx={{ color: '#94A3B8' }}>
-                  Elevation bounds: {uploadedSurvey?.minElevation.toFixed(1)}m min – {uploadedSurvey?.maxElevation.toFixed(1)}m max
+                  Elevation bounds: {uploadedSurvey ? `${uploadedSurvey.minElevation.toFixed(1)}m min – ${uploadedSurvey.maxElevation.toFixed(1)}m max` : '—'}
                 </Typography>
                 <Box sx={{ display: 'flex', gap: 1 }}>
                   {displayCount < surveyPoints.length && (

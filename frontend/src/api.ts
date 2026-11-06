@@ -8,6 +8,21 @@ export type HealthResponse = {
   environment: string
   engineer_disclaimer: string
   rules_sha256: string
+  neon?: {
+    connected: boolean
+    provider: string
+    configured: boolean
+    latency_ms: number | null
+    database: string | null
+    error: string | null
+  }
+  database?: {
+    status?: string
+    engine?: string
+    is_neon?: boolean
+    latency_ms?: number | null
+    connected?: boolean
+  }
 }
 
 export async function fetchHealth(): Promise<HealthResponse> {
