@@ -7,7 +7,8 @@ export const TerrainView: React.FC = () => {
   const { 
     terrainSummary, 
     activeTerrainTab, 
-    setActiveTerrainTab 
+    setActiveTerrainTab,
+    isTerrainLive // <--- Read directly from Project Context
   } = useProject();
 
   return (
@@ -224,6 +225,11 @@ export const TerrainView: React.FC = () => {
             <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
               Terrain summary
             </Typography>
+            {!isTerrainLive && (
+              <Typography variant="caption" sx={{ color: '#E3A948', display: 'block', mb: 1.5 }}>
+                Sample data: no completed run yet
+              </Typography>
+            )}
 
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
               <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>

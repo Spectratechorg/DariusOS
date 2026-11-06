@@ -150,3 +150,18 @@ export type SurveySummary = {
 export function fetchSurveys(projectId: string): Promise<SurveySummary[]> {
   return fetchJson<SurveySummary[]>(`/projects/${encodeURIComponent(projectId)}/surveys`)
 }
+
+export type TerrainSummaryResponse = {
+  surveyPointsUsed: number
+  tinTriangles: number
+  lowestGroundM: number
+  highestGroundM: number
+  meanSlopePercent: number
+  classification: string
+  slopeDistribution: Array<{ label: string; percentage: number }>
+  engineer_disclaimer: string
+}
+
+export function fetchTerrainSummary(runId: string): Promise<TerrainSummaryResponse> {
+  return fetchJson<TerrainSummaryResponse>(`/runs/${encodeURIComponent(runId)}/terrain`)
+}

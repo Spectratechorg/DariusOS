@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app import __version__
 from app.api import api_router
 from app.core.config import settings
-from app.core.database import init_db
+from app.core.database import init_db, check_database_health
 from app.core.engineering import EngineeringRulesLoader
 from app.schemas.common import HealthCheck
 
@@ -54,10 +54,12 @@ app.include_router(api_router)
 @app.get("/api/v1/health", response_model=HealthCheck, tags=["System"])
 def health_check():
     rules_hash = EngineeringRulesLoader.get_sha256()
+    db_health = check_database_health()
     return HealthCheck(
-        status="healthy",
+        status="healthy" if db_health.get("status") == "connected" else "degraded",
         version=__version__,
         environment=settings.APP_ENV,
         engineer_disclaimer="ALL GEOMETRY & RATES TO BE CONFIRMED BY A REGISTERED ENGINEER",
-        rules_sha256=rules_hash
+        rules_sha256=rules_hash,
+        database=db_health
     )

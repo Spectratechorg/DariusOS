@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
-from app.api.deps import get_current_user, get_db
+from app.api.deps import get_current_user, get_current_user_strict, get_db
 from app.core.audit import record_audit_event
 from app.core.security import create_access_token, get_password_hash, verify_password, UserRole
 from app.models.user import User
@@ -64,7 +64,7 @@ def register(request: UserCreateRequest, db: Session = Depends(get_db)):
         email=request.email,
         full_name=request.full_name,
         hashed_password=get_password_hash(request.password),
-        role="engineer",
+        role= "engineer",
         is_active=True
     )
     db.add(user)
@@ -84,6 +84,6 @@ def register(request: UserCreateRequest, db: Session = Depends(get_db)):
 
 
 @router.get("/me", response_model=UserResponse)
-def get_me(current_user: User = Depends(get_current_user)):
+def get_me(current_user: User = Depends(get_current_user_strict)):
     """Returns profile details of the authenticated caller."""
     return current_user

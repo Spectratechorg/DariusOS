@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useMemo, ReactNode } from 'react';
 import useSWR from 'swr';
-import { fetchHealth, fetchProjects, fetchProjectDetail, HealthResponse, ProjectSummary, ProjectDetail } from '../api';
+import { fetchHealth, fetchProjects, fetchProjectDetail, HealthResponse, ProjectSummary, ProjectDetail, fetchTerrainSummary } from '../api';
 import { 
   StageId, 
   ProjectData, 
@@ -78,6 +78,7 @@ interface ProjectContextType {
   backendProjectsError?: Error;
   activeBackendProject?: ProjectDetail;
   activeBackendProjectError?: Error;
+  isTerrainLive: boolean;
 
   // Notifications
   snackbarMessage: string | null;
@@ -108,8 +109,21 @@ export const ProjectProvider: React.FC<{ children: ReactNode }> = ({ children })
   const [surveyWarnings, setSurveyWarnings] = useState<EngineerWarning[]>(MOCK_SURVEY_WARNINGS);
   const [validationChecks] = useState<ValidationCheckItem[]>(MOCK_VALIDATION_CHECKS);
   
-  const [terrainSummary] = useState<TerrainSummary>(MOCK_TERRAIN_SUMMARY);
-  const [activeTerrainTab, setActiveTerrainTab] = useState<'TIN' | 'Contours' | 'Alignment'>('TIN');
+  const latestRunId = useMemo(() => {
+  const runs = activeBackendProject?.runs ?? [];
+  return [...runs]
+    .filter(r => r.completed_at)
+    .sort((a, b) => b.created_at.localeCompare(a.created_at))[0]?.id;
+}, [activeBackendProject]);
+
+const { data: liveTerrain } = useSWR(
+  latestRunId ? ['terrain-summary', latestRunId] : null,
+  () => fetchTerrainSummary(latestRunId as string),
+  { shouldRetryOnError: false },
+);
+const isTerrainLive = !!liveTerrain;
+const terrainSummary = (liveTerrain ?? MOCK_TERRAIN_SUMMARY) as TerrainSummary;
+const [activeTerrainTab, setActiveTerrainTab] = useState<'TIN' | 'Contours' | 'Alignment'>('TIN');
   
   
   const [activeDesignTab, setActiveDesignTab] = useState<'Longitudinal profile' | 'Horizontal alignment' | 'Cross-section'>('Longitudinal profile');
@@ -208,6 +222,7 @@ export const ProjectProvider: React.FC<{ children: ReactNode }> = ({ children })
       activeBackendProject,
       activeBackendProjectError,
       snackbarMessage,
+      isTerrainLive,
       setSnackbarMessage,
     }}>
       {children}

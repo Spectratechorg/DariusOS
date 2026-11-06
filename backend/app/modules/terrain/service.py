@@ -20,11 +20,12 @@ class TerrainService:
     """
 
     @classmethod
-    def get_storage_paths(cls, sha256_hash: str) -> Tuple[Path, Path]:
+    def get_storage_paths(cls, sha256_hash: str, cell_size_m: float = 1.0) -> Tuple[Path, Path]:
         processed_dir = Path(settings.PROCESSED_DIR)
         processed_dir.mkdir(parents=True, exist_ok=True)
-        grid_file = processed_dir / f"{sha256_hash}_dem.npy"
-        meta_file = processed_dir / f"{sha256_hash}_dem_meta.json"
+        tag = f"{cell_size_m:g}m"
+        grid_file = processed_dir / f"{sha256_hash}_{tag}_dem.npy"
+        meta_file = processed_dir / f"{sha256_hash}_{tag}_dem_meta.json"
         return grid_file, meta_file
 
     @classmethod
@@ -36,7 +37,7 @@ class TerrainService:
         cell_size_m: float = 1.0,
         force_recompute: bool = False
     ) -> Tuple[TerrainSurfaceData, TerrainInterpolator]:
-        grid_path, meta_path = cls.get_storage_paths(survey_sha256)
+        grid_path, meta_path = cls.get_storage_paths(survey_sha256, cell_size_m)
 
         # Check cache unless force_recompute is True
         if not force_recompute and grid_path.is_file() and meta_path.is_file():
@@ -97,11 +98,12 @@ class TerrainService:
         return surface_data, interpolator
 
     @classmethod
-    def load_interpolator(cls, survey_sha256: str) -> Optional[TerrainInterpolator]:
-        grid_path, meta_path = cls.get_storage_paths(survey_sha256)
+    def load_interpolator(cls, survey_sha256: str, cell_size_m: float = 1.0) -> Optional[TerrainInterpolator]:
+        grid_path, meta_path = cls.get_storage_paths(survey_sha256, cell_size_m)
         if not grid_path.is_file() or not meta_path.is_file():
             return None
         grid_z = np.load(grid_path)
         meta_dict = json.loads(meta_path.read_text(encoding="utf-8"))
         metadata = GridMetadata(**meta_dict)
         return TerrainInterpolator(grid_z, metadata)
+    
