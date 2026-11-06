@@ -73,6 +73,18 @@
       "skillPath": "skills/improve-animations/SKILL.md",
       "computedHash": "d8c10dad70287ad3a8f85f98dc7e763a490c8d669d883e250c28322a71a79a90"
     },
+    "logo-designer": {
+      "source": "neonwatty/logo-designer-skill",
+      "sourceType": "github",
+      "skillPath": "skills/logo-designer/SKILL.md",
+      "computedHash": "e356c75b171538a2452733c86034c619fafbc7c6368c99c2802b1e28a3b42acd"
+    },
+    "logo-generator": {
+      "source": "op7418/logo-generator-skill",
+      "sourceType": "github",
+      "skillPath": "SKILL.md",
+      "computedHash": "4e25e86d29728563f55bb9eef77db705220e10b68e49b59d57e568ed7f20503f"
+    },
     "mobile-native": {
       "source": "emilkowalski/skills",
       "sourceType": "github",

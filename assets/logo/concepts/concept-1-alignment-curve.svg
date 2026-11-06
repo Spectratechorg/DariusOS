@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
+  <!-- Concept 1: Geometric Alignment Curve (Tangent, Arc, Centerline) -->
+  <g id="tangent-geometry" opacity="0.35">
+    <!-- Tangent lines intersecting at PI (Point of Intersection) -->
+    <line x1="20" y1="80" x2="48" y2="16" stroke="#0F172A" stroke-width="3" stroke-dasharray="4 3"/>
+    <line x1="48" y1="16" x2="84" y2="34" stroke="#0F172A" stroke-width="3" stroke-dasharray="4 3"/>
+    <circle cx="48" cy="16" r="3.5" fill="#0F172A"/>
+  </g>
+  <!-- Primary Road Alignment Corridor -->
+  <path id="road-curve" d="M 18 80 L 34 46 C 40 32 52 24 66 24 L 86 24" 
+        stroke="#2563EB" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Tangent Station Pegs (PC & PT) -->
+  <circle cx="34" cy="46" r="4.5" fill="#0F172A"/>
+  <circle cx="34" cy="46" r="2" fill="#FFFFFF"/>
+  <circle cx="66" cy="24" r="4.5" fill="#0F172A"/>
+  <circle cx="66" cy="24" r="2" fill="#FFFFFF"/>
+  <!-- Radius Focus Point (Center of Curvature) -->
+  <circle cx="66" cy="56" r="3" fill="#2563EB" opacity="0.8"/>
+  <line x1="66" y1="29" x2="66" y2="52" stroke="#2563EB" stroke-width="2" stroke-dasharray="2 2" opacity="0.5"/>
+</svg>

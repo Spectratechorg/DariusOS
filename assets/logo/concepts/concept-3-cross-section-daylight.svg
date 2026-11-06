@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
+  <!-- Concept 3: Road Cross-Section & Terrain Daylight -->
+  <!-- Existing Ground Surface (Datum) -->
+  <path d="M 10 70 Q 25 74 40 68 T 75 70 T 90 66" 
+        stroke="#8B6F47" stroke-width="4" stroke-linecap="round"/>
+  
+  <!-- Batter Slopes (Cut / Fill Daylight prism) -->
+  <polygon points="50,26 76,33 84,68 16,68 24,33" 
+           fill="#0F172A" opacity="0.08"/>
+  <path d="M 24 33 L 16 68 M 76 33 L 84 68" 
+        stroke="#0F172A" stroke-width="4.5" stroke-linecap="round"/>
+        
+  <!-- Engineered Carriageway Crown & Pavement Prism (Bill 4/5) -->
+  <polygon points="50,26 76,33 76,45 50,38 24,45 24,33" 
+           fill="#2563EB"/>
+  
+  <!-- Crown Centerline Vertical Axis -->
+  <line x1="50" y1="16" x2="50" y2="82" 
+        stroke="#0F172A" stroke-width="3" stroke-dasharray="6 4" stroke-linecap="round"/>
+  <circle cx="50" cy="26" r="4.5" fill="#0F172A"/>
+  <circle cx="50" cy="26" r="2" fill="#FFFFFF"/>
+</svg>

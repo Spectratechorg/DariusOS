@@ -868,48 +868,64 @@ export const DrawingsView: React.FC = () => {
                     strokeWidth="1.5"
                   />
                   {/* Divider Grid */}
-                  <line x1="0" y1="45" x2="450" y2="45" stroke={isPrintMode ? '#CBD5E1' : '#1E293B'} strokeWidth="1" />
-                  <line x1="225" y1="0" x2="225" y2="45" stroke={isPrintMode ? '#CBD5E1' : '#1E293B'} strokeWidth="1" />
-                  <line x1="120" y1="45" x2="120" y2="90" stroke={isPrintMode ? '#CBD5E1' : '#1E293B'} strokeWidth="1" />
-                  <line x1="225" y1="45" x2="225" y2="90" stroke={isPrintMode ? '#CBD5E1' : '#1E293B'} strokeWidth="1" />
-                  <line x1="320" y1="45" x2="320" y2="90" stroke={isPrintMode ? '#CBD5E1' : '#1E293B'} strokeWidth="1" />
+                  <line x1="65" y1="0" x2="65" y2="90" stroke={isPrintMode ? '#CBD5E1' : '#1E293B'} strokeWidth="1" />
+                  <line x1="65" y1="45" x2="450" y2="45" stroke={isPrintMode ? '#CBD5E1' : '#1E293B'} strokeWidth="1" />
+                  <line x1="255" y1="0" x2="255" y2="45" stroke={isPrintMode ? '#CBD5E1' : '#1E293B'} strokeWidth="1" />
+                  <line x1="170" y1="45" x2="170" y2="90" stroke={isPrintMode ? '#CBD5E1' : '#1E293B'} strokeWidth="1" />
+                  <line x1="255" y1="45" x2="255" y2="90" stroke={isPrintMode ? '#CBD5E1' : '#1E293B'} strokeWidth="1" />
+                  <line x1="345" y1="45" x2="345" y2="90" stroke={isPrintMode ? '#CBD5E1' : '#1E293B'} strokeWidth="1" />
+
+                  {/* Brand Block: DariusOS Engineering Stamp */}
+                  <g transform="translate(0, 0)">
+                    <g transform="translate(17, 7) scale(0.31)">
+                      <rect x="18" y="16" width="14" height="68" rx="4" fill={isPrintMode ? '#000000' : '#FFFFFF'} />
+                      <line x1="18" y1="33" x2="25" y2="33" stroke={isPrintMode ? '#FFFFFF' : '#0F172A'} strokeWidth="2.5" strokeLinecap="round" />
+                      <line x1="18" y1="50" x2="27" y2="50" stroke={isPrintMode ? '#FFFFFF' : '#0F172A'} strokeWidth="2.5" strokeLinecap="round" />
+                      <line x1="18" y1="67" x2="25" y2="67" stroke={isPrintMode ? '#FFFFFF' : '#0F172A'} strokeWidth="2.5" strokeLinecap="round" />
+                      <path d="M 32 24 C 64 24 82 34 82 50 C 82 66 64 76 32 76" stroke={isPrintMode ? '#000000' : '#38BDF8'} strokeWidth="12" strokeLinecap="round" />
+                      <path d="M 36 36 C 54 36 66 42 66 50 C 66 58 54 64 36 64" stroke="#FFFFFF" strokeWidth="3" strokeLinecap="round" strokeDasharray="5 4" opacity={isPrintMode ? 0.9 : 0.95} />
+                    </g>
+                    <text x="32" y="52" textAnchor="middle" fill={isPrintMode ? '#0F172A' : '#F8FAFC'} fontSize="6.5" fontWeight="800" fontFamily="sans-serif">DARIUS OS</text>
+                    <text x="32" y="64" textAnchor="middle" fill="#64748B" fontSize="4.5" fontWeight="600" fontFamily="monospace">HIGHWAY CAD</text>
+                    <text x="32" y="76" textAnchor="middle" fill={isPrintMode ? '#2563EB' : '#38BDF8'} fontSize="4.5" fontWeight="700" fontFamily="monospace">VERIFIED</text>
+                  </g>
 
                   {/* Top Half: Project & Client */}
-                  <g transform="translate(10, 8)">
+                  <g transform="translate(75, 8)">
                     <text x="0" y="8" fill="#64748B" fontSize="7" fontWeight="700" fontFamily="monospace">PROJECT</text>
-                    <text x="0" y="24" fill={isPrintMode ? '#0F172A' : '#F8FAFC'} fontSize="9.5" fontWeight="700" fontFamily="sans-serif">
+                    <text x="0" y="24" fill={isPrintMode ? '#0F172A' : '#F8FAFC'} fontSize="9" fontWeight="700" fontFamily="sans-serif">
                       {projectData.projectName}
                     </text>
                   </g>
-                  <g transform="translate(235, 8)">
+                  <g transform="translate(265, 8)">
                     <text x="0" y="8" fill="#64748B" fontSize="7" fontWeight="700" fontFamily="monospace">CLIENT / AUTHORITY</text>
-                    <text x="0" y="24" fill={isPrintMode ? '#0F172A' : '#F8FAFC'} fontSize="9" fontWeight="600" fontFamily="sans-serif">
+                    <text x="0" y="24" fill={isPrintMode ? '#0F172A' : '#F8FAFC'} fontSize="8.5" fontWeight="600" fontFamily="sans-serif">
                       {projectData.client}
                     </text>
                   </g>
 
                   {/* Bottom Half: Sheet Title, Sheet ID, Revision, Scale & Status */}
-                  <g transform="translate(10, 52)">
+                  <g transform="translate(75, 52)">
                     <text x="0" y="8" fill="#64748B" fontSize="7" fontWeight="700" fontFamily="monospace">DRAWING TITLE</text>
-                    <text x="0" y="24" fill={isPrintMode ? '#0F172A' : '#F8FAFC'} fontSize="8.5" fontWeight="600" fontFamily="sans-serif">
+                    <text x="0" y="24" fill={isPrintMode ? '#0F172A' : '#F8FAFC'} fontSize="8" fontWeight="600" fontFamily="sans-serif">
                       {sheets.find((s) => s.id === activeCadSheet)?.name.split('&')[0]}
                     </text>
                   </g>
-                  <g transform="translate(130, 52)">
+                  <g transform="translate(180, 52)">
                     <text x="0" y="8" fill="#64748B" fontSize="7" fontWeight="700" fontFamily="monospace">SHEET NO.</text>
-                    <text x="0" y="24" fill={isPrintMode ? '#0F172A' : '#38BDF8'} fontSize="10" fontWeight="700" fontFamily="monospace">
+                    <text x="0" y="24" fill={isPrintMode ? '#0F172A' : '#38BDF8'} fontSize="9.5" fontWeight="700" fontFamily="monospace">
                       {activeCadSheet}
                     </text>
                   </g>
-                  <g transform="translate(235, 52)">
+                  <g transform="translate(265, 52)">
                     <text x="0" y="8" fill="#64748B" fontSize="7" fontWeight="700" fontFamily="monospace">SCALE</text>
                     <text x="0" y="24" fill={isPrintMode ? '#0F172A' : '#F8FAFC'} fontSize="8.5" fontFamily="monospace">
                       {sheets.find((s) => s.id === activeCadSheet)?.scale}
                     </text>
                   </g>
-                  <g transform="translate(330, 52)">
+                  <g transform="translate(355, 52)">
                     <text x="0" y="8" fill="#64748B" fontSize="7" fontWeight="700" fontFamily="monospace">REV / STATUS</text>
-                    <text x="0" y="24" fill="#16A34A" fontSize="8.5" fontWeight="700" fontFamily="monospace">
+                    <text x="0" y="24" fill="#16A34A" fontSize="8" fontWeight="700" fontFamily="monospace">
                       REV C · APPROVED
                     </text>
                   </g>

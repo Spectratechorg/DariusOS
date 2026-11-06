@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
+  <!-- Concept 6: Dual-Carriageway Superelevated Highway Ribbon -->
+  <!-- Carriageway 1: Opposing Arterial Lane (Slate) -->
+  <path d="M 12 70 C 26 70 42 56 54 44 C 66 32 74 22 86 18 L 88 28 C 76 32 66 42 54 54 C 42 66 24 80 10 80 Z" 
+        fill="#0F172A"/>
+        
+  <!-- Carriageway 2: Primary Design Alignment (Cobalt Blue) -->
+  <path d="M 22 84 C 36 84 50 72 62 60 C 74 48 82 38 92 34 L 90 44 C 80 48 72 58 60 70 C 48 82 32 94 20 94 Z" 
+        fill="#2563EB"/>
+        
+  <!-- Alignment Tangent Vector Dots (Subtle Engineering Accent) -->
+  <circle cx="86" cy="18" r="3.5" fill="#0F172A"/>
+  <circle cx="92" cy="34" r="3.5" fill="#2563EB"/>
+</svg>

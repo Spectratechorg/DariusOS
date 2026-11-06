@@ -20,6 +20,7 @@ import CalculateOutlinedIcon from '@mui/icons-material/CalculateOutlined';
 import ReceiptLongOutlinedIcon from '@mui/icons-material/ReceiptLongOutlined';
 import { useProject } from '../context/ProjectContext';
 import { VIZ_TOKENS } from '../tokens';
+import { BrandLogo } from '../components/BrandLogo';
 
 export const BemeReportView: React.FC = () => {
   const { 
@@ -44,6 +45,48 @@ export const BemeReportView: React.FC = () => {
 
   return (
     <Box sx={{ p: { xs: 2, md: 3 } }}>
+      {/* Official Project BEME Header with DariusOS Brand Mark */}
+      <Box sx={{ mb: 2.5, display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #1E293B', pb: 2 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+          <Box
+            sx={{
+              width: 42,
+              height: 42,
+              backgroundColor: '#0F172A',
+              border: '1px solid #1E293B',
+              borderRadius: 1.5,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              boxShadow: '0 0 16px rgba(56, 189, 248, 0.2)',
+            }}
+          >
+            <BrandLogo variant="white" size={32} />
+          </Box>
+          <Box>
+            <Typography variant="h6" sx={{ fontWeight: 700, fontSize: '1.15rem', color: '#F8FAFC', lineHeight: 1.15 }}>
+              {projectData.projectName} · Engineering Takeoff
+            </Typography>
+            <Typography variant="caption" sx={{ color: '#94A3B8', fontFamily: VIZ_TOKENS.typography.monoFont, fontSize: '0.72rem' }}>
+              DARIUS OS ROAD DESIGN SYSTEM · {projectData.applicableStandard} · REVISION C
+            </Typography>
+          </Box>
+        </Box>
+        <Chip
+          label="OFFICIAL BEME PACKAGE"
+          size="small"
+          sx={{
+            backgroundColor: 'rgba(37, 99, 235, 0.1)',
+            color: '#38BDF8',
+            border: '1px solid rgba(56, 189, 248, 0.3)',
+            fontWeight: 700,
+            fontSize: '0.68rem',
+            fontFamily: VIZ_TOKENS.typography.monoFont,
+            display: { xs: 'none', sm: 'inline-flex' }
+          }}
+        />
+      </Box>
+
       {/* Top Traceability Banner */}
       <Card
         sx={{

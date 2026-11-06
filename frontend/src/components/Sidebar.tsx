@@ -4,6 +4,7 @@ import DashboardOutlinedIcon from '@mui/icons-material/DashboardOutlined';
 import { useProject } from '../context/ProjectContext';
 import { StageId } from '../types';
 import { VIZ_TOKENS } from '../tokens';
+import { BrandLogo } from './BrandLogo';
 
 export const Sidebar: React.FC = () => {
   const { activeStage, setActiveStage } = useProject();
@@ -36,21 +37,19 @@ export const Sidebar: React.FC = () => {
         <Box sx={{ p: 2.5, display: 'flex', alignItems: 'center', gap: 1.5, borderBottom: '1px solid #141C2E' }}>
           <Box
             sx={{
-              width: 30,
-              height: 30,
-              backgroundColor: '#2563EB',
-              borderRadius: 1.2,
+              width: 32,
+              height: 32,
+              backgroundColor: '#0F172A',
+              border: '1px solid #1E293B',
+              borderRadius: 1.5,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              color: '#FFFFFF',
-              fontWeight: 800,
-              fontSize: '1rem',
-              fontFamily: VIZ_TOKENS.typography.monoFont,
-              boxShadow: '0 0 12px rgba(37, 99, 235, 0.4)',
+              boxShadow: '0 0 16px rgba(56, 189, 248, 0.25)',
+              overflow: 'hidden',
             }}
           >
-            D
+            <BrandLogo variant="white" size={26} />
           </Box>
           <Box>
             <Typography variant="h6" sx={{ fontWeight: 700, letterSpacing: '-0.02em', fontSize: '1.05rem', lineHeight: 1.1 }}>
