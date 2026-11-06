@@ -1,6 +1,5 @@
 import React from 'react';
-import { Box, Typography, Button, InputBase, Chip } from '@mui/material';
-import SearchIcon from '@mui/icons-material/Search';
+import { Box, Typography, Button, Chip } from '@mui/material';
 import { useProject } from '../context/ProjectContext';
 import { StageId } from '../types';
 
@@ -11,30 +10,28 @@ export const TopBar: React.FC = () => {
     setSnackbarMessage,
     backendHealth,
     backendHealthError,
-    isBackendChecking,
     projectData,
   } = useProject();
 
   const getBreadcrumbs = () => {
-    const projectSub = `${(projectData.projectName || 'ROAD DESIGN CORRIDOR').toUpperCase()} · ${(projectData.client || 'CIVIL WORKS').toUpperCase()}`;
     switch (activeStage) {
       case 'overview':
-        return { subtitle: projectSub, title: 'Project overview' };
+        return { subtitle: 'CORRIDOR DASHBOARD', title: 'Executive Overview' };
       case 'setup':
-        return { subtitle: 'STAGE 1 · PROJECT SETUP', title: 'Corridor specifications' };
+        return { subtitle: 'STAGE 1', title: 'Project Setup & Standards' };
       case 'survey':
-        return { subtitle: 'STAGE 2 · SURVEY INTAKE AND VALIDATION', title: 'Survey coordinates & validation' };
+        return { subtitle: 'STAGE 2', title: 'Survey Intake & Validation' };
       case 'terrain':
-        return { subtitle: 'STAGE 3 · TERRAIN ENGINE', title: 'Existing terrain surface' };
+        return { subtitle: 'STAGE 3', title: 'Terrain Engine & TIN Mesh' };
       case 'design':
       case 'reasoning':
-        return { subtitle: 'STAGE 4 · ENGINEERING ENGINE AND VALIDATION', title: 'Geometric design engine' };
+        return { subtitle: 'STAGE 4', title: 'Geometric Design Engine' };
       case 'drawings':
-        return { subtitle: 'STAGE 5 · CAD ENGINE', title: 'Engineering CAD drawings' };
+        return { subtitle: 'STAGE 5', title: 'Engineering CAD Drawings' };
       case 'beme':
-        return { subtitle: 'STAGE 6 · QUANTITY ENGINE, BEME ENGINE AND REPORT', title: 'Quantities and BEME schedule' };
+        return { subtitle: 'STAGE 6', title: 'BEME Takeoff & Report' };
       default:
-        return { subtitle: projectSub, title: 'Project overview' };
+        return { subtitle: 'CORRIDOR DASHBOARD', title: 'Executive Overview' };
     }
   };
 
@@ -91,8 +88,6 @@ export const TopBar: React.FC = () => {
   const primaryAction = getPrimaryAction();
   const secondaryAction = getSecondaryAction();
 
-  const isNeonConnected = Boolean(backendHealth?.neon?.connected || backendHealth?.database?.is_neon);
-
   return (
     <Box
       sx={{
@@ -140,57 +135,19 @@ export const TopBar: React.FC = () => {
 
       {/* Right Controls */}
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-        {/* Neon Status Badge */}
-        {isNeonConnected && (
+        {backendHealthError && (
           <Chip
             size="small"
-            label="Neon DB"
+            label="API offline"
             sx={{
-              color: '#38BDF8',
-              backgroundColor: 'rgba(56, 189, 248, 0.12)',
-              border: '1px solid #0284C7',
+              color: '#FBBF24',
+              backgroundColor: 'rgba(245, 158, 11, 0.12)',
+              border: '1px solid #92400E',
               fontSize: '0.7rem',
               fontWeight: 600,
             }}
           />
         )}
-
-        <Chip
-          size="small"
-          label={isBackendChecking ? 'Connecting API' : backendHealthError ? 'API offline' : `API ${backendHealth?.status ?? 'ready'}`}
-          sx={{
-            color: backendHealthError ? '#FBBF24' : '#34D399',
-            backgroundColor: backendHealthError ? 'rgba(245, 158, 11, 0.12)' : 'rgba(16, 185, 129, 0.12)',
-            border: `1px solid ${backendHealthError ? '#92400E' : '#065F46'}`,
-            fontSize: '0.7rem',
-            fontWeight: 600,
-          }}
-        />
-
-        {/* Search */}
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            backgroundColor: '#131B2E',
-            border: '1px solid #1E293B',
-            borderRadius: 1.5,
-            px: 1.5,
-            py: 0.3,
-            width: 200,
-          }}
-        >
-          <SearchIcon sx={{ color: '#64748B', fontSize: '1.1rem', mr: 1 }} />
-          <InputBase
-            placeholder="Search drawings, BEME, surveys"
-            sx={{
-              color: '#F8FAFC',
-              fontSize: '0.78rem',
-              width: '100%',
-              '& input::placeholder': { color: '#64748B', opacity: 1 },
-            }}
-          />
-        </Box>
 
         {/* Secondary Action */}
         {secondaryAction && (
