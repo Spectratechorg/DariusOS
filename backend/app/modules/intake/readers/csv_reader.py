@@ -7,10 +7,6 @@ import numpy as np
 
 from app.modules.intake.readers.base import BaseReader, POINT_DTYPE
 
-def _split(line: str, delimiter: str) -> list:
-    if delimiter == " ":
-        return line.split()
-    return [p.strip() for p in line.split(delimiter)]
 
 class CsvReader(BaseReader):
     """
@@ -49,7 +45,7 @@ class CsvReader(BaseReader):
 
         # Check for header
         first_line = lines[0]
-        tokens = [t.strip('"').strip("'").lower() for t in _split(first_line, delimiter)]
+        tokens = [t.strip().strip('"').strip("'").lower() for t in re.split(f"[{delimiter}]", first_line) if t.strip()]
 
         x_col, y_col, z_col, class_col = -1, -1, -1, -1
         has_header = False
@@ -57,7 +53,7 @@ class CsvReader(BaseReader):
         header_aliases_x = ["x", "east", "easting", "e"]
         header_aliases_y = ["y", "north", "northing", "n"]
         header_aliases_z = ["z", "elev", "elevation", "height", "altitude", "h"]
-        header_aliases_c = ["classification", "class", "code"]
+        header_aliases_c = ["classification", "class", "code", "id"]
 
         for idx, token in enumerate(tokens):
             if token in header_aliases_x and x_col == -1:
@@ -82,7 +78,7 @@ class CsvReader(BaseReader):
         invalid_rows_count = 0
 
         for line_no, line in enumerate(lines[start_row:], start=start_row + 1):
-            parts = _split(line, delimiter)
+            parts = [p.strip() for p in re.split(f"[{delimiter}]+", line) if p.strip()]
             if len(parts) <= max(x_col, y_col, z_col):
                 invalid_rows_count += 1
                 continue
@@ -91,12 +87,10 @@ class CsvReader(BaseReader):
                 x_val = float(parts[x_col])
                 y_val = float(parts[y_col])
                 z_val = float(parts[z_col])
-                c_val = 0
-                if class_col != -1 and len(parts) > class_col:
-                    try:
-                        c_val = int(float(parts[class_col]))
-                    except ValueError:
-                        pass
+                try:
+                    c_val = int(float(parts[class_col])) if class_col != -1 and len(parts) > class_col else 0
+                except (ValueError, TypeError):
+                    c_val = 0
 
                 if np.isnan(x_val) or np.isnan(y_val) or np.isnan(z_val):
                     invalid_rows_count += 1

@@ -1,107 +1,102 @@
 import React from 'react';
-import { Box, Typography, Tooltip } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import { useProject } from '../context/ProjectContext';
 import { StageId } from '../types';
-import { tokens } from '../theme';
-
-const steps: { id: StageId; number: number; label: string }[] = [
-  { id: 'setup', number: 1, label: 'Setup' },
-  { id: 'survey', number: 2, label: 'Survey' },
-  { id: 'terrain', number: 3, label: 'Terrain' },
-  { id: 'design', number: 4, label: 'Design' },
-  { id: 'drawings', number: 5, label: 'Drawings' },
-  { id: 'beme', number: 6, label: 'BEME' },
-];
-
-const stageOrder: Record<StageId, number> = {
-  overview: 0,
-  setup: 1,
-  survey: 2,
-  terrain: 3,
-  design: 4,
-  drawings: 5,
-  beme: 6,
-  monitoring: 6,
-};
 
 export const StepperBar: React.FC = () => {
-  const { activeStage, setActiveStage } = useProject();
-  const current = stageOrder[activeStage] ?? 0;
+  const { activeStage, setActiveStage, hasSurveyUploaded } = useProject();
+
+  const steps: { id: StageId; number: number; label: string }[] = [
+    { id: 'setup', number: 1, label: 'Setup' },
+    { id: 'survey', number: 2, label: 'Survey' },
+    { id: 'terrain', number: 3, label: 'Terrain' },
+    { id: 'design', number: 4, label: 'Design' },
+    { id: 'drawings', number: 5, label: 'Drawings' },
+    { id: 'beme', number: 6, label: 'BEME and report' },
+  ];
+
+  // Stage order index for progress indicator
+  const stageOrder: Record<string, number> = {
+    overview: hasSurveyUploaded ? 3 : 1,
+    setup: 1,
+    survey: 2,
+    terrain: 3,
+    design: 4,
+    drawings: 5,
+    beme: 6,
+  };
+
+  const currentStepNum = stageOrder[activeStage] || 1;
 
   return (
     <Box
       sx={{
-        flexShrink: 0,
-        height: { xs: 44, sm: 38 },
         px: { xs: 2, md: 3 },
-        backgroundColor: tokens.base,
-        borderBottom: `1px solid ${tokens.line}`,
+        py: 1,
+        backgroundColor: '#0A0E17',
+        borderBottom: '1px solid #1E293B',
         display: 'flex',
         alignItems: 'center',
-        gap: 2,
+        justifyContent: 'space-between',
+        position: 'relative',
       }}
     >
-      <Typography
-        variant="subtitle2"
-        sx={{ color: tokens.faint, flexShrink: 0, mb: 0, display: { xs: 'none', sm: 'block' } }}
-      >
-        Pipeline
-      </Typography>
+      <Box sx={{ display: 'flex', width: '100%', justifyContent: { xs: 'flex-start', md: 'space-between' }, alignItems: 'center', gap: { xs: 1.5, md: 0 }, overflowX: 'auto', '& > *': { flexShrink: 0 } }}>
+        {steps.map(s => {
+          const isCompleted = s.number < currentStepNum || (hasSurveyUploaded && s.number <= 2);
+          const isCurrent = s.id === activeStage;
+          const color = isCurrent ? '#38BDF8' : isCompleted ? '#10B981' : '#64748B';
 
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: '4px', flex: 1 }}>
-        {steps.map(step => {
-          const isComplete = step.number < current;
-          const isCurrent = step.number === current;
           return (
-            <Tooltip key={step.id} title={`${step.number}. ${step.label}`} placement="bottom">
+            <Box
+              key={s.id}
+              onClick={() => setActiveStage(s.id)}
+              sx={{
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 0.8,
+                opacity: isCurrent || isCompleted ? 1 : 0.6,
+                transition: 'opacity 0.2s',
+                '&:hover': { opacity: 1 },
+              }}
+            >
               <Box
-                onClick={() => setActiveStage(step.id)}
-                role="button"
-                tabIndex={0}
-                onKeyDown={e => {
-                  if (e.key === 'Enter' || e.key === ' ') setActiveStage(step.id);
-                }}
-                aria-label={`Go to ${step.label}`}
                 sx={{
-                  flex: 1,
-                  height: 44,
+                  width: 16,
+                  height: 16,
+                  borderRadius: '50%',
+                  border: `1.5px solid ${color}`,
                   display: 'flex',
                   alignItems: 'center',
-                  cursor: 'pointer',
-                  '&:focus-visible': { outline: `2px solid rgba(91,141,239,0.7)`, outlineOffset: 2, borderRadius: 99 },
-                  '& .bar': {
-                    height: 3,
-                    width: '100%',
-                    borderRadius: 99,
-                    backgroundColor: isCurrent
-                      ? tokens.accent
-                      : isComplete
-                        ? 'rgba(91,141,239,0.45)'
-                        : '#1E242E',
-                    transition: 'background-color 160ms ease, height 160ms ease',
-                  },
-                  '&:hover .bar': { height: 5, backgroundColor: isCurrent ? tokens.accentHover : '#3A4453' },
+                  justifyContent: 'center',
+                  backgroundColor: isCompleted ? color : 'transparent',
                 }}
               >
-                <Box className="bar" />
+                {isCompleted ? (
+                  <Box sx={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: '#0A0E17' }} />
+                ) : (
+                  <Typography sx={{ fontSize: '0.6rem', color, fontWeight: 700 }}>
+                    {s.number}
+                  </Typography>
+                )}
               </Box>
-            </Tooltip>
+
+              <Typography
+                variant="caption"
+                sx={{
+                  fontWeight: isCurrent ? 700 : 500,
+                  color: isCurrent ? '#F8FAFC' : color,
+                  fontSize: '0.75rem',
+                  letterSpacing: '0.01em',
+                }}
+              >
+                {s.label}
+              </Typography>
+            </Box>
           );
         })}
       </Box>
-
-      <Typography
-        sx={{
-          flexShrink: 0,
-          fontSize: '0.71875rem',
-          color: tokens.faint,
-          fontVariantNumeric: 'tabular-nums',
-          whiteSpace: 'nowrap',
-          display: { xs: 'none', sm: 'block' },
-        }}
-      >
-        {current === 0 ? 'Overview' : `Stage ${current} of 6`}
-      </Typography>
     </Box>
   );
 };

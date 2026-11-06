@@ -26,9 +26,14 @@ data/
 *.laz
 *.xyz
 *.csv
+!fake_data/*.csv
+*LDF*
+*LIFIDI*
 *.dxf
 *.xlsx
 *.pdf
+*.docx
+*.doc
 *.npy
 
 # Testing & Coverage
@@ -52,3 +57,4 @@ pgdata/
 # OS artifacts
 .DS_Store
 Thumbs.db
+.vercel

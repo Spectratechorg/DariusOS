@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Box, Drawer, ThemeProvider, CssBaseline, Snackbar, Alert } from '@mui/material';
-import { theme, tokens } from './theme';
+import { theme } from './theme';
 import { ProjectProvider, useProject } from './context/ProjectContext';
 import { Sidebar } from './components/Sidebar';
 import { TopBar } from './components/TopBar';
@@ -15,7 +15,6 @@ import { TerrainView } from './views/TerrainView';
 import { DesignEngineView } from './views/DesignEngineView';
 import { DrawingsView } from './views/DrawingsView';
 import { BemeReportView } from './views/BemeReportView';
-import { RoutesMonitoringView } from './views/RoutesMonitoringView';
 
 const MainLayout: React.FC = () => {
   const { activeStage, snackbarMessage, setSnackbarMessage } = useProject();
@@ -37,27 +36,19 @@ const MainLayout: React.FC = () => {
         return <DrawingsView />;
       case 'beme':
         return <BemeReportView />;
-      case 'monitoring':
-        return <RoutesMonitoringView />;
       default:
         return <OverviewView />;
     }
   };
 
   return (
-    <Box
-      sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        height: '100dvh',
-        width: '100vw',
-        overflow: 'hidden',
-        backgroundColor: tokens.base,
-      }}
-    >
+    <Box sx={{ display: 'flex', flexDirection: 'column', height: '100dvh', width: '100vw', overflow: 'hidden', backgroundColor: '#0B0F19' }}>
+      {/* Top Persistent Mandatory Registered Engineer Banner */}
       <EngineerBanner />
 
-      <Box sx={{ display: 'flex', flex: 1, minHeight: 0, overflow: 'hidden' }}>
+      {/* Main Workspace Frame */}
+      <Box sx={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
+        {/* Left Navigation Sidebar */}
         <Box sx={{ display: { xs: 'none', md: 'block' }, height: '100%' }}>
           <Sidebar />
         </Box>
@@ -71,9 +62,9 @@ const MainLayout: React.FC = () => {
             paper: {
               sx: {
                 width: 248,
-                backgroundColor: '#0B0E14',
+                backgroundColor: '#0A0E17',
                 backgroundImage: 'none',
-                borderRight: `1px solid ${tokens.line}`,
+                borderRight: '1px solid #1E293B',
               },
             },
           }}
@@ -81,15 +72,17 @@ const MainLayout: React.FC = () => {
           <Sidebar onNavigate={() => setNavOpen(false)} />
         </Drawer>
 
+        {/* Center Main Stage Content */}
         <Box sx={{ display: 'flex', flexDirection: 'column', flex: 1, minWidth: 0, height: '100%', overflow: 'hidden' }}>
           <TopBar onOpenNav={() => setNavOpen(true)} />
           <StepperBar />
-          <Box component="main" sx={{ flex: 1, overflowY: 'auto', overflowX: 'hidden', backgroundColor: tokens.base }}>
+          <Box sx={{ flex: 1, overflowY: 'auto', overflowX: 'hidden', backgroundColor: '#0B0F19' }}>
             {renderActiveView()}
           </Box>
         </Box>
       </Box>
 
+      {/* Interactive Action Toast Notification */}
       <Snackbar
         open={Boolean(snackbarMessage)}
         autoHideDuration={4000}
@@ -98,14 +91,12 @@ const MainLayout: React.FC = () => {
       >
         <Alert
           onClose={() => setSnackbarMessage(null)}
-          severity="info"
-          variant="outlined"
+          severity="success"
           sx={{
-            backgroundColor: '#141922',
-            color: tokens.text,
-            border: `1px solid ${tokens.lineStrong}`,
-            boxShadow: '0 12px 32px rgba(0,0,0,0.45)',
-            '& .MuiAlert-icon': { color: tokens.accent },
+            backgroundColor: '#0F1E38',
+            color: '#38BDF8',
+            border: '1px solid #1E3A8A',
+            '& .MuiAlert-icon': { color: '#38BDF8' },
           }}
         >
           {snackbarMessage}

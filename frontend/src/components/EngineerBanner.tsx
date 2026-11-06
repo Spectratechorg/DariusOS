@@ -1,44 +1,34 @@
 import React from 'react';
-import { Box, Typography, Tooltip } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import VerifiedUserOutlinedIcon from '@mui/icons-material/VerifiedUserOutlined';
-import { tokens } from '../theme';
 
 export const EngineerBanner: React.FC = () => {
   return (
-    <Tooltip
-      title="All engineering values, design rules, curve limits and unit rates are placeholders to be confirmed by a registered engineer."
-      placement="bottom"
+    <Box
+      sx={{
+        backgroundColor: '#1E1512',
+        borderBottom: '1px solid #78350F',
+        py: 0.5,
+        px: { xs: 2, md: 3 },
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 1.5,
+      }}
     >
-      <Box
+      <VerifiedUserOutlinedIcon sx={{ color: '#F59E0B', fontSize: '0.95rem' }} />
+      <Typography
+        variant="caption"
         sx={{
-          flexShrink: 0,
-          backgroundColor: 'rgba(227,169,72,0.06)',
-          borderBottom: `1px solid rgba(227,169,72,0.18)`,
-          height: 30,
-          px: { xs: 2, md: 3 },
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: 1,
+          color: '#FDE68A',
+          fontWeight: 600,
+          letterSpacing: '0.03em',
+          fontSize: '0.72rem',
+          textTransform: 'uppercase',
         }}
       >
-        <VerifiedUserOutlinedIcon sx={{ color: tokens.warning, fontSize: '0.875rem' }} />
-        <Typography
-          sx={{
-            color: '#D8B876',
-            fontWeight: 500,
-            fontSize: '0.6875rem',
-            letterSpacing: '0.055em',
-            textTransform: 'uppercase',
-            whiteSpace: 'nowrap',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            minWidth: 0,
-          }}
-        >
-          Preliminary output · to be confirmed by a registered engineer
-        </Typography>
-      </Box>
-    </Tooltip>
+        TO BE CONFIRMED BY A REGISTERED ENGINEER · ALL GEOMETRY, VOLUMES, AND RATES ARE PRELIMINARY PLACEHOLDERS
+      </Typography>
+    </Box>
   );
 };

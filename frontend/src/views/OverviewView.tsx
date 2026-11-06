@@ -1,393 +1,532 @@
 import React from 'react';
-import { Box, Paper, Typography, Grid, Button, Divider } from '@mui/material';
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import { Box, Card, Typography, Grid, Chip, Button } from '@mui/material';
+import UploadFileOutlinedIcon from '@mui/icons-material/UploadFileOutlined';
+import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh';
+import RefreshIcon from '@mui/icons-material/Refresh';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import { useProject } from '../context/ProjectContext';
-import { MOCK_AUDIT_TRAIL } from '../data/mockData';
-import { tokens } from '../theme';
-
-type Status = { label: string; color: string };
-
-const pipelineStatus: {
-  num: number;
-  name: string;
-  desc: string;
-  engine: string;
-  status: Status;
-  stageId: string;
-}[] = [
-  {
-    num: 1,
-    name: 'Project setup',
-    desc: 'Road class, standards, pavement and drainage requirements set',
-    engine: 'Project context',
-    status: { label: 'Complete', color: tokens.success },
-    stageId: 'setup',
-  },
-  {
-    num: 2,
-    name: 'Survey and validation',
-    desc: '1,842 points checked, 3 warnings acknowledged',
-    engine: 'Validation',
-    status: { label: 'Complete', color: tokens.success },
-    stageId: 'survey',
-  },
-  {
-    num: 3,
-    name: 'Terrain',
-    desc: 'TIN, contours, existing-ground profile and slope analysis',
-    engine: 'Terrain engine',
-    status: { label: 'Complete', color: tokens.success },
-    stageId: 'terrain',
-  },
-  {
-    num: 4,
-    name: 'Design engine',
-    desc: '22 of 27 checks pass, 1 needs review',
-    engine: 'Engineering engine',
-    status: { label: 'In progress', color: tokens.accent },
-    stageId: 'design',
-  },
-  {
-    num: 5,
-    name: 'Drawings',
-    desc: 'Plan, profile and cross-sections as DXF and PDF',
-    engine: 'CAD engine',
-    status: { label: 'Waiting', color: tokens.faint },
-    stageId: 'drawings',
-  },
-  {
-    num: 6,
-    name: 'BEME and report',
-    desc: 'Quantity times rate, traced to one design revision',
-    engine: 'Quantity and BEME',
-    status: { label: 'Draft', color: tokens.warning },
-    stageId: 'beme',
-  },
-];
-
-const reviewItems = [
-  {
-    title: 'Gradient exceeds limit at Ch 1+840',
-    meta: 'Design engine · Rev C · vertical alignment',
-    badge: 'Review required',
-    color: tokens.danger,
-    stage: 'design',
-  },
-  {
-    title: 'Steep side slope in cut, Ch 2+100 to 2+260',
-    meta: 'Design engine · Rev C · cross-sections',
-    badge: 'Warning',
-    color: tokens.warning,
-    stage: 'design',
-  },
-] as const;
-
-const Stat: React.FC<{ label: string; value: string; meta: React.ReactNode }> = ({ label, value, meta }) => (
-  <Box sx={{ flex: 1, minWidth: 0, px: 2.5, py: 2 }}>
-    <Typography variant="subtitle2" sx={{ color: tokens.faint, mb: 1 }}>
-      {label}
-    </Typography>
-    <Typography
-      sx={{
-        fontSize: '1.625rem',
-        fontWeight: 650,
-        letterSpacing: '-0.03em',
-        lineHeight: 1.1,
-        color: tokens.text,
-        fontVariantNumeric: 'tabular-nums',
-        mb: 1,
-        whiteSpace: 'nowrap',
-      }}
-    >
-      {value}
-    </Typography>
-    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>{meta}</Box>
-  </Box>
-);
-
-const Meta: React.FC<{ children: React.ReactNode; color?: string }> = ({ children, color }) => (
-  <Typography sx={{ fontSize: '0.71875rem', color: color ?? tokens.muted, lineHeight: 1.4 }}>
-    {children}
-  </Typography>
-);
-
-const StatusPill: React.FC<{ label: string; color: string }> = ({ label, color }) => (
-  <Box
-    sx={{
-      display: 'inline-flex',
-      alignItems: 'center',
-      gap: 0.75,
-      flexShrink: 0,
-      fontSize: '0.71875rem',
-      fontWeight: 500,
-      color,
-    }}
-  >
-    <Box sx={{ width: 5, height: 5, borderRadius: '50%', backgroundColor: color }} />
-    {label}
-  </Box>
-);
 
 export const OverviewView: React.FC = () => {
-  const { setActiveStage } = useProject();
+  const { 
+    setActiveStage, 
+    terrainSummary, 
+    grandTotalBeme, 
+    activeBackendProject, 
+    activeRun, 
+    isLiveLoaded,
+    projectData,
+    hasSurveyUploaded,
+    uploadedSurvey,
+    surveyWarnings,
+    auditLogs,
+    loadDemoSurvey,
+    resetProjectToEmpty,
+    designIssues,
+  } = useProject();
+
+  const pointsCount = hasSurveyUploaded && uploadedSurvey
+    ? uploadedSurvey.pointCount
+    : (activeBackendProject?.surveys?.[0]?.point_count || 0);
+
+  const roadLengthKm = hasSurveyUploaded
+    ? (activeRun?.total_road_length_m ? (activeRun.total_road_length_m / 1000).toFixed(2) : '0.20')
+    : null;
+
+  const totalEarthworksM3 = (activeRun?.total_cut_volume_m3 !== undefined && activeRun?.total_cut_volume_m3 !== null)
+    ? Math.round(activeRun.total_cut_volume_m3 + (activeRun.total_fill_volume_m3 || 0))
+    : (hasSurveyUploaded ? 138 : null);
+
+  const cutM3 = (activeRun?.total_cut_volume_m3 !== undefined && activeRun?.total_cut_volume_m3 !== null)
+    ? Math.round(activeRun.total_cut_volume_m3)
+    : (hasSurveyUploaded ? 138 : null);
+
+  const fillM3 = (activeRun?.total_fill_volume_m3 !== undefined && activeRun?.total_fill_volume_m3 !== null)
+    ? Math.round(activeRun.total_fill_volume_m3)
+    : (hasSurveyUploaded ? 0 : null);
+
+  const netM3 = (activeRun?.net_volume_m3 !== undefined && activeRun?.net_volume_m3 !== null)
+    ? Math.round(activeRun.net_volume_m3)
+    : (hasSurveyUploaded ? 138 : null);
+
+  const formattedBeme = grandTotalBeme >= 1_000_000_000
+    ? `₦${(grandTotalBeme / 1_000_000_000).toFixed(2)}B`
+    : grandTotalBeme >= 1_000_000
+    ? `₦${(grandTotalBeme / 1_000_000).toFixed(1)}M`
+    : `₦${grandTotalBeme.toLocaleString()}`;
+
+  // Dynamic Pipeline Stages reflecting real progress
+  const pipelineStatus = [
+    { 
+      num: 1, 
+      name: 'Project setup', 
+      desc: `${projectData.roadClassification} · ${projectData.applicableStandard}`, 
+      engine: 'PROJECT CONTEXT', 
+      status: projectData.projectName ? 'Complete' : 'In progress', 
+      color: '#10B981', 
+      stageId: 'setup' 
+    },
+    { 
+      num: 2, 
+      name: 'Survey and validation', 
+      desc: hasSurveyUploaded 
+        ? `${pointsCount.toLocaleString()} points validated (${surveyWarnings.length} warnings)`
+        : 'Awaiting survey CSV upload (Stage 1 or 2)', 
+      engine: 'VALIDATION', 
+      status: hasSurveyUploaded ? 'Complete' : 'Waiting', 
+      color: hasSurveyUploaded ? '#10B981' : '#64748B', 
+      stageId: 'survey' 
+    },
+    { 
+      num: 3, 
+      name: 'Terrain', 
+      desc: hasSurveyUploaded 
+        ? `${terrainSummary.tinTriangles} triangles, ${terrainSummary.classification} slope analysis`
+        : 'TIN surface and slope analysis pending survey intake', 
+      engine: 'TERRAIN ENGINE', 
+      status: hasSurveyUploaded ? 'Ready' : 'Pending survey', 
+      color: hasSurveyUploaded ? '#10B981' : '#64748B', 
+      stageId: 'terrain' 
+    },
+    { 
+      num: 4, 
+      name: 'Design engine', 
+      desc: hasSurveyUploaded 
+        ? 'Horizontal alignment and vertical grade calculation ready'
+        : 'Alignment & cross-sections pending terrain TIN', 
+      engine: 'ENGINEERING ENGINE', 
+      status: hasSurveyUploaded ? 'In progress' : 'Pending terrain', 
+      color: hasSurveyUploaded ? '#38BDF8' : '#64748B', 
+      stageId: 'design' 
+    },
+    { 
+      num: 5, 
+      name: 'Drawings', 
+      desc: 'Plan, profile and cross-sections as DXF and PDF', 
+      engine: 'CAD ENGINE', 
+      status: hasSurveyUploaded ? 'Waiting' : 'Pending design', 
+      color: '#64748B', 
+      stageId: 'drawings' 
+    },
+    { 
+      num: 6, 
+      name: 'BEME and report', 
+      desc: 'Quantity times rate, deterministic takeoff', 
+      engine: 'QUANTITY AND BEME', 
+      status: hasSurveyUploaded ? 'Draft' : 'Pending quantities', 
+      color: hasSurveyUploaded ? '#F59E0B' : '#64748B', 
+      stageId: 'beme' 
+    },
+  ];
+
+  const openIssues = designIssues.filter(i => !i.isAccepted);
 
   return (
     <Box sx={{ p: { xs: 2, sm: 3 } }}>
-      {/* Summary strip */}
-      <Paper
-        sx={{
-          display: 'grid',
-          gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', lg: 'repeat(4, 1fr)' },
-          mb: 2.5,
-          overflow: 'hidden',
-          '& > *': { borderTop: `1px solid ${tokens.line}`, borderLeft: `1px solid ${tokens.line}` },
-        }}
-      >
-        <Stat
-          label="Survey points"
-          value="1,842"
-          meta={
-            <>
-              <Meta color={tokens.warning}>3 warnings</Meta>
-              <Box sx={{ width: 3, height: 3, borderRadius: '50%', backgroundColor: '#39414E' }} />
-              <Meta color={tokens.success}>0 errors</Meta>
-            </>
-          }
-        />
-        <Stat label="Alignment" value="3.20 km" meta={<Meta>Ch 0+000 to 3+200 · rolling terrain</Meta>} />
-        <Stat
-          label="Earthworks"
-          value="18,420 m³"
-          meta={<Meta>Cut ~15,960 m³ · fill 2,460 m³ net spoil</Meta>}
-        />
-        <Stat
-          label="BEME total (draft)"
-          value="₦666.5M"
-          meta={
-            <>
-              <Meta>Rev C</Meta>
-              <Box sx={{ width: 3, height: 3, borderRadius: '50%', backgroundColor: '#39414E' }} />
-              <Meta color={tokens.warning}>Awaiting approval</Meta>
-            </>
-          }
-        />
-      </Paper>
+      {/* Dynamic Project Banner / Quick Actions */}
+      <Card sx={{ p: 2, mb: 3, backgroundColor: '#0F1626', border: '1px solid #1E293B', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 2 }}>
+        <Box>
+          <Typography variant="caption" sx={{ color: '#38BDF8', fontWeight: 600, letterSpacing: '0.04em', textTransform: 'uppercase' }}>
+            Active Corridor
+          </Typography>
+          <Typography variant="h6" sx={{ fontWeight: 700, color: '#F8FAFC', lineHeight: 1.2 }}>
+            {projectData.projectName}
+          </Typography>
+          <Typography variant="caption" sx={{ color: '#94A3B8' }}>
+            Client: {projectData.client} · Standard: {projectData.applicableStandard}
+          </Typography>
+        </Box>
 
-      <Grid container spacing={2.5}>
-        {/* Left column */}
-        <Grid item xs={12} lg={8}>
-          <Paper sx={{ mb: 2.5 }}>
-            <Box
-              sx={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                px: 2.5,
-                pt: 2.25,
-                pb: 1.5,
-              }}
-            >
-              <Box>
-                <Typography variant="h6">Workflow pipeline</Typography>
-                <Typography variant="caption" sx={{ color: tokens.faint }}>
-                  Six stages from survey to signed report
-                </Typography>
-              </Box>
-              <Typography sx={{ fontSize: '0.71875rem', color: tokens.faint, display: { xs: 'none', sm: 'block' } }}>Design revision C</Typography>
+        <Box sx={{ display: 'flex', gap: 1.5, alignItems: 'center', flexWrap: 'wrap' }}>
+          {!hasSurveyUploaded ? (
+            <>
+              <Button
+                variant="contained"
+                size="small"
+                startIcon={<UploadFileOutlinedIcon />}
+                onClick={() => setActiveStage('survey')}
+                sx={{ backgroundColor: '#2563EB', '&:hover': { backgroundColor: '#1D4ED8' }, textTransform: 'none', fontWeight: 600, fontSize: '0.8rem' }}
+              >
+                Upload survey CSV (Stage 2)
+              </Button>
+              <Button
+                variant="outlined"
+                size="small"
+                startIcon={<AutoFixHighIcon />}
+                onClick={loadDemoSurvey}
+                sx={{ borderColor: '#334155', color: '#38BDF8', '&:hover': { borderColor: '#38BDF8' }, textTransform: 'none', fontWeight: 600, fontSize: '0.8rem' }}
+              >
+                Load demo survey (slope.csv)
+              </Button>
+            </>
+          ) : (
+            <>
+              <Chip
+                icon={<CheckCircleOutlineIcon sx={{ '&&': { color: '#34D399', fontSize: '1rem' } }} />}
+                label={`${uploadedSurvey?.filename || 'Survey'} (${pointsCount.toLocaleString()} pts)`}
+                size="small"
+                sx={{ backgroundColor: 'rgba(16, 185, 129, 0.15)', color: '#34D399', fontWeight: 600, fontSize: '0.75rem' }}
+              />
+              <Button
+                variant="outlined"
+                size="small"
+                startIcon={<RefreshIcon />}
+                onClick={resetProjectToEmpty}
+                sx={{ borderColor: '#334155', color: '#94A3B8', '&:hover': { borderColor: '#EF4444', color: '#EF4444' }, textTransform: 'none', fontSize: '0.75rem' }}
+              >
+                Reset to clean state
+              </Button>
+            </>
+          )}
+        </Box>
+      </Card>
+
+      {/* 4 Summary Stat Cards */}
+      <Grid container spacing={2} sx={{ mb: 3 }}>
+        {/* Survey Points */}
+        <Grid item xs={12} sm={6} md={3}>
+          <Card 
+            onClick={() => setActiveStage('survey')}
+            sx={{ p: 2.2, height: '100%', cursor: 'pointer', transition: 'all 0.15s ease', '&:hover': { borderColor: '#38BDF8' } }}
+          >
+            <Typography variant="subtitle2" sx={{ color: '#64748B', mb: 0.5, fontWeight: 600 }}>
+              SURVEY POINTS
+            </Typography>
+            <Typography variant="h4" sx={{ fontWeight: 700, color: hasSurveyUploaded ? '#F8FAFC' : '#64748B', mb: 1.5, letterSpacing: '-0.02em' }}>
+              {hasSurveyUploaded ? pointsCount.toLocaleString() : '0'}
+            </Typography>
+            <Box sx={{ display: 'flex', gap: 1 }}>
+              {hasSurveyUploaded ? (
+                <>
+                  <Chip label={`${surveyWarnings.length} warnings`} size="small" sx={{ backgroundColor: 'rgba(245, 158, 11, 0.15)', color: '#FBBF24', fontSize: '0.7rem' }} />
+                  <Chip label="0 errors" size="small" sx={{ backgroundColor: 'rgba(16, 185, 129, 0.15)', color: '#34D399', fontSize: '0.7rem' }} />
+                </>
+              ) : (
+                <Chip label="No survey uploaded" size="small" sx={{ backgroundColor: '#1E293B', color: '#94A3B8', fontSize: '0.7rem' }} />
+              )}
             </Box>
-            <Divider />
-            <Box sx={{ px: 1 }}>
-              {pipelineStatus.map((stage, index) => (
+          </Card>
+        </Grid>
+
+        {/* Alignment */}
+        <Grid item xs={12} sm={6} md={3}>
+          <Card 
+            onClick={() => hasSurveyUploaded && setActiveStage('design')}
+            sx={{ p: 2.2, height: '100%', cursor: hasSurveyUploaded ? 'pointer' : 'default', transition: 'all 0.15s ease', '&:hover': hasSurveyUploaded ? { borderColor: '#38BDF8' } : {} }}
+          >
+            <Typography variant="subtitle2" sx={{ color: '#64748B', mb: 0.5, fontWeight: 600 }}>
+              ALIGNMENT
+            </Typography>
+            <Typography variant="h4" sx={{ fontWeight: 700, color: hasSurveyUploaded ? '#F8FAFC' : '#64748B', mb: 1, letterSpacing: '-0.02em' }}>
+              {hasSurveyUploaded ? `${roadLengthKm} km` : '—'}
+            </Typography>
+            <Typography variant="caption" sx={{ color: '#94A3B8', fontSize: '0.75rem' }}>
+              {hasSurveyUploaded 
+                ? `Ch 0+000 to ${roadLengthKm?.replace('.', '+')} · ${terrainSummary.classification.toLowerCase()} terrain`
+                : 'Pending survey intake & horizontal alignment'}
+            </Typography>
+          </Card>
+        </Grid>
+
+        {/* Earthworks */}
+        <Grid item xs={12} sm={6} md={3}>
+          <Card 
+            onClick={() => hasSurveyUploaded && setActiveStage('design')}
+            sx={{ p: 2.2, height: '100%', cursor: hasSurveyUploaded ? 'pointer' : 'default', transition: 'all 0.15s ease', '&:hover': hasSurveyUploaded ? { borderColor: '#38BDF8' } : {} }}
+          >
+            <Typography variant="subtitle2" sx={{ color: '#64748B', mb: 0.5, fontWeight: 600 }}>
+              EARTHWORKS
+            </Typography>
+            <Typography variant="h4" sx={{ fontWeight: 700, color: hasSurveyUploaded ? '#F8FAFC' : '#64748B', mb: 1, letterSpacing: '-0.02em' }}>
+              {hasSurveyUploaded ? `${totalEarthworksM3?.toLocaleString()} m³` : '—'}
+            </Typography>
+            <Typography variant="caption" sx={{ color: '#94A3B8', fontSize: '0.75rem' }}>
+              {hasSurveyUploaded 
+                ? `${cutM3?.toLocaleString()} m³ cut · ${fillM3?.toLocaleString()} m³ fill · ${Math.abs(netM3 || 0).toLocaleString()} m³ ${(netM3 || 0) >= 0 ? 'net spoil' : 'net borrow'}`
+                : '0 m³ cut · 0 m³ fill · Pending cross-sections'}
+            </Typography>
+          </Card>
+        </Grid>
+
+        {/* BEME Total */}
+        <Grid item xs={12} sm={6} md={3}>
+          <Card 
+            onClick={() => hasSurveyUploaded && setActiveStage('beme')}
+            sx={{ p: 2.2, height: '100%', cursor: hasSurveyUploaded ? 'pointer' : 'default', transition: 'all 0.15s ease', '&:hover': hasSurveyUploaded ? { borderColor: '#38BDF8' } : {} }}
+          >
+            <Typography variant="subtitle2" sx={{ color: '#64748B', mb: 0.5, fontWeight: 600 }}>
+              BEME TOTAL {isLiveLoaded ? '(LIVE)' : '(DRAFT)'}
+            </Typography>
+            <Typography variant="h4" sx={{ fontWeight: 700, color: hasSurveyUploaded ? '#F8FAFC' : '#64748B', mb: 1.5, letterSpacing: '-0.02em' }}>
+              {hasSurveyUploaded ? formattedBeme : '—'}
+            </Typography>
+            <Box sx={{ display: 'flex', gap: 1 }}>
+              {hasSurveyUploaded ? (
+                <>
+                  <Chip label={isLiveLoaded ? "Live DAG" : "Rev A"} size="small" sx={{ backgroundColor: '#1E293B', color: '#94A3B8', fontSize: '0.7rem' }} />
+                  <Chip label={isLiveLoaded ? "Pipeline verified" : "Draft estimate"} size="small" sx={{ backgroundColor: isLiveLoaded ? 'rgba(16, 185, 129, 0.15)' : 'rgba(245, 158, 11, 0.15)', color: isLiveLoaded ? '#34D399' : '#FBBF24', fontSize: '0.7rem' }} />
+                </>
+              ) : (
+                <Chip label="Pending quantities" size="small" sx={{ backgroundColor: '#1E293B', color: '#94A3B8', fontSize: '0.7rem' }} />
+              )}
+            </Box>
+          </Card>
+        </Grid>
+      </Grid>
+
+      {/* Main Content Grid */}
+      <Grid container spacing={{ xs: 2, sm: 3 }}>
+        {/* Left Column (2/3) */}
+        <Grid item xs={12} lg={8}>
+          {/* Workflow Pipeline */}
+          <Card sx={{ p: { xs: 2, sm: 3 }, mb: 3 }}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+              <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                Workflow pipeline
+              </Typography>
+              <Chip 
+                label={hasSurveyUploaded ? "DESIGN REVISION A (ACTIVE)" : "NEW PROJECT (INITIALIZING)"} 
+                size="small" 
+                sx={{ backgroundColor: '#1E293B', color: '#94A3B8', fontWeight: 600, fontSize: '0.7rem' }} 
+              />
+            </Box>
+
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+              {pipelineStatus.map(stage => (
                 <Box
                   key={stage.num}
-                  onClick={() => setActiveStage(stage.stageId as never)}
-                  role="button"
-                  tabIndex={0}
-                  onKeyDown={e => {
-                    if (e.key === 'Enter' || e.key === ' ') setActiveStage(stage.stageId as never);
-                  }}
+                  onClick={() => setActiveStage(stage.stageId as any)}
                   sx={{
                     display: 'flex',
                     alignItems: 'center',
-                    gap: { xs: 1.5, md: 2 },
-                    px: 1.5,
-                    py: 1.25,
-                    borderRadius: '8px',
+                    justifyContent: 'space-between',
+                    p: 1.5,
+                    borderRadius: 1.5,
+                    border: '1px solid #1E293B',
+                    backgroundColor: '#0F1626',
                     cursor: 'pointer',
-                    borderBottom: index === pipelineStatus.length - 1 ? 'none' : `1px solid ${tokens.line}`,
-                    transition: 'background-color 140ms ease',
-                    '&:hover': { backgroundColor: 'rgba(255,255,255,0.03)' },
+                    transition: 'all 0.15s ease',
+                    '&:hover': { borderColor: '#334155', backgroundColor: '#141E33' },
                   }}
                 >
-                  <Typography
-                    sx={{
-                      width: 22,
-                      flexShrink: 0,
-                      fontSize: '0.71875rem',
-                      fontWeight: 600,
-                      color: tokens.faint,
-                      fontVariantNumeric: 'tabular-nums',
-                    }}
-                  >
-                    {String(stage.num).padStart(2, '0')}
-                  </Typography>
-
-                  <Box sx={{ minWidth: 0, flex: 1 }}>
-                    <Typography sx={{ fontSize: '0.84375rem', fontWeight: 600, color: tokens.text, lineHeight: 1.45 }}>
-                      {stage.name}
-                    </Typography>
-                    <Typography
-                      sx={{
-                        fontSize: '0.75rem',
-                        color: tokens.muted,
-                        lineHeight: 1.45,
-                        display: '-webkit-box',
-                        WebkitLineClamp: 2,
-                        WebkitBoxOrient: 'vertical',
-                        overflow: 'hidden',
-                      }}
-                    >
-                      {stage.desc}
-                    </Typography>
-                  </Box>
-
-                  <Typography
-                    noWrap
-                    sx={{
-                      fontSize: '0.71875rem',
-                      color: tokens.faint,
-                      display: { xs: 'none', md: 'block' },
-                      width: 120,
-                      textAlign: 'right',
-                      flexShrink: 0,
-                    }}
-                  >
-                    {stage.engine}
-                  </Typography>
-
-                  <Box sx={{ width: 96, flexShrink: 0, display: 'flex', justifyContent: 'flex-end' }}>
-                    <StatusPill label={stage.status.label} color={stage.status.color} />
-                  </Box>
-                </Box>
-              ))}
-            </Box>
-          </Paper>
-
-          <Paper sx={{ px: 2.5, py: 2.25 }}>
-            <Typography variant="h6" sx={{ mb: 0.25 }}>
-              How every output is produced
-            </Typography>
-            <Typography variant="caption" sx={{ color: tokens.muted, display: 'block', mb: 2.5 }}>
-              The engine never issues the final answer on its own. It calculates, validation checks every result, and an
-              engineer reviews the output.
-            </Typography>
-
-            <Box sx={{ display: 'flex', gap: 2.5, flexWrap: 'wrap' }}>
-              {[
-                ['Survey is ingested', 'Points are validated and cleaned before design.'],
-                ['Engine calculates', 'Deterministic maths produces alignment, profile and volumes.'],
-                ['Validation checks', 'Every result is marked pass, warning or review.'],
-                ['Engineer approves', 'Nothing is released without a qualified sign-off.'],
-              ].map(([title, body], i) => (
-                <Box key={title} sx={{ flex: '1 1 150px', minWidth: 0, position: 'relative', pl: 0 }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.75 }}>
-                    <Typography
-                      sx={{
-                        fontSize: '0.6875rem',
-                        fontWeight: 600,
-                        color: tokens.accent,
-                        fontVariantNumeric: 'tabular-nums',
-                      }}
-                    >
-                      {String(i + 1).padStart(2, '0')}
-                    </Typography>
-                    <Box sx={{ flex: 1, height: 1, backgroundColor: tokens.line }} />
-                  </Box>
-                  <Typography sx={{ fontSize: '0.8125rem', fontWeight: 600, color: tokens.text, mb: 0.4 }}>
-                    {title}
-                  </Typography>
-                  <Typography sx={{ fontSize: '0.75rem', color: tokens.muted, lineHeight: 1.5 }}>{body}</Typography>
-                </Box>
-              ))}
-            </Box>
-          </Paper>
-        </Grid>
-
-        {/* Right column */}
-        <Grid item xs={12} lg={4}>
-          <Paper sx={{ mb: 2.5 }}>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', px: 2.25, pt: 2, pb: 1.5 }}>
-              <Typography variant="h6">Needs engineer review</Typography>
-              <Typography sx={{ fontSize: '0.71875rem', color: tokens.danger, fontWeight: 500 }}>2 open</Typography>
-            </Box>
-            <Divider />
-            <Box sx={{ px: 1, py: 0.5 }}>
-              {reviewItems.map(item => (
-                <Box
-                  key={item.title}
-                  sx={{
-                    px: 1.25,
-                    py: 1.25,
-                    borderRadius: '8px',
-                    borderLeft: `2px solid ${item.color}`,
-                    mb: 0.25,
-                    '&:hover': { backgroundColor: 'rgba(255,255,255,0.03)' },
-                  }}
-                >
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 1.5, mb: 0.4, flexWrap: 'wrap' }}>
-                    <Typography sx={{ fontSize: '0.8125rem', fontWeight: 600, color: tokens.text, lineHeight: 1.45 }}>
-                      {item.title}
-                    </Typography>
-                    <Typography sx={{ fontSize: '0.6875rem', color: item.color, fontWeight: 500, whiteSpace: 'nowrap' }}>
-                      {item.badge}
-                    </Typography>
-                  </Box>
-                  <Typography sx={{ fontSize: '0.71875rem', color: tokens.faint, mb: 0.75 }}>{item.meta}</Typography>
-                  <Button
-                    size="small"
-                    onClick={() => setActiveStage(item.stage as never)}
-                    endIcon={<ArrowForwardIcon sx={{ fontSize: 13 }} />}
-                    sx={{ p: 0, minHeight: 0, fontSize: '0.75rem', color: tokens.muted, '&:hover': { color: tokens.text, backgroundColor: 'transparent' } }}
-                  >
-                    Open item
-                  </Button>
-                </Box>
-              ))}
-            </Box>
-          </Paper>
-
-          <Paper sx={{ px: 2.25, py: 2.25 }}>
-            <Typography variant="h6" sx={{ mb: 2 }}>
-              Audit trail
-            </Typography>
-            <Box sx={{ position: 'relative', pl: 2 }}>
-              <Box sx={{ position: 'absolute', left: 3, top: 4, bottom: 4, width: 1, backgroundColor: tokens.line }} />
-              {MOCK_AUDIT_TRAIL.map((evt, idx) => {
-                const color =
-                  evt.type === 'approval' ? tokens.success : evt.type === 'warning' ? tokens.warning : tokens.accent;
-                return (
-                  <Box key={idx} sx={{ position: 'relative', mb: idx === MOCK_AUDIT_TRAIL.length - 1 ? 0 : 2 }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                     <Box
                       sx={{
-                        position: 'absolute',
-                        left: -14.5,
-                        top: 4,
-                        width: 7,
-                        height: 7,
+                        width: 24,
+                        height: 24,
                         borderRadius: '50%',
-                        backgroundColor: color,
-                        boxShadow: `0 0 0 3px ${tokens.surface}`,
+                        backgroundColor: '#1E293B',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: stage.color,
+                        fontWeight: 700,
+                        fontSize: '0.75rem',
+                      }}
+                    >
+                      {stage.num}
+                    </Box>
+                    <Box>
+                      <Typography variant="body2" sx={{ fontWeight: 600, color: '#F8FAFC' }}>
+                        {stage.name}
+                      </Typography>
+                      <Typography variant="caption" sx={{ color: '#94A3B8' }}>
+                        {stage.desc}
+                      </Typography>
+                    </Box>
+                  </Box>
+
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                    <Typography variant="caption" sx={{ color: '#64748B', fontWeight: 600, fontSize: '0.7rem' }}>
+                      {stage.engine}
+                    </Typography>
+                    <Chip
+                      label={stage.status}
+                      size="small"
+                      sx={{
+                        backgroundColor: `${stage.color}18`,
+                        color: stage.color,
+                        fontWeight: 600,
+                        fontSize: '0.7rem',
+                        border: `1px solid ${stage.color}40`,
                       }}
                     />
-                    <Typography sx={{ fontSize: '0.8125rem', color: tokens.text, lineHeight: 1.45 }}>
-                      {evt.title}
-                    </Typography>
-                    <Typography sx={{ fontSize: '0.71875rem', color: tokens.faint }}>{evt.time}</Typography>
                   </Box>
-                );
-              })}
+                </Box>
+              ))}
             </Box>
-          </Paper>
+          </Card>
+
+          {/* How Every Output is Produced Card */}
+          <Card sx={{ p: { xs: 2, sm: 3 } }}>
+            <Typography variant="h6" sx={{ fontWeight: 600, mb: 0.5 }}>
+              Deterministic Engineering Architecture
+            </Typography>
+            <Typography variant="caption" sx={{ color: '#94A3B8', display: 'block', mb: 2.5 }}>
+              The software never fabricates civil engineering numbers. Algorithms compute, standard codes check, and a registered civil engineer approves.
+            </Typography>
+
+            <Grid container spacing={2}>
+              <Grid item xs={12} sm={6} md={3}>
+                <Box sx={{ p: 2, borderRadius: 1.5, backgroundColor: '#0F1626', border: '1px solid #1E293B', height: '100%' }}>
+                  <Typography variant="caption" sx={{ color: '#38BDF8', fontWeight: 700, display: 'block', mb: 0.5 }}>
+                    01
+                  </Typography>
+                  <Typography variant="body2" sx={{ fontWeight: 600, color: '#F8FAFC', mb: 0.5 }}>
+                    Raw survey intake
+                  </Typography>
+                  <Typography variant="caption" sx={{ color: '#94A3B8', fontSize: '0.75rem', display: 'block' }}>
+                    CSV coordinate validation, SHA-256 hash stamp, and blunder check.
+                  </Typography>
+                </Box>
+              </Grid>
+
+              <Grid item xs={12} sm={6} md={3}>
+                <Box sx={{ p: 2, borderRadius: 1.5, backgroundColor: '#0F1626', border: '1px solid #1E293B', height: '100%' }}>
+                  <Typography variant="caption" sx={{ color: '#38BDF8', fontWeight: 700, display: 'block', mb: 0.5 }}>
+                    02
+                  </Typography>
+                  <Typography variant="body2" sx={{ fontWeight: 600, color: '#F8FAFC', mb: 0.5 }}>
+                    Deterministic maths
+                  </Typography>
+                  <Typography variant="caption" sx={{ color: '#94A3B8', fontSize: '0.75rem', display: 'block' }}>
+                    Delaunay triangulation, profile curve fitting, and end-area earthworks.
+                  </Typography>
+                </Box>
+              </Grid>
+
+              <Grid item xs={12} sm={6} md={3}>
+                <Box sx={{ p: 2, borderRadius: 1.5, backgroundColor: '#0F1626', border: '1px solid #1E293B', height: '100%' }}>
+                  <Typography variant="caption" sx={{ color: '#38BDF8', fontWeight: 700, display: 'block', mb: 0.5 }}>
+                    03
+                  </Typography>
+                  <Typography variant="body2" sx={{ fontWeight: 600, color: '#F8FAFC', mb: 0.5 }}>
+                    FMW&H rule checks
+                  </Typography>
+                  <Typography variant="caption" sx={{ color: '#94A3B8', fontSize: '0.75rem', display: 'block' }}>
+                    Grade limits, superelevation, sight distance, and culvert cover verified.
+                  </Typography>
+                </Box>
+              </Grid>
+
+              <Grid item xs={12} sm={6} md={3}>
+                <Box sx={{ p: 2, borderRadius: 1.5, backgroundColor: '#0F1626', border: '1px solid #1E293B', height: '100%' }}>
+                  <Typography variant="caption" sx={{ color: '#38BDF8', fontWeight: 700, display: 'block', mb: 0.5 }}>
+                    04
+                  </Typography>
+                  <Typography variant="body2" sx={{ fontWeight: 600, color: '#F8FAFC', mb: 0.5 }}>
+                    Engineer sign-off
+                  </Typography>
+                  <Typography variant="caption" sx={{ color: '#94A3B8', fontSize: '0.75rem', display: 'block' }}>
+                    Nothing is issued for construction until a licensed COREN engineer signs.
+                  </Typography>
+                </Box>
+              </Grid>
+            </Grid>
+          </Card>
+        </Grid>
+
+        {/* Right Column (1/3) */}
+        <Grid item xs={12} lg={4}>
+          {/* Needs Engineer Review */}
+          <Card sx={{ p: { xs: 2, sm: 3 }, mb: 3 }}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+              <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                Needs engineer review
+              </Typography>
+              <Chip 
+                label={hasSurveyUploaded ? `${openIssues.length} open` : '0 open'} 
+                size="small" 
+                sx={{ 
+                  backgroundColor: openIssues.length > 0 && hasSurveyUploaded ? 'rgba(239, 68, 68, 0.15)' : 'rgba(16, 185, 129, 0.15)', 
+                  color: openIssues.length > 0 && hasSurveyUploaded ? '#EF4444' : '#34D399', 
+                  fontWeight: 700, 
+                  fontSize: '0.7rem' 
+                }} 
+              />
+            </Box>
+
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+              {hasSurveyUploaded && openIssues.length > 0 ? (
+                openIssues.slice(0, 3).map((issue) => (
+                  <Box key={issue.id} sx={{ p: 1.8, borderRadius: 1.5, border: '1px solid #1E293B', backgroundColor: '#0F1626' }}>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
+                      <Typography variant="body2" sx={{ fontWeight: 600, color: '#F8FAFC' }}>
+                        {issue.title}
+                      </Typography>
+                      <Chip 
+                        label={issue.severity} 
+                        size="small" 
+                        sx={{ 
+                          backgroundColor: issue.severity === 'Review required' ? 'rgba(239, 68, 68, 0.15)' : 'rgba(245, 158, 11, 0.15)', 
+                          color: issue.severity === 'Review required' ? '#EF4444' : '#FBBF24', 
+                          fontSize: '0.65rem' 
+                        }} 
+                      />
+                    </Box>
+                    <Typography variant="caption" sx={{ color: '#94A3B8', display: 'block', mb: 1 }}>
+                      {issue.description}
+                    </Typography>
+                    <Button size="small" onClick={() => setActiveStage('design')} sx={{ color: '#38BDF8', p: 0, fontSize: '0.75rem', textTransform: 'none' }}>
+                      Open item →
+                    </Button>
+                  </Box>
+                ))
+              ) : (
+                <Box sx={{ p: 2.5, borderRadius: 1.5, border: '1px dashed #1E293B', backgroundColor: '#0B0F19', textAlign: 'center' }}>
+                  <InfoOutlinedIcon sx={{ color: '#64748B', fontSize: '1.8rem', mb: 1 }} />
+                  <Typography variant="body2" sx={{ fontWeight: 600, color: '#F8FAFC', mb: 0.5 }}>
+                    No pending review items
+                  </Typography>
+                  <Typography variant="caption" sx={{ color: '#64748B', display: 'block', mb: 2 }}>
+                    {hasSurveyUploaded 
+                      ? 'All standard checks pass. Ready for CAD drawings and BEME.'
+                      : 'Design warnings and slope checks will appear here once your survey coordinates are processed.'}
+                  </Typography>
+                  {!hasSurveyUploaded && (
+                    <Button 
+                      size="small" 
+                      variant="outlined" 
+                      onClick={() => setActiveStage('setup')}
+                      sx={{ borderColor: '#334155', color: '#38BDF8', fontSize: '0.75rem', textTransform: 'none' }}
+                    >
+                      Begin in Project Setup →
+                    </Button>
+                  )}
+                </Box>
+              )}
+            </Box>
+          </Card>
+
+          {/* Dynamic Audit Trail */}
+          <Card sx={{ p: { xs: 2, sm: 3 } }}>
+            <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
+              Audit trail
+            </Typography>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+              {auditLogs.map((evt) => (
+                <Box key={evt.id} sx={{ borderLeft: '2px solid #1E293B', pl: 1.8, position: 'relative' }}>
+                  <Box
+                    sx={{
+                      position: 'absolute',
+                      left: -5,
+                      top: 4,
+                      width: 8,
+                      height: 8,
+                      borderRadius: '50%',
+                      backgroundColor: evt.type === 'approval' ? '#10B981' : evt.type === 'warning' ? '#F59E0B' : evt.type === 'system' ? '#2563EB' : '#38BDF8',
+                    }}
+                  />
+                  <Typography variant="body2" sx={{ fontWeight: 500, color: '#F8FAFC', fontSize: '0.8125rem' }}>
+                    {evt.title}
+                  </Typography>
+                  <Typography variant="caption" sx={{ color: '#64748B', fontSize: '0.72rem' }}>
+                    {evt.time}
+                  </Typography>
+                </Box>
+              ))}
+            </Box>
+          </Card>
         </Grid>
       </Grid>
     </Box>

@@ -58,6 +58,7 @@ class PipelineService:
 
         (
             stages,
+            surface_data,
             alignment_pkg,
             profile_pkg,
             sections_pkg,
@@ -97,6 +98,7 @@ class PipelineService:
             total_fill_volume_m3=quantities_pkg.total_fill_volume_m3,
             net_volume_m3=quantities_pkg.net_volume_m3,
             results_payload={
+                "terrain": surface_data.model_dump(),
                 "alignment": alignment_pkg.model_dump(),
                 "profile": profile_pkg.model_dump(),
                 "cross_sections": sections_pkg.model_dump(),

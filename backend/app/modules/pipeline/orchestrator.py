@@ -15,6 +15,7 @@ from app.schemas.cross_section import CrossSectionPackage
 from app.schemas.manifest import PipelineRunRequest, StageRecord, StageRunStatus
 from app.schemas.profile import LongitudinalProfilePackage
 from app.schemas.quantities import EarthworkQuantitiesPackage
+from app.schemas.terrain import TerrainSurfaceData
 
 # Global in-memory artifact cache across pipeline runs
 _PIPELINE_CACHE: Dict[str, Any] = {}
@@ -42,6 +43,7 @@ class PipelineOrchestrator:
         force_recompute: bool = False
     ) -> Tuple[
         Dict[str, StageRecord],
+        TerrainSurfaceData,
         HorizontalAlignmentPackage,
         LongitudinalProfilePackage,
         CrossSectionPackage,
@@ -227,6 +229,7 @@ class PipelineOrchestrator:
         total_pipeline_duration = round(time.perf_counter() - overall_start_time, 4)
         return (
             stage_records,
+            surface_data,
             alignment_pkg,
             profile_pkg,
             sections_pkg,

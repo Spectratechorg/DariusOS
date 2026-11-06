@@ -5,8 +5,7 @@ export type StageId =
   | 'terrain'
   | 'design'
   | 'drawings'
-  | 'beme'
-  | 'monitoring';
+  | 'beme';
 
 export type UserRole = 'Approver' | 'Reviewer' | 'Viewer';
 
