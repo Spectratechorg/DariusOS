@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useMemo, ReactNode } from 'react';
 import useSWR from 'swr';
-import { fetchHealth, fetchProjects, HealthResponse, ProjectSummary } from '../api';
+import { fetchHealth, fetchProjects, fetchProjectDetail, HealthResponse, ProjectSummary, ProjectDetail } from '../api';
 import { 
   StageId, 
   ProjectData, 
@@ -8,7 +8,6 @@ import {
   EngineerWarning, 
   ValidationCheckItem, 
   TerrainSummary, 
-  CurveOption, 
   DesignValidationIssue, 
   BemeCategory, 
   AsBuiltComparisonRow, 
@@ -20,7 +19,6 @@ import {
   MOCK_SURVEY_WARNINGS, 
   MOCK_VALIDATION_CHECKS, 
   MOCK_TERRAIN_SUMMARY, 
-  MOCK_CURVE_OPTIONS, 
   MOCK_DESIGN_ISSUES, 
   MOCK_BEME_CATEGORIES, 
   MOCK_AS_BUILT_ROWS, 
@@ -47,11 +45,6 @@ interface ProjectContextType {
   terrainSummary: TerrainSummary;
   activeTerrainTab: 'TIN' | 'Contours' | 'Alignment';
   setActiveTerrainTab: (tab: 'TIN' | 'Contours' | 'Alignment') => void;
-  
-  // AI Reasoning
-  curveOptions: CurveOption[];
-  selectedCurveId: 'A' | 'B' | 'C';
-  selectCurveOption: (id: 'A' | 'B' | 'C') => void;
   
   // Design Engine
   activeDesignTab: 'Longitudinal profile' | 'Horizontal alignment' | 'Cross-section';
@@ -83,6 +76,8 @@ interface ProjectContextType {
   isBackendChecking: boolean;
   backendProjects: ProjectSummary[];
   backendProjectsError?: Error;
+  activeBackendProject?: ProjectDetail;
+  activeBackendProjectError?: Error;
 
   // Notifications
   snackbarMessage: string | null;
@@ -99,6 +94,12 @@ export const ProjectProvider: React.FC<{ children: ReactNode }> = ({ children })
   const { data: backendProjects = [], error: backendProjectsError } = useSWR<ProjectSummary[]>('backend-projects', fetchProjects, {
     shouldRetryOnError: false,
   });
+  const activeProjectId = backendProjects[0]?.id;
+  const { data: activeBackendProject, error: activeBackendProjectError } = useSWR<ProjectDetail>(
+    activeProjectId ? ['backend-project-detail', activeProjectId] : null,
+    () => fetchProjectDetail(activeProjectId as string),
+    { shouldRetryOnError: false },
+  );
   const [activeStage, setActiveStage] = useState<StageId>('overview');
   const [isSampleData, setIsSampleData] = useState<boolean>(false);
   
@@ -110,8 +111,6 @@ export const ProjectProvider: React.FC<{ children: ReactNode }> = ({ children })
   const [terrainSummary] = useState<TerrainSummary>(MOCK_TERRAIN_SUMMARY);
   const [activeTerrainTab, setActiveTerrainTab] = useState<'TIN' | 'Contours' | 'Alignment'>('TIN');
   
-  const [curveOptions, setCurveOptions] = useState<CurveOption[]>(MOCK_CURVE_OPTIONS);
-  const [selectedCurveId, setSelectedCurveId] = useState<'A' | 'B' | 'C'>('B');
   
   const [activeDesignTab, setActiveDesignTab] = useState<'Longitudinal profile' | 'Horizontal alignment' | 'Cross-section'>('Longitudinal profile');
   const [designIssues, setDesignIssues] = useState<DesignValidationIssue[]>(MOCK_DESIGN_ISSUES);
@@ -126,7 +125,7 @@ export const ProjectProvider: React.FC<{ children: ReactNode }> = ({ children })
   
   const [bemeCategories, setBemeCategories] = useState<BemeCategory[]>(MOCK_BEME_CATEGORIES);
   
-  const [selectedRouteId, setSelectedRouteId] = useState<string>('balanced');
+  const [selectedRouteId, setSelectedRouteId] = useState<string>('route-b');
   const [activeTolerance, setActiveTolerance] = useState<'0.5 m' | '1 m' | '2 m'>('1 m');
   const [asBuiltRows] = useState<AsBuiltComparisonRow[]>(MOCK_AS_BUILT_ROWS);
   
@@ -138,15 +137,6 @@ export const ProjectProvider: React.FC<{ children: ReactNode }> = ({ children })
 
   const toggleWarningAcknowledged = (id: string) => {
     setSurveyWarnings(prev => prev.map(w => w.id === id ? { ...w, isAcknowledged: !w.isAcknowledged } : w));
-  };
-
-  const selectCurveOption = (id: 'A' | 'B' | 'C') => {
-    setSelectedCurveId(id);
-    setCurveOptions(prev => prev.map(c => ({
-      ...c,
-      badge: c.id === id ? 'Selected' : 'Alternative'
-    })));
-    setSnackbarMessage(`Curve option ${id} selected. Engineering calculations updated.`);
   };
 
   const acceptDesignIssue = (id: string, note?: string) => {
@@ -194,9 +184,6 @@ export const ProjectProvider: React.FC<{ children: ReactNode }> = ({ children })
       terrainSummary,
       activeTerrainTab,
       setActiveTerrainTab,
-      curveOptions,
-      selectedCurveId,
-      selectCurveOption,
       activeDesignTab,
       setActiveDesignTab,
       designIssues,
@@ -218,6 +205,8 @@ export const ProjectProvider: React.FC<{ children: ReactNode }> = ({ children })
       isBackendChecking,
       backendProjects,
       backendProjectsError,
+      activeBackendProject,
+      activeBackendProjectError,
       snackbarMessage,
       setSnackbarMessage,
     }}>
