@@ -1,7 +1,9 @@
 import React from 'react';
 import { Box, Typography } from '@mui/material';
+import CheckIcon from '@mui/icons-material/Check';
 import { useProject } from '../context/ProjectContext';
 import { StageId } from '../types';
+import { VIZ_TOKENS } from '../tokens';
 
 export const StepperBar: React.FC = () => {
   const { activeStage, setActiveStage, hasSurveyUploaded } = useProject();
@@ -12,10 +14,9 @@ export const StepperBar: React.FC = () => {
     { id: 'terrain', number: 3, label: 'Terrain' },
     { id: 'design', number: 4, label: 'Design' },
     { id: 'drawings', number: 5, label: 'Drawings' },
-    { id: 'beme', number: 6, label: 'BEME and report' },
+    { id: 'beme', number: 6, label: 'BEME & Report' },
   ];
 
-  // Stage order index for progress indicator
   const stageOrder: Record<string, number> = {
     overview: hasSurveyUploaded ? 3 : 1,
     setup: 1,
@@ -32,21 +33,44 @@ export const StepperBar: React.FC = () => {
   return (
     <Box
       sx={{
-        px: 3,
-        py: 1,
-        backgroundColor: '#0A0E17',
+        px: { xs: 2, md: 3 },
+        py: 1.2,
+        backgroundColor: '#090D16',
         borderBottom: '1px solid #1E293B',
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'space-between',
         position: 'relative',
+        overflowX: 'auto',
       }}
     >
-      <Box sx={{ display: 'flex', width: '100%', justifyContent: 'space-between', alignItems: 'center' }}>
-        {steps.map(s => {
+      <Box
+        sx={{
+          display: 'flex',
+          width: '100%',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          minWidth: 650,
+          position: 'relative',
+        }}
+      >
+        {/* Subtle connecting track line behind the steps */}
+        <Box
+          sx={{
+            position: 'absolute',
+            top: '50%',
+            left: '20px',
+            right: '20px',
+            height: '2px',
+            backgroundColor: '#1E293B',
+            transform: 'translateY(-50%)',
+            zIndex: 0,
+          }}
+        />
+
+        {steps.map((s) => {
           const isCompleted = s.number < currentStepNum || (hasSurveyUploaded && s.number <= 2);
           const isCurrent = s.id === activeStage;
-          const color = isCurrent ? '#38BDF8' : isCompleted ? '#10B981' : '#64748B';
+          const statusColor = isCurrent ? '#38BDF8' : isCompleted ? '#16A34A' : '#64748B';
 
           return (
             <Box
@@ -56,28 +80,44 @@ export const StepperBar: React.FC = () => {
                 cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
-                gap: 0.8,
-                opacity: isCurrent || isCompleted ? 1 : 0.6,
-                transition: 'opacity 0.2s',
-                '&:hover': { opacity: 1 },
+                gap: 1,
+                px: 1.2,
+                py: 0.5,
+                borderRadius: 1.5,
+                backgroundColor: isCurrent ? '#0F1E38' : '#090D16',
+                border: isCurrent ? '1px solid rgba(56, 189, 248, 0.4)' : '1px solid transparent',
+                zIndex: 1,
+                transition: VIZ_TOKENS.transitions.cardHover,
+                '&:hover': {
+                  backgroundColor: '#0E1726',
+                  borderColor: '#38BDF8',
+                },
               }}
             >
               <Box
                 sx={{
-                  width: 16,
-                  height: 16,
+                  width: 20,
+                  height: 20,
                   borderRadius: '50%',
-                  border: `1.5px solid ${color}`,
+                  border: `1.5px solid ${statusColor}`,
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  backgroundColor: isCompleted ? color : 'transparent',
+                  backgroundColor: isCompleted ? '#16A34A' : isCurrent ? 'rgba(56, 189, 248, 0.15)' : '#090D16',
+                  transition: 'all 180ms ease',
                 }}
               >
                 {isCompleted ? (
-                  <Box sx={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: '#0A0E17' }} />
+                  <CheckIcon sx={{ fontSize: '0.75rem', color: '#F8FAFC' }} />
                 ) : (
-                  <Typography sx={{ fontSize: '0.6rem', color, fontWeight: 700 }}>
+                  <Typography
+                    sx={{
+                      fontSize: '0.65rem',
+                      color: isCurrent ? '#38BDF8' : '#64748B',
+                      fontWeight: 700,
+                      fontFamily: VIZ_TOKENS.typography.monoFont,
+                    }}
+                  >
                     {s.number}
                   </Typography>
                 )}
@@ -87,7 +127,7 @@ export const StepperBar: React.FC = () => {
                 variant="caption"
                 sx={{
                   fontWeight: isCurrent ? 700 : 500,
-                  color: isCurrent ? '#F8FAFC' : color,
+                  color: isCurrent ? '#F8FAFC' : isCompleted ? '#CBD5E1' : '#64748B',
                   fontSize: '0.75rem',
                   letterSpacing: '0.01em',
                 }}

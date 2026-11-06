@@ -1,0 +1,58 @@
+:root {
+  --ground-existing: #8B6F47;
+  --grade-finished: #F8FAFC;
+  --cut: #D9534F;
+  --fill: #2F80ED;
+  --cut-30: rgba(217, 83, 79, 0.30);
+  --fill-30: rgba(47, 128, 237, 0.30);
+  --pavement-wearing: #1F2937;
+  --pavement-base: #6B7280;
+  --pavement-subbase: #A8A29E;
+  --subgrade: #8B6F47;
+  --contour-minor: #94A3B8;
+  --contour-index: #475569;
+  --right-of-way: #64748B;
+  --flag-warning: #F59E0B;
+  --flag-critical: #DC2626;
+  --ok: #16A34A;
+  
+  --font-mono: 'JetBrains Mono', 'IBM Plex Mono', monospace;
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+body {
+  margin: 0;
+  background-color: #0b0f19;
+  color: #f8fafc;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Tabular numerals utility for civil stationing, coordinates, elevations, and rates */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum' 1;
+  font-family: var(--font-mono);
+}
+
+/* Drawing canvas svg typography */
+svg text {
+  user-select: none;
+}
+
+/* CAD Layer Transitions */
+.cad-layer {
+  transition: opacity 180ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

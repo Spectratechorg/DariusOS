@@ -228,7 +228,7 @@ export const SurveyValidationView: React.FC = () => {
                           {row.northing.toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 2 })}
                         </TableCell>
                         <TableCell sx={{ color: '#CBD5E1', fontSize: '0.8rem', fontFamily: 'monospace' }}>
-                          {row.elevation.toFixed(1)}
+                          {row.elevation.toFixed(2)}
                         </TableCell>
                         <TableCell sx={{ color: '#CBD5E1', fontSize: '0.8rem' }}>
                           {row.description}
