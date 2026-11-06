@@ -64,7 +64,7 @@ def register(request: UserCreateRequest, db: Session = Depends(get_db)):
         email=request.email,
         full_name=request.full_name,
         hashed_password=get_password_hash(request.password),
-        role=request.role if request.role in ["admin", "engineer", "viewer"] else "engineer",
+        role="engineer",
         is_active=True
     )
     db.add(user)

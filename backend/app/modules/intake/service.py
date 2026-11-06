@@ -16,6 +16,8 @@ from app.modules.intake.report import IntakeReportGenerator
 from app.modules.intake.validator import SurveyValidator
 from app.schemas.survey import StandardPointCloudData, SurveyFileStatus, SurveyUploadResponse
 
+from app.schemas.survey import QualityVerdict, StandardPointCloudData, SurveyFileStatus, SurveyUploadResponse
+
 logger = logging.getLogger("dariusos.intake")
 
 
@@ -95,7 +97,7 @@ class IntakeService:
             crs_epsg=crs_epsg
         )
 
-        status = SurveyFileStatus.VALIDATED if validation.errors == [] else SurveyFileStatus.REJECTED
+        status = SurveyFileStatus.REJECTED if validation.verdict == QualityVerdict.REJECTED else SurveyFileStatus.VALIDATED
 
         # 11. Create immutable database record
         b = validation.bounds

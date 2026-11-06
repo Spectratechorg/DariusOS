@@ -3,7 +3,6 @@ export type StageId =
   | 'setup'
   | 'survey'
   | 'terrain'
-  | 'reasoning'
   | 'design'
   | 'drawings'
   | 'beme';

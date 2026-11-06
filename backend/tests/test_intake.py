@@ -14,6 +14,9 @@ from app.modules.intake.service import IntakeService
 from app.models.user import User
 from app.models.project import Project
 from app.schemas.survey import QualityVerdict
+from app.models.project import Project
+from app.models.user import User
+from app.modules.intake.service import IntakeService
 
 from tests.synthetic_data.terrain_generators import (
     generate_flat_plane_points,
@@ -23,6 +26,7 @@ from tests.synthetic_data.terrain_generators import (
     points_to_xyz_bytes,
     points_to_las_bytes
 )
+
 
 
 @pytest.fixture
@@ -175,9 +179,50 @@ def test_intake_service_full_workflow(db_session, clean_flat_points):
         raw_bytes=csv_bytes
     )
 
+    
+
     assert record.id is not None
     assert record.sha256_hash == cloud.sha256_hash
     assert record.status == "VALIDATED"
     assert record.point_count == len(clean_flat_points)
     assert Path(record.storage_path).exists()
     assert cloud.density_pts_m2 > 0.0
+
+
+def test_tiny_survey_is_rejected(db_session):
+    user = User(email="t@t.com", full_name="T", hashed_password="x", role="engineer", is_active=True)
+    db_session.add(user)
+    db_session.commit()
+    project = Project(name="P", created_by_user_id=user.id)
+    db_session.add(project)
+    db_session.commit()
+
+    record, _ = IntakeService.process_file_upload(
+        db=db_session, project_id=project.id, user_id=user.id,
+        filename="tiny.csv", raw_bytes=b"x,y,z\n1,2,3\n4,5,6\n",
+    )
+    assert record.status == "REJECTED"
+
+def test_register_cannot_self_assign_admin(client):
+    r = client.post("/api/v1/auth/register", json={
+        "email": "x@x.com", "password": "Passw0rd!123",
+        "full_name": "X", "role": "admin"})
+    assert r.status_code == 201
+    assert r.json()["role"] == "engineer"
+
+
+def test_csv_text_point_ids(tmp_path):
+    f = tmp_path / "a.csv"
+    f.write_text("id,x,y,z\nP1,100,200,10\nP2,101,201,11\n")
+    pts, meta = CsvReader().read(f)
+    assert len(pts) == 2
+    assert pts["z"][0] == 10
+
+
+def test_csv_empty_cell_not_shifted(tmp_path):
+    f = tmp_path / "b.csv"
+    f.write_text("x,y,z,class\n100,200,,5\n101,201,11,2\n")
+    pts, meta = CsvReader().read(f)
+    assert len(pts) == 1
+    assert pts["z"][0] == 11
+    assert meta["blank_or_invalid_rows"] == 1
