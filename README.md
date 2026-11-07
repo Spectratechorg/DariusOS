@@ -70,6 +70,7 @@ pytest tests/test_quantities.py -k "golden"
 ---
 
 ## Documentation
+- [MVP audit & build passes (Pilot Project)](docs/MVP-AUDIT-AND-PASSES.md)
 - [Architecture & Guide for Junior Engineers](docs/architecture.md)
 - [Data Contracts Between Stages](docs/contracts/)
 - [Architecture Decision Log](docs/decisions.md)

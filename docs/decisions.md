@@ -51,3 +51,13 @@ This document records key technical decisions made during the design and constru
 - **Context**: A common pitfall in civil engineering software is calculating bill quantities from a 3D TIN difference while drawing 2D cross-sections separately, resulting in drawing areas that do not match the bill of quantities.
 - **Decision**: Cross-section polygons and earthwork volume integration share the exact same geometric cross-section slice objects via the Average End Area method (with Prismoidal correction for tapering).
 - **Consequences**: Drawings and BEME quantities are guaranteed to match 100%.
+
+---
+
+## ADR 006: Corridor Survey Mode alongside the Area/DEM Pipeline
+- **Date**: 2026-11-07
+- **Who**: Engineering team (MVP sprint)
+- **Status**: Accepted
+- **Context**: The Pilot Survey Data supplied by Mastodon (`LDF DATA`, 2,658 pts) is a corridor survey: centreline plus left/right cross-section points at ~25 m intervals, grouped in three route blocks, with feature codes for culverts, buildings, river and poles. The current pipeline assumes a dense area point cloud and grids a 1 m DEM over the full bounding box — 76.3 M cells / ~610 MB for this file — and its CSV reader drops the C/L/R code column entirely, so every point arrives as classification 0. Forcing the pilot data through the area path produces a terrain surface that says nothing about the ground more than ~5 m off the centreline.
+- **Decision**: Add a corridor mode to intake/design. The CSV intake gains a block-and-code aware reader (`intake/corridor.py`) that produces route centrelines, surveyed sections and feature points. Alignment, profile and cross-sections consume that corridor model; quantities, BEME and the pilot report keep consuming the same contracts (04–07), so ADR 005 (quantities match drawings) still holds. The existing DEM/area path remains unchanged for future drone data (Full System).
+- **Consequences**: The MVP works with the data the client actually has; the terrain step is skipped for corridor projects (no 610 MB grid); classification codes become first-class data feeding BEME quantities (culvert counts, building/land-take lists). Full System drone workflows keep the area path.
