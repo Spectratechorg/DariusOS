@@ -77,8 +77,11 @@ class CsvReader(BaseReader):
         parsed_points: List[Tuple[float, float, float, int]] = []
         invalid_rows_count = 0
 
+        # Keep empty fields so a blank cell cannot shift the columns to its right
+        # (e.g. "100,200,,5" must not read the class value as the height).
+        splitter = re.compile(re.escape(delimiter))
         for line_no, line in enumerate(lines[start_row:], start=start_row + 1):
-            parts = [p.strip() for p in re.split(f"[{delimiter}]+", line) if p.strip()]
+            parts = [p.strip().strip('"').strip("'") for p in splitter.split(line)]
             if len(parts) <= max(x_col, y_col, z_col):
                 invalid_rows_count += 1
                 continue
